@@ -1,27 +1,15 @@
 "use client";
 
 import { Handle, type NodeProps, Position } from "@xyflow/react";
-import {
-  ChevronDownIcon,
-  ChevronUpIcon,
-  Loader2Icon,
-  MessageCircleMoreIcon,
-  SparklesIcon,
-  XIcon,
-  ZapIcon,
-} from "lucide-react";
-import Image from "next/image";
-import { useCallback, useMemo, useState } from "react";
-import { useFlow } from "@/contexts/FlowContext";
-import {
-  type AspectRatio,
-  generateImage,
-  type ImageSize,
-} from "@/lib/google-ai";
+import { Loader2Icon, SparklesIcon, XIcon, ZapIcon } from "lucide-react";
+import { useMemo, useState } from "react";
+import { useFlow } from "@/contexts/flow";
+import { useUpdateDataGenerationImageNodeController } from "@/contexts/flow/controllers/generation-image/update";
+import type { AspectRatio, ImageSize } from "@/lib/google-ai";
+import type { GenerationImageNodeService } from "@/services/node/GenerationImageNodeService";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
-import { ScrollArea } from "../ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -33,83 +21,87 @@ import {
 } from "../ui/select";
 import { Separator } from "../ui/separator";
 
-interface AIGeneratorNodeData {
-  format?: AspectRatio;
-  quality?: ImageSize;
-}
+type AIGeneratorNodeData = GenerationImageNodeService.Node["data"] & {
+  isExecuted?: boolean;
+};
 
 export function AIGeneratorNode({ id, data }: NodeProps) {
-  const { updateNodeData, getConnectedData, addResultNode } = useFlow();
-  const nodeData = data as AIGeneratorNodeData;
-  const [isGenerating, setIsGenerating] = useState(false);
+  const { updateNodeData, getConnectedData, flowId } = useFlow();
+  const [nodeData, setNodeData] = useState<AIGeneratorNodeData>(
+    data as unknown as AIGeneratorNodeData,
+  );
+
+  const { updateGenerationImageNode } =
+    useUpdateDataGenerationImageNodeController();
+
   const [error, setError] = useState<string | null>(null);
-  const [showInputs, setShowInputs] = useState(false);
 
   const connectedData = useMemo(() => {
     return getConnectedData(id);
   }, [id, getConnectedData]);
 
-  const handleFormatChange = useCallback(
-    (value: string) => {
-      updateNodeData(id, { format: value as AspectRatio });
-    },
-    [id, updateNodeData],
-  );
+  const handleFormatChange = (value: string) => {
+    setNodeData((prev) => ({
+      ...prev,
+      parameters: {
+        ...prev.parameters,
+        aspectRatio: value as AspectRatio,
+      },
+    }));
+    updateNodeData(id, { format: value as AspectRatio });
+    updateGenerationImageNode({
+      flowId,
+      nodeId: id,
+      data: {
+        ...nodeData,
+        parameters: {
+          quality: nodeData.parameters.quality ?? "1K",
+          aspectRatio: value as AspectRatio,
+        },
+      },
+    });
+  };
 
-  const handleQualityChange = useCallback(
-    (value: string) => {
-      updateNodeData(id, { quality: value as ImageSize });
-    },
-    [id, updateNodeData],
-  );
-
-  const handleGenerate = useCallback(async () => {
-    setError(null);
-    setIsGenerating(true);
-
-    try {
-      const { prompts, images } = connectedData;
-
-      if (prompts.length === 0) {
-        throw new Error("Conecte pelo menos um node de prompt");
-      }
-
-      const combinedPrompt = prompts.join("\n\n");
-
-      const imageUrl = await generateImage({
-        prompt: combinedPrompt,
-        referenceImages: images,
-        aspectRatio: nodeData.format || "1:1",
-        imageSize: nodeData.quality || "2K",
-      });
-
-      addResultNode(id, imageUrl);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao gerar imagem");
-    } finally {
-      setIsGenerating(false);
-    }
-  }, [id, connectedData, addResultNode, nodeData.format, nodeData.quality]);
+  const handleQualityChange = (value: string) => {
+    setNodeData((prev) => ({
+      ...prev,
+      parameters: {
+        ...prev.parameters,
+        quality: value as ImageSize,
+      },
+    }));
+    updateNodeData(id, { quality: value as ImageSize });
+    updateGenerationImageNode({
+      flowId,
+      nodeId: id,
+      data: {
+        ...nodeData,
+        parameters: {
+          aspectRatio: nodeData.parameters.aspectRatio ?? "1:1",
+          quality: value as ImageSize,
+        },
+      },
+    });
+  };
 
   const hasPrompts = connectedData.prompts.length > 0;
   const hasImages = connectedData.images.length > 0;
   const hasAnyInput = hasPrompts || hasImages;
 
   return (
-    <Card className="w-78 p-1 shadow-lg border-primary/30 bg-linear-to-b from-card to-primary/5">
+    <Card className="w-78 p-0 shadow-lg border-purple-600/30 bg-linear-to-b from-card to-purple-600/5">
       <Handle
         type="source"
         position={Position.Right}
-        className="bg-primary! size-3! border-2! border-card!"
+        className="bg-purple-600! size-3! border-2! border-card!"
       />
       <Handle
         type="target"
         position={Position.Left}
-        className="bg-primary! size-3! border-2! border-card!"
+        className="bg-purple-600! size-3! border-2! border-card!"
       />
 
-      <CardContent className="p-3 space-y-3">
-        {/* Header */}
+      <CardContent className="p-2 space-y-3">
         <header className="flex items-center gap-2">
           <div className="bg-linear-to-br from-purple-400 to-purple-600 p-2 grid place-items-center rounded-lg shadow-sm">
             <SparklesIcon className="size-4 text-white" strokeWidth={2} />
@@ -142,59 +134,10 @@ export function AIGeneratorNode({ id, data }: NodeProps) {
                   </Badge>
                 )}
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="size-6 nodrag"
-                onClick={() => setShowInputs(!showInputs)}
-              >
-                {showInputs ? (
-                  <ChevronUpIcon className="size-4" />
-                ) : (
-                  <ChevronDownIcon className="size-4" />
-                )}
-              </Button>
             </div>
           )}
         </header>
 
-        {/* Inputs Dinâmicos (colapsável) */}
-        {showInputs && hasAnyInput && (
-          <ScrollArea className="">
-            <div className="space-y-1.5 pr-2">
-              {connectedData.prompts.map((prompt, index) => (
-                <div
-                  key={`prompt-${index}`}
-                  className="p-1.5 bg-amber-50 border border-amber-200 rounded text-[10px] text-gray-700 line-clamp-2"
-                >
-                  <MessageCircleMoreIcon className="size-3 text-amber-600 inline mr-1" />
-                  {prompt}
-                </div>
-              ))}
-              {connectedData.images.map((imageUrl, index) => (
-                <div
-                  key={`image-${index}`}
-                  className="flex items-center gap-1.5 p-1.5 bg-blue-50 border border-blue-200 rounded"
-                >
-                  <div className="size-8 rounded overflow-hidden bg-gray-100 shrink-0">
-                    <Image
-                      src={imageUrl}
-                      alt={`Ref ${index + 1}`}
-                      width={32}
-                      height={32}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <span className="text-[10px] text-blue-700">
-                    Referência {index + 1}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </ScrollArea>
-        )}
-
-        {/* Mensagem se não houver inputs */}
         {!hasAnyInput && (
           <div className="p-2 bg-gray-50 border border-dashed border-gray-300 rounded-lg text-center">
             <p className="text-[10px] text-gray-500">
@@ -206,14 +149,15 @@ export function AIGeneratorNode({ id, data }: NodeProps) {
 
         <Separator />
 
-        {/* Configurações */}
         <div className="grid grid-cols-2 gap-2">
-          {/* Formato */}
           <div className="space-y-1">
             <span className="text-[10px] font-medium text-gray-500">
               Formato
             </span>
-            <Select value={nodeData.format} onValueChange={handleFormatChange}>
+            <Select
+              value={nodeData.parameters.aspectRatio}
+              onValueChange={handleFormatChange}
+            >
               <SelectTrigger className="w-full nodrag h-8 text-xs">
                 <SelectValue placeholder="1:1" />
               </SelectTrigger>
@@ -237,17 +181,16 @@ export function AIGeneratorNode({ id, data }: NodeProps) {
             </Select>
           </div>
 
-          {/* Qualidade */}
           <div className="space-y-1">
             <span className="text-[10px] font-medium text-gray-500">
               Qualidade
             </span>
             <Select
-              value={nodeData.quality}
+              value={nodeData.parameters.quality}
               onValueChange={handleQualityChange}
             >
               <SelectTrigger className="w-full nodrag h-8 text-xs">
-                <SelectValue placeholder="2K" />
+                <SelectValue placeholder="1K" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
@@ -276,7 +219,6 @@ export function AIGeneratorNode({ id, data }: NodeProps) {
           </div>
         </div>
 
-        {/* Erro */}
         {error && (
           <div className="flex items-start gap-1.5 p-2 bg-red-50 border border-red-200 rounded-lg">
             <XIcon className="size-3 text-red-500 mt-0.5 shrink-0" />
@@ -284,13 +226,14 @@ export function AIGeneratorNode({ id, data }: NodeProps) {
           </div>
         )}
 
-        {/* Botão Gerar */}
         <Button
-          onClick={handleGenerate}
-          disabled={isGenerating || !hasPrompts}
+          onClick={() => {
+            console.log("Gerar imagem com");
+          }}
+          disabled={false || !hasPrompts}
           className="w-full bg-linear-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg shadow-md nodrag h-9"
         >
-          {isGenerating ? (
+          {false ? (
             <>
               <Loader2Icon
                 className="size-4 animate-spin mr-2"

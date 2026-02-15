@@ -4,14 +4,7 @@ const ai = new GoogleGenAI({
   apiKey: process.env.NEXT_PUBLIC_GOOGLE_AI_API_KEY || "",
 });
 
-export type AspectRatio =
-  | "9:16"
-  | "1:1"
-  | "16:9"
-  | "4:3"
-  | "3:4"
-  | "2:3"
-  | "3:2";
+export type AspectRatio = "9:16" | "1:1" | "16:9" | "4:3";
 export type ImageSize = "1K" | "2K" | "4K";
 
 interface GenerateImageParams {
@@ -53,9 +46,7 @@ export async function generateImage({
       imageConfig: {
         aspectRatio,
         imageSize,
-        personGeneration: "allow_all",
       },
-      temperature: 0.7,
     },
   });
 

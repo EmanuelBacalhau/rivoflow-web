@@ -6,8 +6,8 @@ import {
   Controls,
   ReactFlow,
 } from "@xyflow/react";
-import { useFlow } from "@/contexts/FlowContext";
-import { AIGeneratorNode } from "./nodes/AIGeneratorNode";
+import { useFlow } from "@/contexts/flow";
+import { AIGeneratorNode } from "./nodes/AIGeneratorImageNode";
 import { PromptNode } from "./nodes/PromptNode";
 import { ResultNode } from "./nodes/ResultNode";
 import { UploadImageNode } from "./nodes/UploadImageNode";
@@ -15,10 +15,10 @@ import { Sidebar } from "./Sidebar";
 import { Toolbar } from "./Toolbar";
 
 const nodeTypes = {
-  prompt: PromptNode,
-  image: UploadImageNode,
-  aiGenerator: AIGeneratorNode,
-  result: ResultNode,
+  PROMPT: PromptNode,
+  IMAGE: UploadImageNode,
+  GENERATION_IMAGE: AIGeneratorNode,
+  RESULT: ResultNode,
 };
 
 export function FlowCanvas() {
@@ -30,21 +30,23 @@ export function FlowCanvas() {
     onConnect,
     addPromptNode,
     addImageNode,
-    addAIGeneratorNode,
-    imageNodeCount,
-    maxImageNodes,
+    addGenerationImageNode,
+    // imageNodeCount,
+    // maxImageNodes,
   } = useFlow();
 
   return (
     <div className="h-screen bg-gray-50">
       <Sidebar />
+
       <Toolbar
         onAddPromptNode={addPromptNode}
         onAddImageNode={addImageNode}
-        onAddAIGeneratorNode={addAIGeneratorNode}
-        imageNodeCount={imageNodeCount}
-        maxImageNodes={maxImageNodes}
+        onAddGenerationImageNode={addGenerationImageNode}
+        // imageNodeCount={imageNodeCount}
+        // maxImageNodes={maxImageNodes}
       />
+
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -62,6 +64,7 @@ export function FlowCanvas() {
           size={3}
           color="#d1d5db"
         />
+
         <Controls className="bg-white rounded-lg shadow-lg border border-gray-200" />
       </ReactFlow>
     </div>

@@ -1,13 +1,7 @@
 "use client";
 
 import { Handle, type NodeProps, Position } from "@xyflow/react";
-import {
-  ArrowRightIcon,
-  DownloadIcon,
-  EyeIcon,
-  ShareIcon,
-  ZoomInIcon,
-} from "lucide-react";
+import { DownloadIcon, EyeIcon, ShareIcon, ZoomInIcon } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useState } from "react";
 import { Badge } from "../ui/badge";
@@ -48,7 +42,6 @@ export function ResultNode({ data }: NodeProps) {
       });
       await navigator.share({ files: [file] });
     } catch {
-      // Fallback: copy to clipboard
       await navigator.clipboard.writeText(nodeData.imageUrl);
     }
   }, [nodeData.imageUrl]);
@@ -60,7 +53,7 @@ export function ResultNode({ data }: NodeProps) {
         position={Position.Left}
         className="bg-green-400! size-3! border-2! border-white!"
       />
-      {/* Handle source para fluxo incremental */}
+
       {nodeData.imageUrl && (
         <Handle
           type="source"
@@ -90,7 +83,7 @@ export function ResultNode({ data }: NodeProps) {
           )}
         </header>
 
-        {nodeData.imageUrl ? (
+        {nodeData.imageUrl && (
           <div className="space-y-2">
             <div className="w-full h-48 overflow-hidden rounded-lg relative group border border-green-100">
               <Image
@@ -105,7 +98,6 @@ export function ResultNode({ data }: NodeProps) {
                 <Button
                   size="icon"
                   variant="secondary"
-                  className="size-9 nodrag"
                   onClick={() => window.open(nodeData.imageUrl, "_blank")}
                 >
                   <ZoomInIcon className="size-5" />
@@ -117,7 +109,7 @@ export function ResultNode({ data }: NodeProps) {
               <Button
                 variant="outline"
                 size="sm"
-                className="flex-1 h-8 text-xs nodrag"
+                className="flex-1 h-8 text-xs"
                 onClick={handleDownload}
                 disabled={downloading}
               >
@@ -127,25 +119,16 @@ export function ResultNode({ data }: NodeProps) {
               <Button
                 variant="outline"
                 size="sm"
-                className="h-8 text-xs nodrag"
+                className="h-8 text-xs"
                 onClick={handleShare}
               >
                 <ShareIcon className="size-3.5" />
               </Button>
             </div>
 
-            {/* Indicador de fluxo */}
             <p className="text-[10px] text-center text-gray-400 flex items-center justify-center gap-1">
-              <ArrowRightIcon className="size-3" />
               Conecte a outro gerador
             </p>
-          </div>
-        ) : (
-          <div className="w-full h-48 bg-gray-50 border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center">
-            <div className="bg-gray-100 rounded-full p-3 mb-2">
-              <EyeIcon className="size-5 text-gray-400" />
-            </div>
-            <p className="text-xs text-gray-400">Aguardando imagem...</p>
           </div>
         )}
       </CardContent>

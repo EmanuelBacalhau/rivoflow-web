@@ -1,5 +1,18 @@
 "use client";
 
+import axios from "axios";
+import {
+  FolderOpenIcon,
+  HistoryIcon,
+  ImageIcon,
+  LayoutDashboardIcon,
+  MenuIcon,
+  PlusIcon,
+  SettingsIcon,
+  SparklesIcon,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
@@ -10,17 +23,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import {
-  FolderOpenIcon,
-  LayoutDashboardIcon,
-  MenuIcon,
-  SettingsIcon,
-  SparklesIcon,
-  ImageIcon,
-  HistoryIcon,
-  PlusIcon,
-} from "lucide-react";
-import { useState } from "react";
 
 interface NavItem {
   id: string;
@@ -64,6 +66,19 @@ const NAV_ITEMS: NavItem[] = [
 
 export function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
+  async function handleCreateFlow() {
+    const response = await axios.post(
+      "https://5zevgiqwgi.execute-api.sa-east-1.amazonaws.com/flows",
+      {
+        title: "Teste Flow",
+      },
+    );
+
+    const data = response.data.flow;
+
+    router.push(`/dashboard/flow/${data.id}`);
+  }
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -99,6 +114,17 @@ export function Sidebar() {
               <span className="ml-auto text-[10px] text-muted-foreground">
                 Em breve
               </span>
+            </Button>
+
+            <Separator className="my-2" />
+
+            <Button
+              variant="outline"
+              className="w-full justify-start gap-2 mb-3"
+              onClick={handleCreateFlow}
+            >
+              <PlusIcon className="size-4" />
+              Novo Flow
             </Button>
 
             <Separator className="my-2" />
