@@ -136,6 +136,9 @@ export function FlowProvider({ children }: { children: ReactNode }) {
         const nodeId = change.id;
         const node = nodes.find((n) => n.id === nodeId);
         if (!node) return;
+
+        if (nodeId.startsWith("temp-")) return;
+
         updatePositionNodeDebounced({
           nodeId,
           flowId,
@@ -206,37 +209,37 @@ export function FlowProvider({ children }: { children: ReactNode }) {
     );
   };
 
-  const addPromptNode = async () => {
+  const addPromptNode = () => {
     const position = {
       x: 0,
       y: 0,
     };
 
-    await createPromptNode({
+    createPromptNode({
       position: position,
       flowId,
     });
   };
 
-  const addImageNode = async () => {
+  const addImageNode = () => {
     const position = {
       x: 0,
       y: 0,
     };
 
-    await createImageNode({
+    createImageNode({
       position: position,
       flowId,
     });
   };
 
-  const addGenerationImageNode = async () => {
+  const addGenerationImageNode = () => {
     const position = {
       x: 0,
       y: 0,
     };
 
-    await createGenerationImageNode({
+    createGenerationImageNode({
       position: position,
       flowId,
     });

@@ -25,7 +25,7 @@ type UploadImageNodeData = ImageNodeService.Node["data"] & {
 };
 
 export function UploadImageNode({ id, data }: NodeProps) {
-  const { updateNodeData, uploadImageNode, flowId } = useFlow();
+  const { uploadImageNode, flowId } = useFlow();
   const nodeData = data as UploadImageNodeData;
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -34,17 +34,12 @@ export function UploadImageNode({ id, data }: NodeProps) {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
-      updateNodeData(id, { imageUrl: URL.createObjectURL(selectedFile) });
       uploadImageNode({
         flowId,
         nodeId: id,
         file: selectedFile,
       });
     }
-  };
-
-  const handleRemoveImage = () => {
-    updateNodeData(id, { imageUrl: "" });
   };
 
   return (
@@ -80,7 +75,7 @@ export function UploadImageNode({ id, data }: NodeProps) {
               alt="Uploaded Reference"
               fill
               sizes="256px"
-              quality={75}
+              quality={100}
               priority
               className="object-cover"
             />

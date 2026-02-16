@@ -20,8 +20,33 @@ export function useUploadImageNodeController({
         imageUrl: response.imageUrl,
       };
     },
-    onSuccess: (response) => {
+    onMutate: async (params) => {
+      const { nodeId, file } = params;
+
+      const previewUrl = URL.createObjectURL(file);
+
+      updateNodes((prevNodes) =>
+        prevNodes.map((n) =>
+          n.id === nodeId
+            ? {
+                ...n,
+                data: {
+                  ...n.data,
+                  imageUrl: previewUrl,
+                },
+              }
+            : n,
+        ),
+      );
+
+      return { nodeId, previewUrl };
+    },
+    onSuccess: (response, _, context) => {
       const { nodeId, key, imageUrl } = response;
+
+      if (context?.previewUrl) {
+        URL.revokeObjectURL(context.previewUrl);
+      }
 
       updateNodes((prevNodes) => {
         return prevNodes.map((n) =>
@@ -37,6 +62,27 @@ export function useUploadImageNodeController({
             : n,
         );
       });
+    },
+    onError: (_, __, context) => {
+      if (context?.previewUrl) {
+        URL.revokeObjectURL(context.previewUrl);
+      }
+
+      if (context?.nodeId) {
+        updateNodes((prevNodes) =>
+          prevNodes.map((n) =>
+            n.id === context.nodeId
+              ? {
+                  ...n,
+                  data: {
+                    ...n.data,
+                    imageUrl: "",
+                  },
+                }
+              : n,
+          ),
+        );
+      }
     },
   });
 

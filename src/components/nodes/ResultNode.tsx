@@ -91,7 +91,7 @@ export function ResultNode({ data }: NodeProps) {
                 alt="Generated Result"
                 fill
                 sizes="288px"
-                quality={75}
+                quality={100}
                 priority
                 className="object-cover"
               />
