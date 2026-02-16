@@ -1,11 +1,34 @@
 import { useMutation } from "@tanstack/react-query";
+import type { Node } from "@xyflow/react";
+import type { Dispatch, SetStateAction } from "react";
 import { GenerationImageNodeService } from "@/services/node/GenerationImageNodeService";
 
-export function useUpdateDataGenerationImageNodeController() {
+interface UpdateDataGenerationImageNodeParams {
+  updateNodes: Dispatch<SetStateAction<Node[]>>;
+}
+
+export function useUpdateDataGenerationImageNodeController({
+  updateNodes,
+}: UpdateDataGenerationImageNodeParams) {
   const { mutateAsync } = useMutation({
     mutationKey: ["updateGenerationImageNode"],
     mutationFn: async (params: GenerationImageNodeService.UpdateParams) => {
       await GenerationImageNodeService.update(params);
+    },
+    onMutate: async (params) => {
+      updateNodes((prevNodes) =>
+        prevNodes.map((n) =>
+          n.id === params.nodeId
+            ? {
+                ...n,
+                data: {
+                  ...n.data,
+                  ...params.data,
+                },
+              }
+            : n,
+        ),
+      );
     },
   });
 

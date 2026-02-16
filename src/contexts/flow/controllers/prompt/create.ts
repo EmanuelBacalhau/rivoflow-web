@@ -48,8 +48,10 @@ export function useCreateNodePromptController({
               type: node.data.type,
               position: n.position,
               data: {
-                isExecuted: node.isExecuted,
-                ...node.data,
+                ...node.data,  // Dados do servidor primeiro
+                ...n.data,     // Sobrescreve com dados da UI (mudanças do usuário)
+                type: node.data.type,  // Garante que type vem do servidor
+                isExecuted: node.isExecuted,  // Garante que isExecuted vem do servidor
               },
             };
           }

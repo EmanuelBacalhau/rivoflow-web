@@ -17,14 +17,19 @@ import {
   useEffect,
   useState,
 } from "react";
+import type { GenerationImageNodeService } from "@/services/node/GenerationImageNodeService";
 import type { ImageNodeService } from "@/services/node/ImageNodeService";
 import { NodeService } from "@/services/node/NodeService";
+import type { PromptNodeService } from "@/services/node/PromptNodeService";
 import { NodeTypeEnum } from "@/services/node/types";
 import { debounce } from "@/utils/debounce";
 import { useCreateNodeGenerationImageController } from "./controllers/generation-image/create";
+import { useGenerateImageController } from "./controllers/generation-image/generate";
+import { useUpdateDataGenerationImageNodeController } from "./controllers/generation-image/update";
 import { useCreateNodeImageController } from "./controllers/image/create";
 import { useUploadImageNodeController } from "./controllers/image/upload";
 import { useCreateNodePromptController } from "./controllers/prompt/create";
+import { useUpdateDataPromptNodeController } from "./controllers/prompt/update";
 import { useCreateEdgeController } from "./controllers/useCreateEdge";
 import { useDeleteEdgesController } from "./controllers/useDeleteEdge";
 import { useDeleteNodeController } from "./controllers/useDeleteNode";
@@ -58,6 +63,13 @@ interface FlowContextType {
   uploadImageNode: (
     params: ImageNodeService.UploadImageParams,
   ) => Promise<ImageNodeService.UploadImageResponse>;
+  updatePromptNode: (params: PromptNodeService.UpdateParams) => Promise<void>;
+  updateGenerationImageNode: (
+    params: GenerationImageNodeService.UpdateParams,
+  ) => Promise<void>;
+  generateImageNode: (
+    params: GenerationImageNodeService.GenerateImageParams,
+  ) => Promise<void>;
   getConnectedData: (nodeId: string) => ConnectedData;
   updateNodeData: (nodeId: string, data: Record<string, unknown>) => void;
 }
@@ -107,10 +119,21 @@ export function FlowProvider({ children }: { children: ReactNode }) {
   const { createPromptNode } = useCreateNodePromptController({
     updateNodes: setNodes,
   });
+  const { updatePromptNode } = useUpdateDataPromptNodeController({
+    updateNodes: setNodes,
+  });
   const { createImageNode } = useCreateNodeImageController({
     updateNodes: setNodes,
   });
   const { createGenerationImageNode } = useCreateNodeGenerationImageController({
+    updateNodes: setNodes,
+  });
+  const { updateGenerationImageNode } =
+    useUpdateDataGenerationImageNodeController({
+      updateNodes: setNodes,
+    });
+  const { generateImageNode } = useGenerateImageController({
+    flowId,
     updateNodes: setNodes,
   });
 
@@ -303,6 +326,9 @@ export function FlowProvider({ children }: { children: ReactNode }) {
         addPromptNode,
         addImageNode,
         addGenerationImageNode,
+        updatePromptNode,
+        updateGenerationImageNode,
+        generateImageNode,
         getConnectedData,
         updateNodeData,
         uploadImageNode,

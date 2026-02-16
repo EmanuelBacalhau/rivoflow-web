@@ -4,8 +4,6 @@ import { Handle, type NodeProps, Position } from "@xyflow/react";
 import { Loader2Icon, SparklesIcon, XIcon, ZapIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useFlow } from "@/contexts/flow";
-import { useGenerateImageController } from "@/contexts/flow/controllers/generation-image/generate";
-import { useUpdateDataGenerationImageNodeController } from "@/contexts/flow/controllers/generation-image/update";
 import type { AspectRatio, ImageSize } from "@/lib/google-ai";
 import { GenerationImageNodeService } from "@/services/node/GenerationImageNodeService";
 import { Badge } from "../ui/badge";
@@ -27,13 +25,14 @@ type AIGeneratorNodeData = GenerationImageNodeService.Node["data"] & {
 };
 
 export function AIGeneratorNode({ id, data }: NodeProps) {
-  const { updateNodeData, getConnectedData, flowId } = useFlow();
+  const {
+    updateNodeData,
+    getConnectedData,
+    flowId,
+    updateGenerationImageNode,
+    generateImageNode,
+  } = useFlow();
   const nodeData = data as AIGeneratorNodeData;
-
-  const { updateGenerationImageNode } =
-    useUpdateDataGenerationImageNodeController();
-
-  const { generateImageNode } = useGenerateImageController(flowId);
 
   const [error, setError] = useState<string | null>(null);
 

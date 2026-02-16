@@ -52,8 +52,10 @@ export function useCreateNodeGenerationImageController({
               type: node.data.type,
               position: n.position,
               data: {
-                isExecuted: node.isExecuted,
                 ...node.data,
+                ...n.data,
+                type: node.data.type,
+                isExecuted: node.isExecuted,
               },
             };
           }

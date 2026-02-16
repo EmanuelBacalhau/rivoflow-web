@@ -4,7 +4,6 @@ import { Handle, type NodeProps, Position } from "@xyflow/react";
 import { CheckIcon, MessageCircleMoreIcon } from "lucide-react";
 import { useState } from "react";
 import { useFlow } from "@/contexts/flow";
-import { useUpdateDataPromptNodeController } from "@/contexts/flow/controllers/prompt/update";
 import type { PromptNodeService } from "@/services/node/PromptNodeService";
 import { debounce } from "@/utils/debounce";
 import { Card, CardContent } from "../ui/card";
@@ -15,12 +14,10 @@ type PromptNodeData = PromptNodeService.Node["data"] & {
 };
 
 export function PromptNode({ id: nodeId, data }: NodeProps) {
-  const { updateNodeData, flowId } = useFlow();
+  const { updateNodeData, flowId, updatePromptNode } = useFlow();
   const nodeData = data as PromptNodeData;
 
   const [charCount] = useState(nodeData.prompt?.length || 0);
-
-  const { updatePromptNode } = useUpdateDataPromptNodeController();
 
   const updatePromptNodeDebounced = debounce(updatePromptNode, 1000);
 
