@@ -4,7 +4,6 @@ import { Handle, type NodeProps, Position } from "@xyflow/react";
 import {
   CheckIcon,
   ImagePlusIcon,
-  Trash2Icon,
   UploadCloudIcon,
   ZoomInIcon,
 } from "lucide-react";
@@ -27,19 +26,14 @@ type UploadImageNodeData = ImageNodeService.Node["data"] & {
 
 export function UploadImageNode({ id, data }: NodeProps) {
   const { updateNodeData, uploadImageNode, flowId } = useFlow();
-  const [nodeData, setNodeData] = useState<UploadImageNodeData>(
-    data as UploadImageNodeData,
-  );
+  const nodeData = data as UploadImageNodeData;
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const inputId = `input-file-${id}`;
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
-      setNodeData((prev) => ({
-        ...prev,
-        imageUrl: URL.createObjectURL(selectedFile),
-      }));
       updateNodeData(id, { imageUrl: URL.createObjectURL(selectedFile) });
       uploadImageNode({
         flowId,
@@ -50,10 +44,6 @@ export function UploadImageNode({ id, data }: NodeProps) {
   };
 
   const handleRemoveImage = () => {
-    setNodeData((prev) => ({
-      ...prev,
-      imageUrl: "",
-    }));
     updateNodeData(id, { imageUrl: "" });
   };
 
@@ -96,15 +86,6 @@ export function UploadImageNode({ id, data }: NodeProps) {
             />
 
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-              <Button
-                size="icon"
-                variant="destructive"
-                className="cursor-pointer"
-                onClick={handleRemoveImage}
-              >
-                <Trash2Icon className="size-5" />
-              </Button>
-
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
                   <Button size="icon" className="cursor-pointer">

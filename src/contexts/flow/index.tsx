@@ -13,7 +13,6 @@ import { useParams } from "next/navigation";
 import {
   createContext,
   type ReactNode,
-  useCallback,
   useContext,
   useEffect,
   useState,
@@ -43,7 +42,7 @@ const NODE_COLORS: Record<string, string> = {
 interface ConnectedData {
   prompts: string[];
   images: string[];
-  videos: string[];
+  nodesSynced: string[];
 }
 
 interface FlowContextType {
@@ -77,10 +76,16 @@ export function FlowProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (data?.nodes) {
-      const mappedNodes = data.nodes.map((node) => ({
-        ...node,
-        type: node.data.type,
-      }));
+      const mappedNodes = data.nodes.map((node) => {
+        return {
+          ...node,
+          data: {
+            ...node.data,
+            isExecuted: node.isExecuted,
+          },
+          type: node.data.type,
+        };
+      });
       const mappedEdges = data.edges.map((edge) => {
         const sourceNode = mappedNodes.find((n) => n.id === edge.sourceNodeId);
         const strokeColor = NODE_COLORS[sourceNode?.type || ""] || "#6b7280";
@@ -93,6 +98,7 @@ export function FlowProvider({ children }: { children: ReactNode }) {
           style: { stroke: strokeColor, strokeWidth: 2 },
         };
       });
+
       setNodes(mappedNodes);
       setEdges(mappedEdges);
     }
@@ -171,6 +177,17 @@ export function FlowProvider({ children }: { children: ReactNode }) {
     const sourceNode = nodes.find((n) => n.id === params.source);
     const strokeColor = NODE_COLORS[sourceNode?.type || ""] || "#6b7280";
 
+    const targetNode = nodes.find((n) => n.id === params.target);
+
+    if (
+      targetNode &&
+      targetNode.type === NodeTypeEnum.GENERATION_IMAGE &&
+      targetNode.data.isExecuted
+    ) {
+      alert("Cannot connect from an executed generation image node.");
+      return;
+    }
+
     createEdge({
       flowId,
       sourceNodeId: params.source,
@@ -225,55 +242,51 @@ export function FlowProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const updateNodeData = useCallback(
-    (nodeId: string, data: Record<string, unknown>) => {
-      setNodes((nds) =>
-        nds.map((node) =>
-          node.id === nodeId
-            ? { ...node, data: { ...node.data, ...data } }
-            : node,
-        ),
-      );
-    },
-    [],
-  );
+  const updateNodeData = (nodeId: string, data: Record<string, unknown>) => {
+    setNodes((nds) =>
+      nds.map((node) =>
+        node.id === nodeId
+          ? { ...node, data: { ...node.data, ...data } }
+          : node,
+      ),
+    );
+  };
 
-  const getConnectedData = useCallback(
-    (nodeId: string): ConnectedData => {
-      const prompts: string[] = [];
-      const images: string[] = [];
-      const videos: string[] = [];
+  const getConnectedData = (nodeId: string): ConnectedData => {
+    const nodesSynced: string[] = [];
+    const prompts: string[] = [];
+    const images: string[] = [];
 
-      const incomingEdges = edges.filter((edge) => edge.target === nodeId);
+    const incomingEdges = edges.filter((edge) => edge.target === nodeId);
 
-      for (const edge of incomingEdges) {
-        const sourceNode = nodes.find((n) => n.id === edge.source);
-        if (!sourceNode) continue;
+    for (const edge of incomingEdges) {
+      const sourceNode = nodes.find((n) => n.id === edge.source);
+      if (!sourceNode) continue;
 
-        const isPromptNode =
-          sourceNode.type === NodeTypeEnum.PROMPT && sourceNode.data?.prompt;
-        const isImageNode =
-          sourceNode.type === NodeTypeEnum.IMAGE && sourceNode.data?.imageUrl;
-        const isResultNode =
-          sourceNode.type === NodeTypeEnum.RESULT && sourceNode.data?.imageUrl;
+      nodesSynced.push(sourceNode.id);
 
-        if (isPromptNode) {
-          prompts.push(sourceNode.data.prompt as string);
-        }
+      const isPromptNode =
+        sourceNode.type === NodeTypeEnum.PROMPT && sourceNode.data?.prompt;
+      const isImageNode =
+        sourceNode.type === NodeTypeEnum.IMAGE && sourceNode.data?.imageUrl;
+      const isResultNode =
+        sourceNode.type === NodeTypeEnum.RESULT && sourceNode.data?.imageUrl;
 
-        if (isImageNode) {
-          images.push(sourceNode.data.imageUrl as string);
-        }
-
-        if (isResultNode) {
-          images.push(sourceNode.data.imageUrl as string);
-        }
+      if (isPromptNode) {
+        prompts.push(sourceNode.data.prompt as string);
       }
 
-      return { prompts, images, videos };
-    },
-    [edges, nodes],
-  );
+      if (isImageNode) {
+        images.push(sourceNode.data.imageUrl as string);
+      }
+
+      if (isResultNode) {
+        images.push(sourceNode.data.imageUrl as string);
+      }
+    }
+
+    return { prompts, images, nodesSynced };
+  };
 
   return (
     <FlowContext.Provider

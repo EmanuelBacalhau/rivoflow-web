@@ -4,9 +4,10 @@ import { Handle, type NodeProps, Position } from "@xyflow/react";
 import { Loader2Icon, SparklesIcon, XIcon, ZapIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useFlow } from "@/contexts/flow";
+import { useGenerateImageController } from "@/contexts/flow/controllers/generation-image/generate";
 import { useUpdateDataGenerationImageNodeController } from "@/contexts/flow/controllers/generation-image/update";
 import type { AspectRatio, ImageSize } from "@/lib/google-ai";
-import type { GenerationImageNodeService } from "@/services/node/GenerationImageNodeService";
+import { GenerationImageNodeService } from "@/services/node/GenerationImageNodeService";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
@@ -27,12 +28,12 @@ type AIGeneratorNodeData = GenerationImageNodeService.Node["data"] & {
 
 export function AIGeneratorNode({ id, data }: NodeProps) {
   const { updateNodeData, getConnectedData, flowId } = useFlow();
-  const [nodeData, setNodeData] = useState<AIGeneratorNodeData>(
-    data as unknown as AIGeneratorNodeData,
-  );
+  const nodeData = data as AIGeneratorNodeData;
 
   const { updateGenerationImageNode } =
     useUpdateDataGenerationImageNodeController();
+
+  const { generateImageNode } = useGenerateImageController(flowId);
 
   const [error, setError] = useState<string | null>(null);
 
@@ -41,13 +42,6 @@ export function AIGeneratorNode({ id, data }: NodeProps) {
   }, [id, getConnectedData]);
 
   const handleFormatChange = (value: string) => {
-    setNodeData((prev) => ({
-      ...prev,
-      parameters: {
-        ...prev.parameters,
-        aspectRatio: value as AspectRatio,
-      },
-    }));
     updateNodeData(id, { format: value as AspectRatio });
     updateGenerationImageNode({
       flowId,
@@ -63,13 +57,6 @@ export function AIGeneratorNode({ id, data }: NodeProps) {
   };
 
   const handleQualityChange = (value: string) => {
-    setNodeData((prev) => ({
-      ...prev,
-      parameters: {
-        ...prev.parameters,
-        quality: value as ImageSize,
-      },
-    }));
     updateNodeData(id, { quality: value as ImageSize });
     updateGenerationImageNode({
       flowId,
@@ -84,9 +71,29 @@ export function AIGeneratorNode({ id, data }: NodeProps) {
     });
   };
 
+  const handleGenerateImage = async () => {
+    await generateImageNode({
+      flowId,
+      nodeGeneratorId: id,
+      inputs: connectedData.nodesSynced,
+    });
+  };
+
   const hasPrompts = connectedData.prompts.length > 0;
   const hasImages = connectedData.images.length > 0;
   const hasAnyInput = hasPrompts || hasImages;
+
+  const isProcessing =
+    nodeData.status ===
+      GenerationImageNodeService.GenerationStatusEnum.PROCESSING ||
+    nodeData.status === GenerationImageNodeService.GenerationStatusEnum.QUEUED;
+
+  const isCompleted =
+    nodeData.status ===
+    GenerationImageNodeService.GenerationStatusEnum.COMPLETED;
+
+  const isButtonDisabled =
+    false || !hasPrompts || nodeData.isExecuted || isProcessing || isCompleted;
 
   return (
     <Card className="w-78 p-0 shadow-lg border-purple-600/30 bg-linear-to-b from-card to-purple-600/5">
@@ -227,16 +234,14 @@ export function AIGeneratorNode({ id, data }: NodeProps) {
         )}
 
         <Button
-          onClick={() => {
-            console.log("Gerar imagem com");
-          }}
-          disabled={false || !hasPrompts}
+          onClick={handleGenerateImage}
+          disabled={isButtonDisabled}
           className="w-full bg-linear-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg shadow-md nodrag h-9"
         >
-          {false ? (
+          {isProcessing ? (
             <>
               <Loader2Icon
-                className="size-4 animate-spin mr-2"
+                className="size-4 animate-spin mr-1"
                 strokeWidth={2}
               />
               <span className="text-sm">Gerando...</span>

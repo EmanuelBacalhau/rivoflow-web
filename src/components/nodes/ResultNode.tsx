@@ -90,8 +90,10 @@ export function ResultNode({ data }: NodeProps) {
                 src={nodeData.imageUrl}
                 alt="Generated Result"
                 fill
+                sizes="288px"
+                quality={75}
+                priority
                 className="object-cover"
-                quality={100}
               />
 
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">

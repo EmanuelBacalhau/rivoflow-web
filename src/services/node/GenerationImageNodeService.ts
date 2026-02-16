@@ -27,6 +27,16 @@ export class GenerationImageNodeService extends Service {
       data: params.data,
     });
   }
+
+  static async generate(
+    params: GenerationImageNodeService.GenerateImageParams,
+  ) {
+    await GenerationImageNodeService.client.post(`/nodes/generate-image`, {
+      flowId: params.flowId,
+      nodeGeneratorId: params.nodeGeneratorId,
+      inputs: params.inputs,
+    });
+  }
 }
 
 export namespace GenerationImageNodeService {
@@ -35,8 +45,15 @@ export namespace GenerationImageNodeService {
     flowId: string;
   };
 
+  export type GenerateImageParams = {
+    flowId: string;
+    nodeGeneratorId: string;
+    inputs: string[];
+  };
+
   export enum GenerationStatusEnum {
     PENDING = "pending",
+    QUEUED = "queued",
     PROCESSING = "processing",
     COMPLETED = "completed",
     FAILED = "failed",

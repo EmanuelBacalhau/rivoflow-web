@@ -16,9 +16,8 @@ type PromptNodeData = PromptNodeService.Node["data"] & {
 
 export function PromptNode({ id: nodeId, data }: NodeProps) {
   const { updateNodeData, flowId } = useFlow();
-  const [nodeData, setNodeData] = useState<PromptNodeData>(
-    data as PromptNodeData,
-  );
+  const nodeData = data as PromptNodeData;
+
   const [charCount] = useState(nodeData.prompt?.length || 0);
 
   const { updatePromptNode } = useUpdateDataPromptNodeController();
@@ -27,7 +26,6 @@ export function PromptNode({ id: nodeId, data }: NodeProps) {
 
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = event.target.value;
-    setNodeData((prev) => ({ ...prev, prompt: value }));
     updateNodeData(nodeId, { prompt: value });
     updatePromptNodeDebounced({
       flowId,

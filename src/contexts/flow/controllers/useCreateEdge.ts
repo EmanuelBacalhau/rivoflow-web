@@ -23,6 +23,7 @@ export function useCreateEdgeController({
         return prevEdges.map((e) =>
           e.source === sourceNodeId && e.target === targetNodeId
             ? {
+                ...e,
                 id: id,
                 source: sourceNodeId,
                 target: targetNodeId,
