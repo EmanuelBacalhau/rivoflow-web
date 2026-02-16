@@ -21,33 +21,46 @@ export function useGenerateImageController({
     ) => {
       await GenerationImageNodeService.generate(paramsNode);
     },
-    onMutate: async () => {
+    onMutate: async (
+      paramsNode: GenerationImageNodeService.GenerateImageParams,
+    ) => {
+      const { nodeGeneratorId } = paramsNode;
       updateNodes((nds) =>
-        nds.map((n) => ({
-          ...n,
-          data: {
-            ...n.data,
-            isExecuted: true,
-            status:
-              n.type === NodeTypeEnum.GENERATION_IMAGE
-                ? GenerationImageNodeService.GenerationStatusEnum.PROCESSING
-                : n.data.status,
-          },
-        })),
+        nds.map((n) =>
+          n.id === nodeGeneratorId && n.type === NodeTypeEnum.GENERATION_IMAGE
+            ? {
+                ...n,
+                data: {
+                  ...n.data,
+                  isExecuted: true,
+                  status:
+                    GenerationImageNodeService.GenerationStatusEnum.PROCESSING,
+                },
+              }
+            : n,
+        ),
       );
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["flow", flowId] });
     },
-    onError: () => {
+    onError: (
+      error,
+      paramsNode: GenerationImageNodeService.GenerateImageParams,
+    ) => {
+      const { nodeGeneratorId } = paramsNode;
       updateNodes((nds) =>
-        nds.map((n) => ({
-          ...n,
-          data: {
-            ...n.data,
-            isExecuted: false,
-          },
-        })),
+        nds.map((n) =>
+          n.id === nodeGeneratorId && n.type === NodeTypeEnum.GENERATION_IMAGE
+            ? {
+                ...n,
+                data: {
+                  ...n.data,
+                  isExecuted: false,
+                },
+              }
+            : n,
+        ),
       );
     },
   });

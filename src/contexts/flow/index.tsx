@@ -17,7 +17,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import type { GenerationImageNodeService } from "@/services/node/GenerationImageNodeService";
+import { GenerationImageNodeService } from "@/services/node/GenerationImageNodeService";
 import type { ImageNodeService } from "@/services/node/ImageNodeService";
 import { NodeService } from "@/services/node/NodeService";
 import type { PromptNodeService } from "@/services/node/PromptNodeService";
@@ -84,6 +84,23 @@ export function FlowProvider({ children }: { children: ReactNode }) {
   const { data } = useQuery({
     queryKey: ["flow", flowId],
     queryFn: () => NodeService.getNodesByFlowId(flowId),
+    refetchInterval: (query) => {
+      const hasProcessingNodes = query.state.data?.nodes.some((node) => {
+        if (node.data.type !== NodeTypeEnum.GENERATION_IMAGE) return false;
+        const generationNode = node as GenerationImageNodeService.Node;
+
+        const isQueued =
+          generationNode.data.status ===
+          GenerationImageNodeService.GenerationStatusEnum.QUEUED;
+        const isProcessing =
+          generationNode.data.status ===
+          GenerationImageNodeService.GenerationStatusEnum.PROCESSING;
+
+        return isProcessing || isQueued;
+      });
+
+      return hasProcessingNodes ? 5000 : false;
+    },
   });
 
   useEffect(() => {

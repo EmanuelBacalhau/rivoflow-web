@@ -1,7 +1,13 @@
 "use client";
 
 import { Handle, type NodeProps, Position } from "@xyflow/react";
-import { Loader2Icon, SparklesIcon, XIcon, ZapIcon } from "lucide-react";
+import {
+  ArrowRightIcon,
+  Loader2Icon,
+  SparklesIcon,
+  XIcon,
+  ZapIcon,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 import { useFlow } from "@/contexts/flow";
 import type { AspectRatio, ImageSize } from "@/lib/google-ai";
@@ -237,7 +243,7 @@ export function AIGeneratorNode({ id, data }: NodeProps) {
           disabled={isButtonDisabled}
           className="w-full bg-linear-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg shadow-md nodrag h-9"
         >
-          {isProcessing ? (
+          {isProcessing && (
             <>
               <Loader2Icon
                 className="size-4 animate-spin mr-1"
@@ -245,12 +251,25 @@ export function AIGeneratorNode({ id, data }: NodeProps) {
               />
               <span className="text-sm">Gerando...</span>
             </>
-          ) : (
+          )}
+
+          {nodeData.status ===
+            GenerationImageNodeService.GenerationStatusEnum.COMPLETED && (
             <>
-              <SparklesIcon className="size-4 mr-2" strokeWidth={2} />
-              <span className="text-sm">Gerar Imagem</span>
+              <span className="text-sm">Sua imagem foi gerada!</span>
+              <ArrowRightIcon className="size-4 ml-1" strokeWidth={2} />
             </>
           )}
+
+          {nodeData.status ===
+            GenerationImageNodeService.GenerationStatusEnum.FAILED ||
+            (nodeData.status ===
+              GenerationImageNodeService.GenerationStatusEnum.PENDING && (
+              <>
+                <SparklesIcon className="size-4 mr-2" strokeWidth={2} />
+                <span className="text-sm">Gerar Imagem</span>
+              </>
+            ))}
         </Button>
       </CardContent>
     </Card>

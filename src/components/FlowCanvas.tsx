@@ -31,8 +31,6 @@ export function FlowCanvas() {
     addPromptNode,
     addImageNode,
     addGenerationImageNode,
-    // imageNodeCount,
-    // maxImageNodes,
   } = useFlow();
 
   return (
@@ -43,8 +41,6 @@ export function FlowCanvas() {
         onAddPromptNode={addPromptNode}
         onAddImageNode={addImageNode}
         onAddGenerationImageNode={addGenerationImageNode}
-        // imageNodeCount={imageNodeCount}
-        // maxImageNodes={maxImageNodes}
       />
 
       <ReactFlow

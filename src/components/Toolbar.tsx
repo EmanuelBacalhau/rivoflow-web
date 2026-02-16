@@ -11,16 +11,12 @@ interface ToolbarProps {
   onAddPromptNode: () => void;
   onAddImageNode: () => void;
   onAddGenerationImageNode: () => void;
-  // imageNodeCount: number;
-  // maxImageNodes: number;
 }
 
 export function Toolbar({
   onAddPromptNode,
   onAddImageNode,
   onAddGenerationImageNode,
-  // imageNodeCount,
-  // maxImageNodes,
 }: ToolbarProps) {
   return (
     <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 bg-white/95 backdrop-blur-sm p-2 rounded-xl shadow-lg border border-gray-200">

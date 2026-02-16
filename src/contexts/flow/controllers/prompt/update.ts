@@ -16,7 +16,6 @@ export function useUpdateDataPromptNodeController({
       await PromptNodeService.update(params);
     },
     onMutate: async (params) => {
-      // Atualiza UI imediatamente (optimistic)
       updateNodes((prevNodes) =>
         prevNodes.map((n) =>
           n.id === params.nodeId

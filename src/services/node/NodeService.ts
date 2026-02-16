@@ -1,5 +1,6 @@
 import type { EdgeService } from "../EdgeService";
 import { Service } from "../Service";
+import type { GenerationImageNodeService } from "./GenerationImageNodeService";
 import type { ImageNodeService } from "./ImageNodeService";
 import type { PromptNodeService } from "./PromptNodeService";
 import type { NodeTypeEnum, Position } from "./types";
@@ -42,7 +43,11 @@ export namespace NodeService {
       createdAt: string;
       updatedAt: string;
     };
-    nodes: Array<PromptNodeService.Node | ImageNodeService.Node>;
+    nodes: Array<
+      | PromptNodeService.Node
+      | ImageNodeService.Node
+      | GenerationImageNodeService.Node
+    >;
     edges: Array<EdgeService.Edge>;
   };
 
