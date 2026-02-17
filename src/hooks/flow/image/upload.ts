@@ -1,15 +1,18 @@
 import { useMutation } from "@tanstack/react-query";
 import type { Node } from "@xyflow/react";
+import { isAxiosError } from "axios";
 import type { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
 import { ImageNodeService } from "@/services/node/ImageNodeService";
 
 interface UploadImageNodeParams {
   updateNodes: Dispatch<SetStateAction<Node[]>>;
+  isDeleted?: (nodeId: string) => boolean;
 }
 
 export function useUploadImageNodeController({
   updateNodes,
+  isDeleted,
 }: UploadImageNodeParams) {
   const { mutateAsync } = useMutation({
     mutationKey: ["uploadImageNode"],
@@ -50,6 +53,8 @@ export function useUploadImageNodeController({
         URL.revokeObjectURL(context.previewUrl);
       }
 
+      if (isDeleted?.(nodeId)) return;
+
       updateNodes((prevNodes) => {
         return prevNodes.map((n) =>
           n.id === nodeId
@@ -70,10 +75,12 @@ export function useUploadImageNodeController({
         flowId,
       });
     },
-    onError: (_, __, context) => {
+    onError: (error, _, context) => {
       if (context?.previewUrl) {
         URL.revokeObjectURL(context.previewUrl);
       }
+
+      if (isAxiosError(error) && error.response?.status === 404) return;
 
       if (context?.nodeId) {
         updateNodes((prevNodes) =>

@@ -28,6 +28,6 @@ jobs:
         run: bun typecheck
 
       - name: Build
-        run: bun build
+        run: bun run build
         env:
-          NEXT_PUBLIC_GOOGLE_AI_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_AI_API_KEY }}
+          NEXT_PUBLIC_API_URL: https://ci.example.com

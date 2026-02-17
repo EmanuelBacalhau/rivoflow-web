@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import type { Node } from "@xyflow/react";
+import { isAxiosError } from "axios";
 import type { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
 import { PromptNodeService } from "@/services/node/PromptNodeService";
@@ -31,7 +32,8 @@ export function useUpdateDataPromptNodeController({
         ),
       );
     },
-    onError: () => {
+    onError: (error) => {
+      if (isAxiosError(error) && error.response?.status === 404) return;
       toast.error("Erro ao salvar o prompt. Tente novamente.");
     },
   });

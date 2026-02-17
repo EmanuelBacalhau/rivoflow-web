@@ -8,10 +8,14 @@ import { NodeTypeEnum } from "@/types";
 
 interface CreateNodeImageNodeParams {
   updateNodes: Dispatch<SetStateAction<Node[]>>;
+  isPendingDelete?: (tempId: string) => boolean;
+  onPendingDelete?: (realNodeId: string, flowId: string) => void;
 }
 
 export function useCreateNodeImageController({
   updateNodes,
+  isPendingDelete,
+  onPendingDelete,
 }: CreateNodeImageNodeParams) {
   const { mutateAsync } = useMutation({
     mutationKey: ["createImageNode"],
@@ -39,6 +43,12 @@ export function useCreateNodeImageController({
       return { tempId, originalPosition: paramsNode.position };
     },
     onSuccess: (node, params, context) => {
+      if (context?.tempId && isPendingDelete?.(context.tempId)) {
+        updateNodes((nds) => nds.filter((n) => n.id !== node.id));
+        onPendingDelete?.(node.id, params.flowId);
+        return;
+      }
+
       let currentPosition = node.position;
 
       updateNodes((nds) =>

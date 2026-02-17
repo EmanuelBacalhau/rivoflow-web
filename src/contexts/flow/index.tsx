@@ -15,6 +15,7 @@ import {
   type ReactNode,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { useCreateNodeGenerationImageController } from "@/hooks/flow/generation-image/create";
@@ -80,6 +81,11 @@ export function FlowProvider({ children }: { children: ReactNode }) {
   const [edges, setEdges] = useState<Edge[]>([]);
   const { id: flowId } = useParams<{ id: string }>();
 
+  // Tracks real node IDs that have been deleted — used to cancel in-flight operations
+  const deletedNodeIdsRef = useRef<Set<string>>(new Set());
+  // Tracks temp IDs deleted before the server responded to create — prevents ghost nodes
+  const pendingDeleteRef = useRef<Set<string>>(new Set());
+
   const { data, isLoading } = useQuery({
     queryKey: ["flow", flowId],
     queryFn: () => NodeService.getNodesByFlowId(flowId),
@@ -130,17 +136,35 @@ export function FlowProvider({ children }: { children: ReactNode }) {
     }
   }, [data]);
 
+  // deleteNode is initialised first so it can be referenced by create hooks' onPendingDelete
+  const { deleteNode } = useDeleteNodeController();
+
+  const isPendingDelete = (tempId: string) =>
+    pendingDeleteRef.current.has(tempId);
+
+  const onPendingDelete = (realNodeId: string, nodeFlowId: string) => {
+    deleteNode({ nodeId: realNodeId, flowId: nodeFlowId });
+  };
+
+  const isDeleted = (nodeId: string) => deletedNodeIdsRef.current.has(nodeId);
+
   const { createPromptNode } = useCreateNodePromptController({
     updateNodes: setNodes,
+    isPendingDelete,
+    onPendingDelete,
   });
   const { updatePromptNode } = useUpdateDataPromptNodeController({
     updateNodes: setNodes,
   });
   const { createImageNode } = useCreateNodeImageController({
     updateNodes: setNodes,
+    isPendingDelete,
+    onPendingDelete,
   });
   const { createGenerationImageNode } = useCreateNodeGenerationImageController({
     updateNodes: setNodes,
+    isPendingDelete,
+    onPendingDelete,
   });
   const { updateGenerationImageNode } =
     useUpdateDataGenerationImageNodeController({
@@ -154,11 +178,10 @@ export function FlowProvider({ children }: { children: ReactNode }) {
   const { updatePositionNode } = useUpdateNodePositionController();
   const { uploadImageNode } = useUploadImageNodeController({
     updateNodes: setNodes,
+    isDeleted,
   });
 
   const updatePositionNodeDebounced = debounce(updatePositionNode, 300);
-
-  const { deleteNode } = useDeleteNodeController();
 
   const { createEdge } = useCreateEdgeController({
     updateEdges: setEdges,
@@ -188,7 +211,12 @@ export function FlowProvider({ children }: { children: ReactNode }) {
         const node = nodes.find((n) => n.id === nodeId);
         if (!node) return;
 
-        if (nodeId.startsWith("temp-")) return;
+        if (nodeId.startsWith("temp-")) {
+          pendingDeleteRef.current.add(nodeId);
+          return;
+        }
+
+        deletedNodeIdsRef.current.add(nodeId);
 
         deleteNode({
           nodeId,

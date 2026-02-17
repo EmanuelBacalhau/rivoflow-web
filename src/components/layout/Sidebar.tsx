@@ -110,7 +110,6 @@ export function Sidebar() {
 
         <ScrollArea className="flex-1">
           <div className="p-3 space-y-1">
-            {/* Novo Projeto */}
             <Button
               variant="outline"
               className="w-full justify-start gap-2 mb-3 border-dashed"
@@ -141,7 +140,6 @@ export function Sidebar() {
 
             <Separator className="my-2" />
 
-            {/* Navegação */}
             <div className="space-y-1">
               <p className="text-xs font-medium text-muted-foreground px-2 py-1">
                 Navegação
@@ -168,7 +166,6 @@ export function Sidebar() {
           </div>
         </ScrollArea>
 
-        {/* Footer */}
         <div className="p-3 border-t mt-auto">
           <Button
             variant="ghost"

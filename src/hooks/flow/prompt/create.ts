@@ -8,10 +8,14 @@ import { NodeTypeEnum } from "@/types";
 
 interface CreateNodePromptParams {
   updateNodes: Dispatch<SetStateAction<Node[]>>;
+  isPendingDelete?: (tempId: string) => boolean;
+  onPendingDelete?: (realNodeId: string, flowId: string) => void;
 }
 
 export function useCreateNodePromptController({
   updateNodes,
+  isPendingDelete,
+  onPendingDelete,
 }: CreateNodePromptParams) {
   const { mutateAsync } = useMutation({
     mutationKey: ["createPromptNode"],
@@ -38,6 +42,12 @@ export function useCreateNodePromptController({
       return { tempId, originalPosition: paramsNode.position };
     },
     onSuccess: (node, params, context) => {
+      if (context?.tempId && isPendingDelete?.(context.tempId)) {
+        updateNodes((nds) => nds.filter((n) => n.id !== node.id));
+        onPendingDelete?.(node.id, params.flowId);
+        return;
+      }
+
       let currentPosition = node.position;
 
       updateNodes((nds) =>
