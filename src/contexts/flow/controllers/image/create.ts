@@ -68,7 +68,6 @@ export function useCreateNodeImageController({
         NodeService.updatePosition({
           nodeId: node.id,
           flowId: params.flowId,
-          nodeType: NodeTypeEnum.IMAGE,
           position: currentPosition,
         });
       }

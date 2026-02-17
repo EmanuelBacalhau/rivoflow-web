@@ -7,7 +7,7 @@ export enum NodeTypeEnum {
   PROMPT = "PROMPT",
   IMAGE = "IMAGE",
   GENERATION_IMAGE = "GENERATION_IMAGE",
-  RESULT = "RESULT",
+  RESULT_IMAGE = "RESULT_IMAGE",
 }
 
 export type NodeEntity = {

@@ -23,7 +23,6 @@ export class GenerationImageNodeService extends Service {
   static async update(params: GenerationImageNodeService.UpdateParams) {
     await GenerationImageNodeService.client.put(`/nodes/${params.nodeId}`, {
       flowId: params.flowId,
-      nodeType: NodeTypeEnum.GENERATION_IMAGE,
       data: params.data,
     });
   }

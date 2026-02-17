@@ -45,6 +45,15 @@ export class ImageNodeService extends Service {
 
     return { key, imageUrl };
   }
+
+  static async confirmUpload(params: ImageNodeService.ConfirmUploadParams) {
+    await ImageNodeService.client.patch(
+      `/nodes/${params.nodeId}/confirm-upload`,
+      {
+        flowId: params.flowId,
+      },
+    );
+  }
 }
 
 export namespace ImageNodeService {
@@ -88,5 +97,10 @@ export namespace ImageNodeService {
     uploadSignature: string;
     key: string;
     imageUrl: string;
+  };
+
+  export type ConfirmUploadParams = {
+    nodeId: string;
+    flowId: string;
   };
 }

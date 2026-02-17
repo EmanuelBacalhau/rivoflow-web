@@ -182,7 +182,6 @@ export function FlowProvider({ children }: { children: ReactNode }) {
         updatePositionNodeDebounced({
           nodeId,
           flowId,
-          nodeType: node.type as NodeTypeEnum,
           position: change.position,
         });
       }
@@ -313,7 +312,8 @@ export function FlowProvider({ children }: { children: ReactNode }) {
       const isImageNode =
         sourceNode.type === NodeTypeEnum.IMAGE && sourceNode.data?.imageUrl;
       const isResultNode =
-        sourceNode.type === NodeTypeEnum.RESULT && sourceNode.data?.imageUrl;
+        sourceNode.type === NodeTypeEnum.RESULT_IMAGE &&
+        sourceNode.data?.imageUrl;
 
       if (isPromptNode) {
         prompts.push(sourceNode.data.prompt as string);

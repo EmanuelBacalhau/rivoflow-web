@@ -17,6 +17,7 @@ export function useUploadImageNodeController({
       return {
         key: response.key,
         nodeId: params.nodeId,
+        flowId: params.flowId,
         imageUrl: response.imageUrl,
       };
     },
@@ -42,7 +43,7 @@ export function useUploadImageNodeController({
       return { nodeId, previewUrl };
     },
     onSuccess: (response, _, context) => {
-      const { nodeId, key, imageUrl } = response;
+      const { nodeId, key, imageUrl, flowId } = response;
 
       if (context?.previewUrl) {
         URL.revokeObjectURL(context.previewUrl);
@@ -61,6 +62,11 @@ export function useUploadImageNodeController({
               }
             : n,
         );
+      });
+
+      ImageNodeService.confirmUpload({
+        nodeId,
+        flowId,
       });
     },
     onError: (_, __, context) => {

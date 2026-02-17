@@ -3,7 +3,7 @@ import { Service } from "../Service";
 import type { GenerationImageNodeService } from "./GenerationImageNodeService";
 import type { ImageNodeService } from "./ImageNodeService";
 import type { PromptNodeService } from "./PromptNodeService";
-import type { NodeTypeEnum, Position } from "./types";
+import type { Position } from "./types";
 
 export class NodeService extends Service {
   static async getNodesByFlowId(
@@ -21,7 +21,6 @@ export class NodeService extends Service {
     params: NodeService.UpdateNodePositionParams,
   ): Promise<void> {
     await NodeService.client.put(`/nodes/${params.nodeId}`, {
-      nodeType: params.nodeType,
       position: params.position,
       flowId: params.flowId,
     });
@@ -52,7 +51,6 @@ export namespace NodeService {
   };
 
   export type UpdateNodePositionParams = {
-    nodeType: NodeTypeEnum;
     nodeId: string;
     flowId: string;
     position: Position;

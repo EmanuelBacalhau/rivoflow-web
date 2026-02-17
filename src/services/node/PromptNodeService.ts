@@ -23,7 +23,6 @@ export class PromptNodeService extends Service {
       `/nodes/${params.nodeId}`,
       {
         flowId: params.flowId,
-        nodeType: params.nodeType,
         data: params.data,
       },
     );
@@ -58,7 +57,6 @@ export namespace PromptNodeService {
   export type UpdateParams = {
     flowId: string;
     nodeId: string;
-    nodeType: NodeTypeEnum;
     data?: Partial<NodeDataPrompt>;
   };
 

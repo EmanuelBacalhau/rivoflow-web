@@ -27,7 +27,6 @@ export function PromptNode({ id: nodeId, data }: NodeProps) {
     updatePromptNodeDebounced({
       flowId,
       nodeId,
-      nodeType: nodeData.type,
       data: {
         ...nodeData,
         prompt: value,

@@ -67,7 +67,6 @@ export function useCreateNodePromptController({
         NodeService.updatePosition({
           nodeId: node.id,
           flowId: params.flowId,
-          nodeType: NodeTypeEnum.PROMPT,
           position: currentPosition,
         });
       }
