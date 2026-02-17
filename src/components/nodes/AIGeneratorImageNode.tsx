@@ -10,8 +10,12 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useFlow } from "@/contexts/flow";
-import type { AspectRatio, ImageSize } from "@/lib/google-ai";
-import { GenerationImageNodeService } from "@/services/node/GenerationImageNodeService";
+import {
+  type AspectRatio,
+  GenerationStatusEnum,
+  type ImageSize,
+  type NodeDataGenerationImage,
+} from "@/types";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
@@ -26,7 +30,7 @@ import {
 } from "../ui/select";
 import { Separator } from "../ui/separator";
 
-type AIGeneratorNodeData = GenerationImageNodeService.Node["data"] & {
+type AIGeneratorNodeData = NodeDataGenerationImage & {
   isExecuted?: boolean;
 };
 
@@ -40,7 +44,7 @@ export function AIGeneratorNode({ id, data }: NodeProps) {
   } = useFlow();
   const nodeData = data as AIGeneratorNodeData;
 
-  const [error, setError] = useState<string | null>(null);
+  const [error, _setError] = useState<string | null>(null);
 
   const connectedData = useMemo(() => {
     return getConnectedData(id);
@@ -89,13 +93,10 @@ export function AIGeneratorNode({ id, data }: NodeProps) {
   const hasAnyInput = hasPrompts || hasImages;
 
   const isProcessing =
-    nodeData.status ===
-      GenerationImageNodeService.GenerationStatusEnum.PROCESSING ||
-    nodeData.status === GenerationImageNodeService.GenerationStatusEnum.QUEUED;
+    nodeData.status === GenerationStatusEnum.PROCESSING ||
+    nodeData.status === GenerationStatusEnum.QUEUED;
 
-  const isCompleted =
-    nodeData.status ===
-    GenerationImageNodeService.GenerationStatusEnum.COMPLETED;
+  const isCompleted = nodeData.status === GenerationStatusEnum.COMPLETED;
 
   const isButtonDisabled =
     false || !hasPrompts || nodeData.isExecuted || isProcessing || isCompleted;
@@ -253,18 +254,15 @@ export function AIGeneratorNode({ id, data }: NodeProps) {
             </>
           )}
 
-          {nodeData.status ===
-            GenerationImageNodeService.GenerationStatusEnum.COMPLETED && (
+          {nodeData.status === GenerationStatusEnum.COMPLETED && (
             <>
               <span className="text-sm">Sua imagem foi gerada!</span>
               <ArrowRightIcon className="size-4 ml-1" strokeWidth={2} />
             </>
           )}
 
-          {nodeData.status ===
-            GenerationImageNodeService.GenerationStatusEnum.FAILED ||
-            (nodeData.status ===
-              GenerationImageNodeService.GenerationStatusEnum.PENDING && (
+          {nodeData.status === GenerationStatusEnum.FAILED ||
+            (nodeData.status === GenerationStatusEnum.PENDING && (
               <>
                 <SparklesIcon className="size-4 mr-2" strokeWidth={2} />
                 <span className="text-sm">Gerar Imagem</span>

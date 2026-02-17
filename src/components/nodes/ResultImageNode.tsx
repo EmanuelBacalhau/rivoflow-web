@@ -12,7 +12,7 @@ interface ResultNodeData {
   imageUrl?: string;
 }
 
-export function ResultNode({ data }: NodeProps) {
+export function ResultImageNode({ data }: NodeProps) {
   const nodeData = data as ResultNodeData;
   const [downloading, setDownloading] = useState(false);
 

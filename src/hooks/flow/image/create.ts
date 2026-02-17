@@ -1,21 +1,22 @@
 import { useMutation } from "@tanstack/react-query";
 import type { Node } from "@xyflow/react";
 import type { Dispatch, SetStateAction } from "react";
-import { GenerationImageNodeService } from "@/services/node/GenerationImageNodeService";
+import { toast } from "sonner";
+import { ImageNodeService } from "@/services/node/ImageNodeService";
 import { NodeService } from "@/services/node/NodeService";
-import { NodeTypeEnum } from "@/services/node/types";
+import { NodeTypeEnum } from "@/types";
 
-interface CreateNodeGenerationImageParams {
+interface CreateNodeImageNodeParams {
   updateNodes: Dispatch<SetStateAction<Node[]>>;
 }
 
-export function useCreateNodeGenerationImageController({
+export function useCreateNodeImageController({
   updateNodes,
-}: CreateNodeGenerationImageParams) {
+}: CreateNodeImageNodeParams) {
   const { mutateAsync } = useMutation({
-    mutationKey: ["createGenerationImageNode"],
-    mutationFn: async (paramsNode: GenerationImageNodeService.CreateParams) => {
-      const response = await GenerationImageNodeService.create(paramsNode);
+    mutationKey: ["createImageNode"],
+    mutationFn: async (paramsNode: ImageNodeService.CreateParams) => {
+      const response = await ImageNodeService.create(paramsNode);
       return response.node;
     },
     onMutate: async (paramsNode) => {
@@ -24,15 +25,12 @@ export function useCreateNodeGenerationImageController({
       updateNodes((nds) =>
         nds.concat({
           id: tempId,
-          type: NodeTypeEnum.GENERATION_IMAGE,
+          type: NodeTypeEnum.IMAGE,
           position: paramsNode.position,
           data: {
-            type: NodeTypeEnum.GENERATION_IMAGE,
-            parameters: {
-              aspectRatio: "1:1",
-              quality: "1K",
-            },
-            status: GenerationImageNodeService.GenerationStatusEnum.PENDING,
+            type: NodeTypeEnum.IMAGE,
+            key: "",
+            imageUrl: "",
             isExecuted: false,
           },
         }),
@@ -79,10 +77,11 @@ export function useCreateNodeGenerationImageController({
       if (context?.tempId) {
         updateNodes((nds) => nds.filter((n) => n.id !== context.tempId));
       }
+      toast.error("Erro ao criar nó de imagem. Tente novamente.");
     },
   });
 
   return {
-    createGenerationImageNode: mutateAsync,
+    createImageNode: mutateAsync,
   };
 }

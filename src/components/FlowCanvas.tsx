@@ -7,22 +7,24 @@ import {
   ReactFlow,
 } from "@xyflow/react";
 import { useFlow } from "@/contexts/flow";
+import { FlowLoading } from "./FlowLoading";
+import { Sidebar } from "./layout/Sidebar";
+import { Toolbar } from "./layout/Toolbar";
 import { AIGeneratorNode } from "./nodes/AIGeneratorImageNode";
 import { PromptNode } from "./nodes/PromptNode";
-import { ResultNode } from "./nodes/ResultNode";
+import { ResultImageNode } from "./nodes/ResultImageNode";
 import { UploadImageNode } from "./nodes/UploadImageNode";
-import { Sidebar } from "./Sidebar";
-import { Toolbar } from "./Toolbar";
 
 const nodeTypes = {
   PROMPT: PromptNode,
   IMAGE: UploadImageNode,
   GENERATION_IMAGE: AIGeneratorNode,
-  RESULT: ResultNode,
+  RESULT_IMAGE: ResultImageNode,
 };
 
 export function FlowCanvas() {
   const {
+    isLoading,
     nodes,
     edges,
     onNodesChange,
@@ -32,6 +34,10 @@ export function FlowCanvas() {
     addImageNode,
     addGenerationImageNode,
   } = useFlow();
+
+  if (isLoading) {
+    return <FlowLoading />;
+  }
 
   return (
     <div className="h-screen bg-gray-50">

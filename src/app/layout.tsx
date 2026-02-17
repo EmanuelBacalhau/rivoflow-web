@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
 import "@xyflow/react/dist/style.css";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { MainProvider } from "@/providers/main-provider";
 
 const roboto = Roboto({
@@ -10,7 +11,7 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "Orion Flow - Gerador de Imagens com IA",
+  title: "RIVOFLOW",
   description: "Crie imagens para propaganda com inteligência artificial",
 };
 
@@ -24,7 +25,9 @@ export default function RootLayout({
       <body
         className={`${roboto.variable} ${roboto.variable} antialiased min-h-screen`}
       >
-        <MainProvider>{children}</MainProvider>
+        <ErrorBoundary>
+          <MainProvider>{children}</MainProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );

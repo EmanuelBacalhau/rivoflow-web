@@ -1,5 +1,10 @@
+import {
+  type GenerationImageNode,
+  type NodeDataGenerationImage,
+  NodeTypeEnum,
+  type Position,
+} from "@/types/node";
 import { Service } from "../Service";
-import { NodeTypeEnum, type Position } from "./types";
 
 export class GenerationImageNodeService extends Service {
   static async create(
@@ -39,6 +44,8 @@ export class GenerationImageNodeService extends Service {
 }
 
 export namespace GenerationImageNodeService {
+  export type Node = GenerationImageNode;
+
   export type CreateParams = {
     position: Position;
     flowId: string;
@@ -48,34 +55,6 @@ export namespace GenerationImageNodeService {
     flowId: string;
     nodeGeneratorId: string;
     inputs: string[];
-  };
-
-  export enum GenerationStatusEnum {
-    PENDING = "pending",
-    QUEUED = "queued",
-    PROCESSING = "processing",
-    COMPLETED = "completed",
-    FAILED = "failed",
-  }
-
-  export type NodeDataGenerationImage = {
-    type: NodeTypeEnum.GENERATION_IMAGE;
-    model?: string;
-    parameters: {
-      aspectRatio: string;
-      quality: string;
-    };
-    status: GenerationStatusEnum;
-  };
-
-  export type Node = {
-    id: string;
-    flowId: string;
-    position: Position;
-    isExecuted: boolean;
-    createdAt: string;
-    updatedAt: string;
-    data: NodeDataGenerationImage;
   };
 
   export type CreateImageNodeResponse = {

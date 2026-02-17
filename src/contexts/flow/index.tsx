@@ -17,31 +17,29 @@ import {
   useEffect,
   useState,
 } from "react";
-import { GenerationImageNodeService } from "@/services/node/GenerationImageNodeService";
+import { useCreateNodeGenerationImageController } from "@/hooks/flow/generation-image/create";
+import { useGenerateImageController } from "@/hooks/flow/generation-image/generate";
+import { useUpdateDataGenerationImageNodeController } from "@/hooks/flow/generation-image/update";
+import { useCreateNodeImageController } from "@/hooks/flow/image/create";
+import { useUploadImageNodeController } from "@/hooks/flow/image/upload";
+import { useCreateNodePromptController } from "@/hooks/flow/prompt/create";
+import { useUpdateDataPromptNodeController } from "@/hooks/flow/prompt/update";
+import { useCreateEdgeController } from "@/hooks/flow/useCreateEdge";
+import { useDeleteEdgesController } from "@/hooks/flow/useDeleteEdge";
+import { useDeleteNodeController } from "@/hooks/flow/useDeleteNode";
+import { useUpdateNodePositionController } from "@/hooks/flow/useUpdatePosition";
+import type { GenerationImageNodeService } from "@/services/node/GenerationImageNodeService";
 import type { ImageNodeService } from "@/services/node/ImageNodeService";
 import { NodeService } from "@/services/node/NodeService";
 import type { PromptNodeService } from "@/services/node/PromptNodeService";
-import { NodeTypeEnum } from "@/services/node/types";
+import { GenerationStatusEnum, NodeTypeEnum } from "@/types";
 import { debounce } from "@/utils/debounce";
-import { useCreateNodeGenerationImageController } from "./controllers/generation-image/create";
-import { useGenerateImageController } from "./controllers/generation-image/generate";
-import { useUpdateDataGenerationImageNodeController } from "./controllers/generation-image/update";
-import { useCreateNodeImageController } from "./controllers/image/create";
-import { useUploadImageNodeController } from "./controllers/image/upload";
-import { useCreateNodePromptController } from "./controllers/prompt/create";
-import { useUpdateDataPromptNodeController } from "./controllers/prompt/update";
-import { useCreateEdgeController } from "./controllers/useCreateEdge";
-import { useDeleteEdgesController } from "./controllers/useDeleteEdge";
-import { useDeleteNodeController } from "./controllers/useDeleteNode";
-import { useUpdateNodePositionController } from "./controllers/useUpdatePosition";
-
-const MAX_IMAGE_NODES = 14;
 
 const NODE_COLORS: Record<string, string> = {
   PROMPT: "#f59e0b", // amber
   IMAGE: "#3b82f6", // blue
   GENERATION_IMAGE: "#a855f7", // purple
-  RESULT: "#22c55e", // green
+  RESULT_IMAGE: "#22c55e", // green
 };
 
 interface ConnectedData {
@@ -70,6 +68,7 @@ interface FlowContextType {
   generateImageNode: (
     params: GenerationImageNodeService.GenerateImageParams,
   ) => Promise<void>;
+  isLoading: boolean;
   getConnectedData: (nodeId: string) => ConnectedData;
   updateNodeData: (nodeId: string, data: Record<string, unknown>) => void;
 }
@@ -81,7 +80,7 @@ export function FlowProvider({ children }: { children: ReactNode }) {
   const [edges, setEdges] = useState<Edge[]>([]);
   const { id: flowId } = useParams<{ id: string }>();
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["flow", flowId],
     queryFn: () => NodeService.getNodesByFlowId(flowId),
     refetchInterval: (query) => {
@@ -90,11 +89,9 @@ export function FlowProvider({ children }: { children: ReactNode }) {
         const generationNode = node as GenerationImageNodeService.Node;
 
         const isQueued =
-          generationNode.data.status ===
-          GenerationImageNodeService.GenerationStatusEnum.QUEUED;
+          generationNode.data.status === GenerationStatusEnum.QUEUED;
         const isProcessing =
-          generationNode.data.status ===
-          GenerationImageNodeService.GenerationStatusEnum.PROCESSING;
+          generationNode.data.status === GenerationStatusEnum.PROCESSING;
 
         return isProcessing || isQueued;
       });
@@ -190,6 +187,8 @@ export function FlowProvider({ children }: { children: ReactNode }) {
         const nodeId = change.id;
         const node = nodes.find((n) => n.id === nodeId);
         if (!node) return;
+
+        if (nodeId.startsWith("temp-")) return;
 
         deleteNode({
           nodeId,
@@ -335,6 +334,7 @@ export function FlowProvider({ children }: { children: ReactNode }) {
     <FlowContext.Provider
       value={{
         flowId,
+        isLoading,
         nodes,
         edges,
         onNodesChange,

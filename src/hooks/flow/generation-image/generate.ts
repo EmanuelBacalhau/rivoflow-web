@@ -1,9 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import type { Node } from "@xyflow/react";
 import type { Dispatch, SetStateAction } from "react";
+import { toast } from "sonner";
 import { queryClient } from "@/providers/main-provider";
 import { GenerationImageNodeService } from "@/services/node/GenerationImageNodeService";
-import { NodeTypeEnum } from "@/services/node/types";
+import { GenerationStatusEnum, NodeTypeEnum } from "@/types";
 
 type GenerateImageControllerParams = {
   flowId: string;
@@ -33,8 +34,7 @@ export function useGenerateImageController({
                 data: {
                   ...n.data,
                   isExecuted: true,
-                  status:
-                    GenerationImageNodeService.GenerationStatusEnum.PROCESSING,
+                  status: GenerationStatusEnum.PROCESSING,
                 },
               }
             : n,
@@ -45,7 +45,7 @@ export function useGenerateImageController({
       queryClient.invalidateQueries({ queryKey: ["flow", flowId] });
     },
     onError: (
-      error,
+      _error,
       paramsNode: GenerationImageNodeService.GenerateImageParams,
     ) => {
       const { nodeGeneratorId } = paramsNode;
@@ -62,6 +62,7 @@ export function useGenerateImageController({
             : n,
         ),
       );
+      toast.error("Erro ao gerar imagem. Tente novamente.");
     },
   });
 

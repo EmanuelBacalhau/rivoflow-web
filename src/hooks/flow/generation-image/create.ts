@@ -1,21 +1,22 @@
 import { useMutation } from "@tanstack/react-query";
 import type { Node } from "@xyflow/react";
 import type { Dispatch, SetStateAction } from "react";
+import { toast } from "sonner";
+import { GenerationImageNodeService } from "@/services/node/GenerationImageNodeService";
 import { NodeService } from "@/services/node/NodeService";
-import { PromptNodeService } from "@/services/node/PromptNodeService";
-import { NodeTypeEnum } from "@/services/node/types";
+import { GenerationStatusEnum, NodeTypeEnum } from "@/types";
 
-interface CreateNodePromptParams {
+interface CreateNodeGenerationImageParams {
   updateNodes: Dispatch<SetStateAction<Node[]>>;
 }
 
-export function useCreateNodePromptController({
+export function useCreateNodeGenerationImageController({
   updateNodes,
-}: CreateNodePromptParams) {
+}: CreateNodeGenerationImageParams) {
   const { mutateAsync } = useMutation({
-    mutationKey: ["createPromptNode"],
-    mutationFn: async (paramsNode: PromptNodeService.CreateParams) => {
-      const response = await PromptNodeService.create(paramsNode);
+    mutationKey: ["createGenerationImageNode"],
+    mutationFn: async (paramsNode: GenerationImageNodeService.CreateParams) => {
+      const response = await GenerationImageNodeService.create(paramsNode);
       return response.node;
     },
     onMutate: async (paramsNode) => {
@@ -24,11 +25,15 @@ export function useCreateNodePromptController({
       updateNodes((nds) =>
         nds.concat({
           id: tempId,
-          type: NodeTypeEnum.PROMPT,
+          type: NodeTypeEnum.GENERATION_IMAGE,
           position: paramsNode.position,
           data: {
-            type: NodeTypeEnum.PROMPT,
-            prompt: "",
+            type: NodeTypeEnum.GENERATION_IMAGE,
+            parameters: {
+              aspectRatio: "1:1",
+              quality: "1K",
+            },
+            status: GenerationStatusEnum.PENDING,
             isExecuted: false,
           },
         }),
@@ -75,10 +80,11 @@ export function useCreateNodePromptController({
       if (context?.tempId) {
         updateNodes((nds) => nds.filter((n) => n.id !== context.tempId));
       }
+      toast.error("Erro ao criar nó de geração. Tente novamente.");
     },
   });
 
   return {
-    createPromptNode: mutateAsync,
+    createGenerationImageNode: mutateAsync,
   };
 }

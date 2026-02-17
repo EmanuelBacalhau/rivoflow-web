@@ -1,9 +1,9 @@
+import type { Position } from "@/types/node";
 import type { EdgeService } from "../EdgeService";
 import { Service } from "../Service";
 import type { GenerationImageNodeService } from "./GenerationImageNodeService";
 import type { ImageNodeService } from "./ImageNodeService";
 import type { PromptNodeService } from "./PromptNodeService";
-import type { Position } from "./types";
 
 export class NodeService extends Service {
   static async getNodesByFlowId(

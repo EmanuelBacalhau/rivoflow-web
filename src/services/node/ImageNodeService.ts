@@ -1,5 +1,5 @@
+import { type ImageNode, NodeTypeEnum, type Position } from "@/types/node";
 import { Service } from "../Service";
-import { NodeTypeEnum, type Position } from "./types";
 
 export class ImageNodeService extends Service {
   static async create(
@@ -57,25 +57,11 @@ export class ImageNodeService extends Service {
 }
 
 export namespace ImageNodeService {
+  export type Node = ImageNode;
+
   export type CreateParams = {
     position: Position;
     flowId: string;
-  };
-
-  export type NodeDataFile = {
-    type: NodeTypeEnum.IMAGE;
-    key: string;
-    imageUrl: string;
-  };
-
-  export type Node = {
-    id: string;
-    flowId: string;
-    position: Position;
-    isExecuted: boolean;
-    createdAt: string;
-    updatedAt: string;
-    data: NodeDataFile;
   };
 
   export type CreateImageNodeResponse = {

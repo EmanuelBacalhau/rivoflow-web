@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import type { Node } from "@xyflow/react";
 import type { Dispatch, SetStateAction } from "react";
+import { toast } from "sonner";
 import { GenerationImageNodeService } from "@/services/node/GenerationImageNodeService";
 
 interface UpdateDataGenerationImageNodeParams {
@@ -29,6 +30,9 @@ export function useUpdateDataGenerationImageNodeController({
             : n,
         ),
       );
+    },
+    onError: () => {
+      toast.error("Erro ao atualizar configurações do gerador.");
     },
   });
 

@@ -1,5 +1,10 @@
+import {
+  type NodeDataPrompt,
+  NodeTypeEnum,
+  type Position,
+  type PromptNode,
+} from "@/types/node";
 import { Service } from "../Service";
-import { NodeTypeEnum, type Position } from "./types";
 
 export class PromptNodeService extends Service {
   static async create(
@@ -30,24 +35,11 @@ export class PromptNodeService extends Service {
 }
 
 export namespace PromptNodeService {
+  export type Node = PromptNode;
+
   export type CreateParams = {
     position: Position;
     flowId: string;
-  };
-
-  export type NodeDataPrompt = {
-    type: NodeTypeEnum.PROMPT;
-    prompt: string;
-  };
-
-  export type Node = {
-    id: string;
-    flowId: string;
-    position: Position;
-    isExecuted: boolean;
-    createdAt: string;
-    updatedAt: string;
-    data: NodeDataPrompt;
   };
 
   export type CreatePromptNodeResponse = {

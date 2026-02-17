@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import type { Node } from "@xyflow/react";
 import type { Dispatch, SetStateAction } from "react";
+import { toast } from "sonner";
 import { ImageNodeService } from "@/services/node/ImageNodeService";
 
 interface UploadImageNodeParams {
@@ -89,6 +90,8 @@ export function useUploadImageNodeController({
           ),
         );
       }
+
+      toast.error("Erro ao fazer upload da imagem. Tente novamente.");
     },
   });
 

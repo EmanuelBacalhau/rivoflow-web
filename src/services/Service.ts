@@ -1,8 +1,9 @@
 import axios from "axios";
+import { env } from "@/env";
 
 export abstract class Service {
   protected static client = axios.create({
-    baseURL: "https://5zevgiqwgi.execute-api.sa-east-1.amazonaws.com",
+    baseURL: env.NEXT_PUBLIC_API_URL,
   });
 
   static async uploadPresignedPOST({

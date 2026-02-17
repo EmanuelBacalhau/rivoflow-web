@@ -1,21 +1,22 @@
 import { useMutation } from "@tanstack/react-query";
 import type { Node } from "@xyflow/react";
 import type { Dispatch, SetStateAction } from "react";
-import { ImageNodeService } from "@/services/node/ImageNodeService";
+import { toast } from "sonner";
 import { NodeService } from "@/services/node/NodeService";
-import { NodeTypeEnum } from "@/services/node/types";
+import { PromptNodeService } from "@/services/node/PromptNodeService";
+import { NodeTypeEnum } from "@/types";
 
-interface CreateNodeImageNodeParams {
+interface CreateNodePromptParams {
   updateNodes: Dispatch<SetStateAction<Node[]>>;
 }
 
-export function useCreateNodeImageController({
+export function useCreateNodePromptController({
   updateNodes,
-}: CreateNodeImageNodeParams) {
+}: CreateNodePromptParams) {
   const { mutateAsync } = useMutation({
-    mutationKey: ["createImageNode"],
-    mutationFn: async (paramsNode: ImageNodeService.CreateParams) => {
-      const response = await ImageNodeService.create(paramsNode);
+    mutationKey: ["createPromptNode"],
+    mutationFn: async (paramsNode: PromptNodeService.CreateParams) => {
+      const response = await PromptNodeService.create(paramsNode);
       return response.node;
     },
     onMutate: async (paramsNode) => {
@@ -24,12 +25,11 @@ export function useCreateNodeImageController({
       updateNodes((nds) =>
         nds.concat({
           id: tempId,
-          type: NodeTypeEnum.IMAGE,
+          type: NodeTypeEnum.PROMPT,
           position: paramsNode.position,
           data: {
-            type: NodeTypeEnum.IMAGE,
-            key: "",
-            imageUrl: "",
+            type: NodeTypeEnum.PROMPT,
+            prompt: "",
             isExecuted: false,
           },
         }),
@@ -76,10 +76,11 @@ export function useCreateNodeImageController({
       if (context?.tempId) {
         updateNodes((nds) => nds.filter((n) => n.id !== context.tempId));
       }
+      toast.error("Erro ao criar nó de prompt. Tente novamente.");
     },
   });
 
   return {
-    createImageNode: mutateAsync,
+    createPromptNode: mutateAsync,
   };
 }

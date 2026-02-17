@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import type { Node } from "@xyflow/react";
 import type { Dispatch, SetStateAction } from "react";
+import { toast } from "sonner";
 import { PromptNodeService } from "@/services/node/PromptNodeService";
 
 interface UpdateDataPromptNodeParams {
@@ -29,6 +30,9 @@ export function useUpdateDataPromptNodeController({
             : n,
         ),
       );
+    },
+    onError: () => {
+      toast.error("Erro ao salvar o prompt. Tente novamente.");
     },
   });
 

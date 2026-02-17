@@ -1,18 +1,19 @@
 "use client";
 
-import axios from "axios";
 import {
   FolderOpenIcon,
   HistoryIcon,
   ImageIcon,
   LayoutDashboardIcon,
+  Loader2Icon,
   MenuIcon,
   PlusIcon,
   SettingsIcon,
-  SparklesIcon,
 } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
@@ -23,6 +24,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { FlowService } from "@/services/FlowService";
 
 interface NavItem {
   id: string;
@@ -66,18 +68,20 @@ const NAV_ITEMS: NavItem[] = [
 
 export function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
   const router = useRouter();
+
   async function handleCreateFlow() {
-    const response = await axios.post(
-      "https://5zevgiqwgi.execute-api.sa-east-1.amazonaws.com/flows",
-      {
-        title: "Teste Flow",
-      },
-    );
-
-    const data = response.data.flow;
-
-    router.push(`/dashboard/flow/${data.id}`);
+    setIsCreating(true);
+    try {
+      const { flow } = await FlowService.create("Novo Flow");
+      setIsOpen(false);
+      router.push(`/dashboard/flow/${flow.id}`);
+    } catch {
+      toast.error("Erro ao criar flow. Tente novamente.");
+    } finally {
+      setIsCreating(false);
+    }
   }
 
   return (
@@ -93,11 +97,14 @@ export function Sidebar() {
       </SheetTrigger>
       <SheetContent side="left" className="w-72 p-0 flex flex-col">
         <SheetHeader className="p-4 pb-2 border-b">
-          <SheetTitle className="flex items-center gap-2">
-            <div className="bg-linear-to-br from-purple-500 to-purple-700 p-1.5 rounded-lg">
-              <SparklesIcon className="size-4 text-white" />
-            </div>
-            <span className="font-bold">Orion Flow</span>
+          <SheetTitle>
+            <Image
+              src="/rivoflow.png"
+              alt="Orion Flow logo"
+              width={44}
+              height={44}
+              className="rounded"
+            />
           </SheetTitle>
         </SheetHeader>
 
@@ -122,9 +129,14 @@ export function Sidebar() {
               variant="outline"
               className="w-full justify-start gap-2 mb-3"
               onClick={handleCreateFlow}
+              disabled={isCreating}
             >
-              <PlusIcon className="size-4" />
-              Novo Flow
+              {isCreating ? (
+                <Loader2Icon className="size-4 animate-spin" />
+              ) : (
+                <PlusIcon className="size-4" />
+              )}
+              {isCreating ? "Criando..." : "Novo Flow"}
             </Button>
 
             <Separator className="my-2" />

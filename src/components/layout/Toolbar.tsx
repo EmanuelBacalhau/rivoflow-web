@@ -5,7 +5,7 @@ import {
   MessageCircleMoreIcon,
   SparklesIcon,
 } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 
 interface ToolbarProps {
   onAddPromptNode: () => void;
