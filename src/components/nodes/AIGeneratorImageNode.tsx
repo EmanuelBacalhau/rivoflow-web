@@ -16,9 +16,7 @@ import {
   type ImageSize,
   type NodeDataGenerationImage,
 } from "@/types";
-import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
-import { Card, CardContent } from "../ui/card";
 import {
   Select,
   SelectContent,
@@ -102,60 +100,53 @@ export function AIGeneratorNode({ id, data }: NodeProps) {
     false || !hasPrompts || nodeData.isExecuted || isProcessing || isCompleted;
 
   return (
-    <Card className="w-78 p-0 shadow-lg border-purple-600/30 bg-linear-to-b from-card to-purple-600/5">
+    <div className="w-80 rounded-xl border border-purple-200 bg-white shadow-md overflow-hidden">
       <Handle
         type="source"
         position={Position.Right}
-        className="bg-purple-600! size-3! border-2! border-card!"
+        className="bg-purple-500! size-3! border-2! border-white!"
       />
       <Handle
         type="target"
         position={Position.Left}
-        className="bg-purple-600! size-3! border-2! border-card!"
+        className="bg-purple-500! size-3! border-2! border-white!"
       />
 
-      <CardContent className="p-2 space-y-3">
-        <header className="flex items-center gap-2">
-          <div className="bg-linear-to-br from-purple-400 to-purple-600 p-2 grid place-items-center rounded-lg shadow-sm">
-            <SparklesIcon className="size-4 text-white" strokeWidth={2} />
+      {/* Header */}
+      <div className="flex items-center gap-2.5 px-3 py-2.5 bg-linear-to-r from-purple-50 to-violet-50 border-b border-purple-100">
+        <div className="w-7 h-7 rounded-lg bg-linear-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow-sm shrink-0">
+          <SparklesIcon className="size-3.5 text-white" strokeWidth={2} />
+        </div>
+        <div className="flex-1 min-w-0">
+          <h3 className="font-semibold text-sm text-gray-800 leading-tight">
+            Gerador AI
+          </h3>
+          <p className="text-[10px] text-purple-600/80">Gere imagens com IA</p>
+        </div>
+        {hasAnyInput && (
+          <div className="flex gap-1">
+            {hasPrompts && (
+              <span className="text-[10px] font-semibold w-5 h-5 rounded-full bg-amber-500/20 text-amber-600 flex items-center justify-center">
+                {connectedData.prompts.length}
+              </span>
+            )}
+            {hasImages && (
+              <span className="text-[10px] font-semibold w-5 h-5 rounded-full bg-sky-500/20 text-sky-600 flex items-center justify-center">
+                {connectedData.images.length}
+              </span>
+            )}
           </div>
+        )}
+      </div>
 
-          <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-sm">Gerador AI</h3>
-            <p className="text-xs text-muted-foreground truncate">
-              Gere imagens com IA
-            </p>
-          </div>
-
-          {hasAnyInput && (
-            <div className="flex items-center gap-1">
-              <div className="flex gap-0.5">
-                {hasPrompts && (
-                  <Badge
-                    variant="secondary"
-                    className="text-[10px] bg-amber-500/20 text-amber-400 rounded-full size-6"
-                  >
-                    {connectedData.prompts.length}
-                  </Badge>
-                )}
-                {hasImages && (
-                  <Badge
-                    variant="secondary"
-                    className="text-[10px] bg-sky-500/20 text-sky-400 rounded-full size-6"
-                  >
-                    {connectedData.images.length}
-                  </Badge>
-                )}
-              </div>
-            </div>
-          )}
-        </header>
-
+      {/* Body */}
+      <div className="p-3 space-y-3">
         {!hasAnyInput && (
-          <div className="p-2 bg-gray-50 border border-dashed border-gray-300 rounded-lg text-center">
+          <div className="py-2 px-3 bg-gray-50 border border-dashed border-gray-200 rounded-lg text-center">
             <p className="text-[10px] text-gray-500">
-              Conecte <span className="text-amber-600">Prompt</span> ou{" "}
-              <span className="text-blue-600">Imagem</span>
+              Conecte um{" "}
+              <span className="text-amber-600 font-medium">Prompt</span> ou{" "}
+              <span className="text-blue-600 font-medium">Imagem</span>
             </p>
           </div>
         )}
@@ -164,7 +155,7 @@ export function AIGeneratorNode({ id, data }: NodeProps) {
 
         <div className="grid grid-cols-2 gap-2">
           <div className="space-y-1">
-            <span className="text-[10px] font-medium text-gray-500">
+            <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wide">
               Formato
             </span>
             <Select
@@ -195,7 +186,7 @@ export function AIGeneratorNode({ id, data }: NodeProps) {
           </div>
 
           <div className="space-y-1">
-            <span className="text-[10px] font-medium text-gray-500">
+            <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wide">
               Qualidade
             </span>
             <Select
@@ -242,34 +233,29 @@ export function AIGeneratorNode({ id, data }: NodeProps) {
         <Button
           onClick={handleGenerateImage}
           disabled={isButtonDisabled}
-          className="w-full bg-linear-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg shadow-md nodrag h-9"
+          className="w-full bg-linear-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg shadow-sm nodrag h-9"
         >
-          {isProcessing && (
+          {isProcessing ? (
             <>
               <Loader2Icon
-                className="size-4 animate-spin mr-1"
+                className="size-4 animate-spin mr-1.5"
                 strokeWidth={2}
               />
               <span className="text-sm">Gerando...</span>
             </>
-          )}
-
-          {nodeData.status === GenerationStatusEnum.COMPLETED && (
+          ) : isCompleted ? (
             <>
-              <span className="text-sm">Sua imagem foi gerada!</span>
-              <ArrowRightIcon className="size-4 ml-1" strokeWidth={2} />
+              <span className="text-sm">Imagem gerada!</span>
+              <ArrowRightIcon className="size-4 ml-1.5" strokeWidth={2} />
+            </>
+          ) : (
+            <>
+              <SparklesIcon className="size-4 mr-1.5" strokeWidth={2} />
+              <span className="text-sm">Gerar Imagem</span>
             </>
           )}
-
-          {nodeData.status === GenerationStatusEnum.FAILED ||
-            (nodeData.status === GenerationStatusEnum.PENDING && (
-              <>
-                <SparklesIcon className="size-4 mr-2" strokeWidth={2} />
-                <span className="text-sm">Gerar Imagem</span>
-              </>
-            ))}
         </Button>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

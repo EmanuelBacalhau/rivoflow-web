@@ -6,6 +6,7 @@ import {
   Controls,
   ReactFlow,
 } from "@xyflow/react";
+import { useEffect } from "react";
 import { useFlow } from "@/contexts/flow";
 import { FlowLoading } from "./FlowLoading";
 import { Toolbar } from "./layout/Toolbar";
@@ -34,6 +35,20 @@ export function FlowCanvas() {
     addGenerationImageNode,
   } = useFlow();
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement).tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
+
+      if (e.key === "p" || e.key === "P") addPromptNode();
+      if (e.key === "i" || e.key === "I") addImageNode();
+      if (e.key === "g" || e.key === "G") addGenerationImageNode();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [addPromptNode, addImageNode, addGenerationImageNode]);
+
   if (isLoading) {
     return <FlowLoading />;
   }
@@ -60,7 +75,7 @@ export function FlowCanvas() {
         <Background
           variant={BackgroundVariant.Dots}
           gap={20}
-          size={3}
+          size={2}
           color="#d1d5db"
         />
 

@@ -3,6 +3,8 @@
 import { useMutation } from "@tanstack/react-query";
 import {
   ArrowRightIcon,
+  CheckIcon,
+  CreditCardIcon,
   ImageIcon,
   LayersIcon,
   PlusIcon,
@@ -208,6 +210,74 @@ export default function DashboardPage() {
             <span className="text-[10px] bg-muted px-1.5 py-0.5 rounded shrink-0">
               Em breve
             </span>
+          </button>
+        </div>
+      </div>
+
+      {/* Credits recharge */}
+      <div className="mt-6 rounded-xl border border-border/50 bg-card p-6">
+        <div className="flex items-start justify-between gap-4 mb-5">
+          <div>
+            <h2 className="text-base font-semibold">Créditos</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Plano gratuito · 76 créditos restantes
+            </p>
+          </div>
+          <button
+            type="button"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium transition-colors"
+          >
+            <CreditCardIcon className="w-3.5 h-3.5" />
+            Recarregar
+          </button>
+        </div>
+
+        {/* Progress bar */}
+        <div className="space-y-1.5 mb-5">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-muted-foreground">Usado este mês</span>
+            <span className="font-medium">24 / 100</span>
+          </div>
+          <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-blue-500 transition-all"
+              style={{ width: "24%" }}
+            />
+          </div>
+        </div>
+
+        {/* Plans */}
+        <div className="grid md:grid-cols-2 gap-3">
+          <div className="flex items-start gap-3 p-3 rounded-lg border border-border/60 bg-muted/30">
+            <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center shrink-0">
+              <ZapIcon className="w-4 h-4 text-muted-foreground" />
+            </div>
+            <div>
+              <p className="text-sm font-medium">Gratuito</p>
+              <p className="text-xs text-muted-foreground">100 créditos/mês</p>
+              <span className="inline-flex items-center gap-1 mt-1.5 text-[10px] text-green-600 font-medium">
+                <CheckIcon className="w-3 h-3" />
+                Plano atual
+              </span>
+            </div>
+          </div>
+          <button
+            type="button"
+            className="flex items-start gap-3 p-3 rounded-lg border border-indigo-500/40 bg-indigo-500/5 hover:bg-indigo-500/10 transition-colors text-left group"
+          >
+            <div className="w-8 h-8 rounded-lg bg-indigo-500/15 flex items-center justify-center shrink-0">
+              <SparklesIcon className="w-4 h-4 text-indigo-500" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium">Pro</p>
+              <p className="text-xs text-muted-foreground">
+                Créditos ilimitados · R$49/mês
+              </p>
+              <span className="inline-flex items-center gap-1 mt-1.5 text-[10px] text-indigo-600 font-medium group-hover:underline">
+                Fazer upgrade
+                <ArrowRightIcon className="w-3 h-3" />
+              </span>
+            </div>
           </button>
         </div>
       </div>

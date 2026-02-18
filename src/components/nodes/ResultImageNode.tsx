@@ -4,9 +4,7 @@ import { Handle, type NodeProps, Position } from "@xyflow/react";
 import { DownloadIcon, EyeIcon, ShareIcon, ZoomInIcon } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useState } from "react";
-import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
-import { Card, CardContent } from "../ui/card";
 
 interface ResultNodeData {
   imageUrl?: string;
@@ -47,13 +45,12 @@ export function ResultImageNode({ data }: NodeProps) {
   }, [nodeData.imageUrl]);
 
   return (
-    <Card className="w-72 p-1 shadow-lg border-green-200 bg-linear-to-b from-white to-green-50/30">
+    <div className="w-72 rounded-xl border border-green-200 bg-white shadow-md overflow-hidden">
       <Handle
         type="target"
         position={Position.Left}
         className="bg-green-400! size-3! border-2! border-white!"
       />
-
       {nodeData.imageUrl && (
         <Handle
           type="source"
@@ -62,28 +59,27 @@ export function ResultImageNode({ data }: NodeProps) {
         />
       )}
 
-      <CardContent className="p-3 space-y-3">
-        <header className="flex items-center gap-2">
-          <div className="bg-linear-to-br from-green-400 to-green-600 p-2 grid place-items-center rounded-lg shadow-sm">
-            <EyeIcon className="size-4 text-white" strokeWidth={2} />
-          </div>
-
-          <div className="flex-1">
-            <h3 className="font-semibold text-sm">Resultado</h3>
-            <span className="text-xs text-gray-500">Imagem gerada</span>
-          </div>
-
-          {nodeData.imageUrl && (
-            <Badge
-              variant="secondary"
-              className="text-[10px] bg-green-100 text-green-700"
-            >
-              Pronto
-            </Badge>
-          )}
-        </header>
-
+      {/* Header */}
+      <div className="flex items-center gap-2.5 px-3 py-2.5 bg-linear-to-r from-green-50 to-emerald-50 border-b border-green-100">
+        <div className="w-7 h-7 rounded-lg bg-linear-to-br from-green-400 to-green-600 flex items-center justify-center shadow-sm shrink-0">
+          <EyeIcon className="size-3.5 text-white" strokeWidth={2} />
+        </div>
+        <div className="flex-1 min-w-0">
+          <h3 className="font-semibold text-sm text-gray-800 leading-tight">
+            Resultado
+          </h3>
+          <p className="text-[10px] text-green-600/80">Imagem gerada</p>
+        </div>
         {nodeData.imageUrl && (
+          <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-green-100 text-green-700 shrink-0">
+            Pronto
+          </span>
+        )}
+      </div>
+
+      {/* Body */}
+      <div className="p-3">
+        {nodeData.imageUrl ? (
           <div className="space-y-2">
             <div className="w-full h-48 overflow-hidden rounded-lg relative group border border-green-100">
               <Image
@@ -95,7 +91,6 @@ export function ResultImageNode({ data }: NodeProps) {
                 priority
                 className="object-cover"
               />
-
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                 <Button
                   size="icon"
@@ -128,12 +123,16 @@ export function ResultImageNode({ data }: NodeProps) {
               </Button>
             </div>
 
-            <p className="text-[10px] text-center text-gray-400 flex items-center justify-center gap-1">
+            <p className="text-[10px] text-center text-gray-400">
               Conecte a outro gerador
             </p>
           </div>
+        ) : (
+          <div className="h-20 flex items-center justify-center rounded-lg border border-dashed border-green-200 bg-green-50/50">
+            <p className="text-[10px] text-gray-400">Aguardando geração...</p>
+          </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

@@ -2,11 +2,9 @@
 
 import { Handle, type NodeProps, Position } from "@xyflow/react";
 import { CheckIcon, MessageCircleMoreIcon } from "lucide-react";
-import { useState } from "react";
 import { useFlow } from "@/contexts/flow";
 import type { PromptNodeService } from "@/services/node/PromptNodeService";
 import { debounce } from "@/utils/debounce";
-import { Card, CardContent } from "../ui/card";
 import { Textarea } from "../ui/textarea";
 
 type PromptNodeData = PromptNodeService.Node["data"] & {
@@ -17,7 +15,7 @@ export function PromptNode({ id: nodeId, data }: NodeProps) {
   const { updateNodeData, flowId, updatePromptNode } = useFlow();
   const nodeData = data as PromptNodeData;
 
-  const [charCount] = useState(nodeData.prompt?.length || 0);
+  const charCount = nodeData.prompt?.length ?? 0;
 
   const updatePromptNodeDebounced = debounce(updatePromptNode, 1000);
 
@@ -27,58 +25,52 @@ export function PromptNode({ id: nodeId, data }: NodeProps) {
     updatePromptNodeDebounced({
       flowId,
       nodeId,
-      data: {
-        ...nodeData,
-        prompt: value,
-      },
+      data: { ...nodeData, prompt: value },
     });
   };
 
   return (
-    <Card className="w-72 p-0 shadow-lg border-amber-200 bg-linear-to-b from-white to-amber-50/30">
+    <div className="w-72 rounded-xl border border-amber-200 bg-white shadow-md overflow-hidden">
       <Handle
         type="source"
         position={Position.Right}
         className="size-3! bg-amber-400! border-2! border-white!"
       />
 
-      <CardContent className="p-2 space-y-3">
-        <header className="flex items-center gap-2">
-          <div className="bg-linear-to-br from-amber-400 to-amber-600 p-2 grid place-items-center rounded-lg shadow-sm">
-            <MessageCircleMoreIcon
-              className="size-4 text-white"
-              strokeWidth={2}
-            />
-          </div>
-
-          <div className="flex-1 flex flex-col">
-            <h3 className="font-semibold text-sm">Prompt</h3>
-            <span className="text-xs text-gray-500">Descreva o estilo</span>
-          </div>
-
-          {nodeData.isExecuted && (
-            <div className="bg-green-100 p-1 rounded-full grid place-items-center">
-              <CheckIcon className="size-4 text-green-500" />
-            </div>
-          )}
-        </header>
-
-        <div className="space-y-1.5">
-          <Textarea
-            className="resize-none h-24 text-xs bg-white border-amber-200"
-            placeholder="Descreva o produto e o estilo da propaganda..."
-            value={nodeData.prompt || ""}
-            onChange={handleChange}
-            disabled={nodeData.isExecuted}
+      <div className="flex items-center gap-2.5 px-3 py-2.5 bg-linear-to-r from-amber-50 to-orange-50 border-b border-amber-100">
+        <div className="w-7 h-7 rounded-lg bg-linear-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-sm shrink-0">
+          <MessageCircleMoreIcon
+            className="size-3.5 text-white"
+            strokeWidth={2}
           />
-
-          <div className="flex justify-end ">
-            <span className="text-[10px] text-gray-400">
-              {charCount > 0 ? `${charCount} caracteres` : ""}
-            </span>
-          </div>
         </div>
-      </CardContent>
-    </Card>
+        <div className="flex-1 min-w-0">
+          <h3 className="font-semibold text-sm text-gray-800 leading-tight">
+            Prompt
+          </h3>
+          <p className="text-[10px] text-amber-600/80">Descreva o estilo</p>
+        </div>
+        {nodeData.isExecuted && (
+          <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+            <CheckIcon className="size-3 text-green-600" />
+          </div>
+        )}
+      </div>
+
+      <div className="p-3 space-y-2">
+        <Textarea
+          className="nodrag resize-none h-24 text-xs bg-gray-50 border-amber-200 focus-visible:ring-amber-300 placeholder:text-gray-400"
+          placeholder="Ex: produto minimalista, fundo clean, luz natural suave..."
+          value={nodeData.prompt || ""}
+          onChange={handleChange}
+          disabled={nodeData.isExecuted}
+        />
+        {charCount > 0 && (
+          <div className="flex justify-end">
+            <span className="text-[10px] text-gray-400">{charCount} chars</span>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

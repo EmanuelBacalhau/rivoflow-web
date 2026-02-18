@@ -12,7 +12,6 @@ import { useState } from "react";
 import { useFlow } from "@/contexts/flow";
 import type { ImageNodeService } from "@/services/node/ImageNodeService";
 import { Button } from "../ui/button";
-import { Card, CardContent } from "../ui/card";
 import {
   Dialog,
   DialogContent,
@@ -43,31 +42,31 @@ export function UploadImageNode({ id, data }: NodeProps) {
   };
 
   return (
-    <Card className="w-64 p-0 shadow-lg border-blue-200 bg-linear-to-b from-white to-blue-50/30">
+    <div className="w-64 rounded-xl border border-blue-200 bg-white shadow-md overflow-hidden">
       <Handle
         type="source"
         position={Position.Right}
         className="bg-blue-400! size-3! border-2! border-white!"
       />
 
-      <CardContent className="p-2 space-y-3">
-        <header className="flex items-center gap-2">
-          <div className="bg-linear-to-br from-blue-400 to-blue-600 p-2 grid place-items-center rounded-lg shadow-sm">
-            <ImagePlusIcon className="size-4 text-white" strokeWidth={2} />
+      <div className="flex items-center gap-2.5 px-3 py-2.5 bg-linear-to-r from-blue-50 to-sky-50 border-b border-blue-100">
+        <div className="w-7 h-7 rounded-lg bg-linear-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-sm shrink-0">
+          <ImagePlusIcon className="size-3.5 text-white" strokeWidth={2} />
+        </div>
+        <div className="flex-1 min-w-0">
+          <h3 className="font-semibold text-sm text-gray-800 leading-tight">
+            Imagem
+          </h3>
+          <p className="text-[10px] text-blue-600/80">Produto ou referência</p>
+        </div>
+        {nodeData.isExecuted && (
+          <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+            <CheckIcon className="size-3 text-green-600" />
           </div>
+        )}
+      </div>
 
-          <div className="flex-1 flex flex-col">
-            <h3 className="font-semibold text-sm">Imagem</h3>
-            <span className="text-xs text-gray-500">Produto ou referência</span>
-          </div>
-
-          {nodeData.isExecuted && (
-            <div className="bg-green-100 p-1 rounded-full grid place-items-center">
-              <CheckIcon className="size-4 text-green-500" />
-            </div>
-          )}
-        </header>
-
+      <div className="p-3">
         {nodeData.imageUrl ? (
           <div className="w-full h-40 overflow-hidden rounded-lg relative group border border-blue-100">
             <Image
@@ -79,7 +78,6 @@ export function UploadImageNode({ id, data }: NodeProps) {
               priority
               className="object-cover"
             />
-
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
@@ -91,7 +89,6 @@ export function UploadImageNode({ id, data }: NodeProps) {
                   <DialogTitle className="sr-only">
                     Visualização da imagem
                   </DialogTitle>
-
                   <div className="relative w-full h-[80vh]">
                     <Image
                       src={nodeData.imageUrl}
@@ -115,18 +112,18 @@ export function UploadImageNode({ id, data }: NodeProps) {
               onChange={handleFileChange}
               id={inputId}
             />
-            <div className="cursor-pointer text-center text-gray-400 border-2 border-dashed border-blue-200 transition-all rounded-lg p-6 hover:border-blue-400 hover:bg-blue-50/50 group">
-              <div className="bg-blue-100 rounded-full p-3 mx-auto mb-3 w-fit group-hover:bg-blue-200 transition-colors">
-                <UploadCloudIcon className="size-6 text-blue-500" />
+            <div className="cursor-pointer text-center border-2 border-dashed border-blue-200 rounded-lg p-5 hover:border-blue-400 hover:bg-blue-50/50 transition-all group">
+              <div className="bg-blue-100 rounded-full p-2.5 mx-auto mb-2.5 w-fit group-hover:bg-blue-200 transition-colors">
+                <UploadCloudIcon className="size-5 text-blue-500" />
               </div>
-              <p className="text-xs font-medium text-gray-600 mb-1">
+              <p className="text-xs font-medium text-gray-600 mb-0.5">
                 Clique para carregar
               </p>
               <p className="text-[10px] text-gray-400">JPG, PNG ou WebP</p>
             </div>
           </label>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
