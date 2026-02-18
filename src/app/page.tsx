@@ -231,12 +231,12 @@ export default function LandingPage() {
 
           <div className="hidden md:flex items-center gap-4">
             <Link
-              href="/editor"
+              href="/auth/google"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Entrar
             </Link>
-            <Link href="/editor">
+            <Link href="/auth/google">
               <Button
                 size="sm"
                 className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg"
@@ -273,7 +273,7 @@ export default function LandingPage() {
                 {link.label}
               </Link>
             ))}
-            <Link href="/editor">
+            <Link href="/auth/google">
               <Button
                 size="sm"
                 className="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 text-white"
@@ -355,7 +355,7 @@ export default function LandingPage() {
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-16">
-            <Link href="/editor">
+            <Link href="/auth/google">
               <Button
                 size="lg"
                 className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 h-12 text-base rounded-xl shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30 transition-all hover:scale-[1.02]"
@@ -714,7 +714,7 @@ export default function LandingPage() {
                   ))}
                 </ul>
 
-                <Link href="/editor" className="block">
+                <Link href="/auth/google" className="block">
                   <Button
                     className={`w-full ${
                       plan.highlight
@@ -796,7 +796,7 @@ export default function LandingPage() {
             Sua próxima campanha pode estar pronta ainda hoje. Sem cartão de
             crédito, sem burocracia.
           </p>
-          <Link href="/editor">
+          <Link href="/auth/google">
             <Button
               size="lg"
               className="bg-indigo-600 hover:bg-indigo-700 text-white px-10 h-12 text-base rounded-xl shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30 transition-all hover:scale-[1.02]"
@@ -833,18 +833,6 @@ export default function LandingPage() {
             </div>
 
             <div className="flex items-center gap-7 text-xs text-muted-foreground">
-              <Link
-                href="#"
-                className="hover:text-foreground transition-colors"
-              >
-                Termos de uso
-              </Link>
-              <Link
-                href="#"
-                className="hover:text-foreground transition-colors"
-              >
-                Privacidade
-              </Link>
               <Link
                 href="#"
                 className="hover:text-foreground transition-colors"

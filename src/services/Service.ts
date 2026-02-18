@@ -4,6 +4,7 @@ import { env } from "@/env";
 export abstract class Service {
   protected static client = axios.create({
     baseURL: env.NEXT_PUBLIC_API_URL,
+    withCredentials: true,
   });
 
   static async uploadPresignedPOST({

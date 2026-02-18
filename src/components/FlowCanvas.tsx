@@ -8,7 +8,6 @@ import {
 } from "@xyflow/react";
 import { useFlow } from "@/contexts/flow";
 import { FlowLoading } from "./FlowLoading";
-import { Sidebar } from "./layout/Sidebar";
 import { Toolbar } from "./layout/Toolbar";
 import { AIGeneratorNode } from "./nodes/AIGeneratorImageNode";
 import { PromptNode } from "./nodes/PromptNode";
@@ -41,8 +40,6 @@ export function FlowCanvas() {
 
   return (
     <div className="h-screen bg-gray-50">
-      <Sidebar />
-
       <Toolbar
         onAddPromptNode={addPromptNode}
         onAddImageNode={addImageNode}
