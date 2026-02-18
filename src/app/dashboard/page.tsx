@@ -1,27 +1,50 @@
 "use client";
 
-import { useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import {
   ArrowRightIcon,
   CheckIcon,
   CreditCardIcon,
+  FolderIcon,
   ImageIcon,
-  LayersIcon,
   PlusIcon,
   SparklesIcon,
   ZapIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { CreateProjectDialog } from "@/components/CreateProjectDialog";
 import { Button } from "@/components/ui/button";
-import { FlowService } from "@/services/FlowService";
+import { ProjectService } from "@/services/ProjectService";
+
+const MOCK_PROJECTS: ProjectService.Project[] = [
+  {
+    id: "mock-1",
+    name: "Campanha Verão 2025",
+    createdAt: "2025-02-10T10:00:00Z",
+    updatedAt: "2025-02-17T14:30:00Z",
+  },
+  {
+    id: "mock-2",
+    name: "Produto Destaque - Tênis",
+    createdAt: "2025-02-12T09:00:00Z",
+    updatedAt: "2025-02-16T09:15:00Z",
+  },
+  {
+    id: "mock-3",
+    name: "Stories Instagram - Promo",
+    createdAt: "2025-02-14T08:00:00Z",
+    updatedAt: "2025-02-14T18:00:00Z",
+  },
+];
 
 const STATS = [
   {
-    label: "Flows criados",
-    value: "3",
-    icon: LayersIcon,
+    label: "Projetos",
+    icon: FolderIcon,
     color: "text-indigo-500",
     bg: "bg-indigo-500/10",
+    dynamic: true,
   },
   {
     label: "Imagens geradas",
@@ -46,27 +69,6 @@ const STATS = [
   },
 ];
 
-const MOCK_FLOWS = [
-  {
-    id: "mock-1",
-    title: "Campanha Verão 2025",
-    updatedAt: "2025-02-17T14:30:00Z",
-    images: 8,
-  },
-  {
-    id: "mock-2",
-    title: "Produto Destaque - Tênis",
-    updatedAt: "2025-02-16T09:15:00Z",
-    images: 5,
-  },
-  {
-    id: "mock-3",
-    title: "Stories Instagram - Promo",
-    updatedAt: "2025-02-14T18:00:00Z",
-    images: 11,
-  },
-];
-
 function timeAgo(dateStr: string) {
   const diff = Date.now() - new Date(dateStr).getTime();
   const days = Math.floor(diff / 86400000);
@@ -77,31 +79,34 @@ function timeAgo(dateStr: string) {
 
 export default function DashboardPage() {
   const router = useRouter();
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
 
-  const { mutate: createFlow, isPending } = useMutation({
-    mutationFn: () => FlowService.create("Novo Flow"),
-    onSuccess: ({ flow }) => {
-      router.push(`/dashboard/flow/${flow.id}`);
-    },
+  const { data, isLoading } = useQuery({
+    queryKey: ["projects"],
+    queryFn: ProjectService.getAll,
+    placeholderData: { projects: MOCK_PROJECTS },
   });
+
+  const projects = data?.projects ?? [];
 
   return (
     <div className="p-8 max-w-5xl mx-auto">
+      <CreateProjectDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} />
+
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold">Dashboard</h1>
+          <h1 className="text-2xl font-bold">Projetos</h1>
           <p className="text-sm text-muted-foreground mt-0.5">
-            Bem-vindo de volta. Aqui está o resumo da sua conta.
+            Organize seus flows em projetos.
           </p>
         </div>
         <Button
           className="bg-indigo-600 hover:bg-indigo-700 text-white"
-          onClick={() => createFlow()}
-          disabled={isPending}
+          onClick={() => setIsCreateOpen(true)}
         >
           <PlusIcon className="w-4 h-4 mr-1.5" />
-          {isPending ? "Criando..." : "Novo Flow"}
+          Novo Projeto
         </Button>
       </div>
 
@@ -118,7 +123,9 @@ export default function DashboardPage() {
               <stat.icon className={`w-4 h-4 ${stat.color}`} />
             </div>
             <div>
-              <p className="text-2xl font-bold">{stat.value}</p>
+              <p className="text-2xl font-bold">
+                {"dynamic" in stat ? String(projects.length) : stat.value}
+              </p>
               <p className="text-xs text-muted-foreground mt-0.5">
                 {stat.label}
               </p>
@@ -127,95 +134,70 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      {/* Recent flows */}
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-base font-semibold">Flows recentes</h2>
+      {/* Projects grid */}
+      <div className="mb-6">
+        <h2 className="text-base font-semibold">Seus Projetos</h2>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-4">
-        {MOCK_FLOWS.map((flow) => (
-          <button
-            key={flow.id}
-            type="button"
-            className="group rounded-xl border border-border/50 bg-card overflow-hidden hover:border-indigo-500/40 hover:shadow-md transition-all text-left w-full"
-            onClick={() => createFlow()}
+      {isLoading ? (
+        <div className="grid md:grid-cols-3 gap-4">
+          {[1, 2, 3].map((n) => (
+            <div
+              key={n}
+              className="h-40 rounded-xl border border-border/50 bg-card animate-pulse"
+            />
+          ))}
+        </div>
+      ) : projects.length === 0 ? (
+        <div className="text-center py-16 rounded-xl border border-dashed border-border/60">
+          <FolderIcon className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
+          <p className="text-sm text-muted-foreground mb-4">
+            Nenhum projeto ainda. Crie um para começar.
+          </p>
+          <Button
+            size="sm"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white"
+            onClick={() => setIsCreateOpen(true)}
           >
-            {/* Thumbnail placeholder */}
-            <div className="h-36 bg-gradient-to-br from-indigo-500/10 via-blue-500/10 to-purple-500/10 flex items-center justify-center border-b border-border/30">
-              <LayersIcon className="w-8 h-8 text-indigo-500/40" />
-            </div>
-            <div className="p-4">
-              <p className="text-sm font-medium truncate">{flow.title}</p>
-              <div className="flex items-center justify-between mt-1.5">
-                <p className="text-xs text-muted-foreground">
-                  {timeAgo(flow.updatedAt)}
-                </p>
-                <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <ImageIcon className="w-3 h-3" />
-                  {flow.images}
-                </span>
+            <PlusIcon className="w-4 h-4 mr-1.5" />
+            Criar primeiro projeto
+          </Button>
+        </div>
+      ) : (
+        <div className="grid md:grid-cols-3 gap-4">
+          {projects.map((project) => (
+            <button
+              key={project.id}
+              type="button"
+              className="group rounded-xl border border-border/50 bg-card overflow-hidden hover:border-indigo-500/40 hover:shadow-md transition-all text-left w-full"
+              onClick={() => router.push(`/dashboard/projects/${project.id}`)}
+            >
+              <div className="h-28 bg-linear-to-br from-indigo-500/10 via-blue-500/10 to-purple-500/10 flex items-center justify-center border-b border-border/30">
+                <FolderIcon className="w-8 h-8 text-indigo-500/40 group-hover:text-indigo-500/60 transition-colors" />
               </div>
-            </div>
-          </button>
-        ))}
+              <div className="p-4">
+                <p className="text-sm font-medium truncate">{project.name}</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {timeAgo(project.updatedAt)}
+                </p>
+              </div>
+            </button>
+          ))}
 
-        {/* New flow card */}
-        <button
-          type="button"
-          onClick={() => createFlow()}
-          disabled={isPending}
-          className="rounded-xl border border-dashed border-border/60 hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all flex flex-col items-center justify-center gap-2 h-[168px] text-muted-foreground hover:text-indigo-500"
-        >
-          <PlusIcon className="w-6 h-6" />
-          <span className="text-sm font-medium">Novo Flow</span>
-        </button>
-      </div>
-
-      {/* Quick actions */}
-      <div className="mt-10 rounded-xl border border-border/50 bg-card p-6">
-        <h2 className="text-base font-semibold mb-4">Ações rápidas</h2>
-        <div className="grid md:grid-cols-2 gap-3">
+          {/* New project card */}
           <button
             type="button"
-            onClick={() => createFlow()}
-            disabled={isPending}
-            className="flex items-center gap-3 p-4 rounded-lg border border-border/40 hover:border-indigo-500/40 hover:bg-indigo-500/5 transition-all text-left group"
+            onClick={() => setIsCreateOpen(true)}
+            className="rounded-xl border border-dashed border-border/60 hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all flex flex-col items-center justify-center gap-2 h-42 text-muted-foreground hover:text-indigo-500"
           >
-            <div className="w-9 h-9 rounded-lg bg-indigo-500/10 flex items-center justify-center shrink-0">
-              <LayersIcon className="w-4 h-4 text-indigo-500" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium">Criar novo flow</p>
-              <p className="text-xs text-muted-foreground">
-                Monte um pipeline de geração do zero
-              </p>
-            </div>
-            <ArrowRightIcon className="w-4 h-4 text-muted-foreground group-hover:text-indigo-500 transition-colors shrink-0" />
-          </button>
-
-          <button
-            type="button"
-            disabled
-            className="flex items-center gap-3 p-4 rounded-lg border border-border/40 opacity-50 cursor-not-allowed text-left"
-          >
-            <div className="w-9 h-9 rounded-lg bg-green-500/10 flex items-center justify-center shrink-0">
-              <ImageIcon className="w-4 h-4 text-green-500" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium">Ver galeria</p>
-              <p className="text-xs text-muted-foreground">
-                Todas as imagens geradas
-              </p>
-            </div>
-            <span className="text-[10px] bg-muted px-1.5 py-0.5 rounded shrink-0">
-              Em breve
-            </span>
+            <PlusIcon className="w-6 h-6" />
+            <span className="text-sm font-medium">Novo Projeto</span>
           </button>
         </div>
-      </div>
+      )}
 
       {/* Credits recharge */}
-      <div className="mt-6 rounded-xl border border-border/50 bg-card p-6">
+      <div className="mt-10 rounded-xl border border-border/50 bg-card p-6">
         <div className="flex items-start justify-between gap-4 mb-5">
           <div>
             <h2 className="text-base font-semibold">Créditos</h2>
@@ -232,7 +214,6 @@ export default function DashboardPage() {
           </button>
         </div>
 
-        {/* Progress bar */}
         <div className="space-y-1.5 mb-5">
           <div className="flex items-center justify-between text-xs">
             <span className="text-muted-foreground">Usado este mês</span>
@@ -240,13 +221,12 @@ export default function DashboardPage() {
           </div>
           <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-blue-500 transition-all"
+              className="h-full rounded-full bg-linear-to-r from-indigo-500 to-blue-500 transition-all"
               style={{ width: "24%" }}
             />
           </div>
         </div>
 
-        {/* Plans */}
         <div className="grid md:grid-cols-2 gap-3">
           <div className="flex items-start gap-3 p-3 rounded-lg border border-border/60 bg-muted/30">
             <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center shrink-0">
