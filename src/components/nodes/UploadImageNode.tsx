@@ -23,7 +23,7 @@ type UploadImageNodeData = ImageNodeService.Node["data"] & {
   isExecuted?: boolean;
 };
 
-export function UploadImageNode({ id, data }: NodeProps) {
+export function UploadImageNode({ id, data, selected }: NodeProps) {
   const { uploadImageNode, flowId } = useFlow();
   const nodeData = data as UploadImageNodeData;
 
@@ -42,7 +42,9 @@ export function UploadImageNode({ id, data }: NodeProps) {
   };
 
   return (
-    <div className="w-64 rounded-xl border border-blue-200 bg-white shadow-md overflow-hidden">
+    <div
+      className={`w-64 rounded-xl border bg-white shadow-md overflow-hidden transition-shadow ${selected ? "border-blue-400 ring-2 ring-blue-300 shadow-blue-100 shadow-lg" : "border-blue-200"}`}
+    >
       <Handle
         type="source"
         position={Position.Right}

@@ -11,7 +11,7 @@ type PromptNodeData = PromptNodeService.Node["data"] & {
   isExecuted?: boolean;
 };
 
-export function PromptNode({ id: nodeId, data }: NodeProps) {
+export function PromptNode({ id: nodeId, data, selected }: NodeProps) {
   const { updateNodeData, flowId, updatePromptNode } = useFlow();
   const nodeData = data as PromptNodeData;
 
@@ -30,7 +30,9 @@ export function PromptNode({ id: nodeId, data }: NodeProps) {
   };
 
   return (
-    <div className="w-72 rounded-xl border border-amber-200 bg-white shadow-md overflow-hidden">
+    <div
+      className={`w-72 rounded-xl border bg-white shadow-md overflow-hidden transition-shadow ${selected ? "border-amber-400 ring-2 ring-amber-300 shadow-amber-100 shadow-lg" : "border-amber-200"}`}
+    >
       <Handle
         type="source"
         position={Position.Right}

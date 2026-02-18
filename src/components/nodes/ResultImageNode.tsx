@@ -10,7 +10,7 @@ interface ResultNodeData {
   imageUrl?: string;
 }
 
-export function ResultImageNode({ data }: NodeProps) {
+export function ResultImageNode({ data, selected }: NodeProps) {
   const nodeData = data as ResultNodeData;
   const [downloading, setDownloading] = useState(false);
 
@@ -45,7 +45,9 @@ export function ResultImageNode({ data }: NodeProps) {
   }, [nodeData.imageUrl]);
 
   return (
-    <div className="w-72 rounded-xl border border-green-200 bg-white shadow-md overflow-hidden">
+    <div
+      className={`w-72 rounded-xl border bg-white shadow-md overflow-hidden transition-shadow ${selected ? "border-green-400 ring-2 ring-green-300 shadow-green-100 shadow-lg" : "border-green-200"}`}
+    >
       <Handle
         type="target"
         position={Position.Left}

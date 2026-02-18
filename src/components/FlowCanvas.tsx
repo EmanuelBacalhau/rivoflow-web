@@ -1,14 +1,10 @@
 "use client";
 
-import {
-  Background,
-  BackgroundVariant,
-  Controls,
-  ReactFlow,
-} from "@xyflow/react";
+import { Background, BackgroundVariant, ReactFlow } from "@xyflow/react";
 import { useEffect } from "react";
 import { useFlow } from "@/contexts/flow";
 import { FlowLoading } from "./FlowLoading";
+import { KeyboardShortcuts } from "./layout/KeyboardShortcuts";
 import { Toolbar } from "./layout/Toolbar";
 import { AIGeneratorNode } from "./nodes/AIGeneratorImageNode";
 import { PromptNode } from "./nodes/PromptNode";
@@ -40,9 +36,9 @@ export function FlowCanvas() {
       const tag = (e.target as HTMLElement).tagName;
       if (tag === "INPUT" || tag === "TEXTAREA") return;
 
-      if (e.key === "p" || e.key === "P") addPromptNode();
-      if (e.key === "i" || e.key === "I") addImageNode();
-      if (e.key === "g" || e.key === "G") addGenerationImageNode();
+      if (e.key.toLocaleLowerCase() === "p") addPromptNode();
+      if (e.key.toLocaleLowerCase() === "i") addImageNode();
+      if (e.key.toLocaleLowerCase() === "g") addGenerationImageNode();
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -54,7 +50,7 @@ export function FlowCanvas() {
   }
 
   return (
-    <div className="h-screen bg-gray-50">
+    <div className="h-screen bg-gray-50 relative">
       <Toolbar
         onAddPromptNode={addPromptNode}
         onAddImageNode={addImageNode}
@@ -72,15 +68,10 @@ export function FlowCanvas() {
         fitView
         className="bg-gray-50"
       >
-        <Background
-          variant={BackgroundVariant.Dots}
-          gap={20}
-          size={2}
-          color="#d1d5db"
-        />
-
-        <Controls className="bg-white rounded-lg shadow-lg border border-gray-200" />
+        <Background variant={BackgroundVariant.Dots} gap={20} size={2} />
       </ReactFlow>
+
+      <KeyboardShortcuts />
     </div>
   );
 }

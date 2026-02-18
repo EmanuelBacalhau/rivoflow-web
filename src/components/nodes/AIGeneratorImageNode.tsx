@@ -32,7 +32,7 @@ type AIGeneratorNodeData = NodeDataGenerationImage & {
   isExecuted?: boolean;
 };
 
-export function AIGeneratorNode({ id, data }: NodeProps) {
+export function AIGeneratorNode({ id, data, selected }: NodeProps) {
   const {
     updateNodeData,
     getConnectedData,
@@ -100,7 +100,9 @@ export function AIGeneratorNode({ id, data }: NodeProps) {
     false || !hasPrompts || nodeData.isExecuted || isProcessing || isCompleted;
 
   return (
-    <div className="w-80 rounded-xl border border-purple-200 bg-white shadow-md overflow-hidden">
+    <div
+      className={`w-80 rounded-xl border bg-white shadow-md overflow-hidden transition-shadow ${selected ? "border-purple-400 ring-2 ring-purple-300 shadow-purple-100 shadow-lg" : "border-purple-200"}`}
+    >
       <Handle
         type="source"
         position={Position.Right}
