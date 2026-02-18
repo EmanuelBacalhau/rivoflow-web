@@ -5,6 +5,7 @@ export class FlowService extends Service {
     const response =
       await FlowService.client.post<FlowService.CreateFlowResponse>("/flows", {
         title,
+        projectId: "default",
       });
     return response.data;
   }

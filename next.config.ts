@@ -6,7 +6,8 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "orion-flow-api-sa-east-1-bucket.s3.sa-east-1.amazonaws.com",
+        hostname:
+          "rivo-flow-api-dev-sa-east-1-bucket.s3.sa-east-1.amazonaws.com",
       },
     ],
     qualities: [100, 75],
