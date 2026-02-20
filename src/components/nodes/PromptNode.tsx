@@ -3,7 +3,7 @@
 import { Handle, type NodeProps, Position } from "@xyflow/react";
 import { CheckIcon, MessageCircleMoreIcon } from "lucide-react";
 import { useRef } from "react";
-import { useFlow } from "@/contexts/flow";
+import { useFlow } from "@/contexts/FlowContext";
 import type { PromptNodeService } from "@/services/node/PromptNodeService";
 import { debounce } from "@/utils/debounce";
 import { Textarea } from "../ui/textarea";

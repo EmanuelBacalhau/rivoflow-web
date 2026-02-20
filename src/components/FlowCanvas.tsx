@@ -2,7 +2,7 @@
 
 import { Background, BackgroundVariant, ReactFlow } from "@xyflow/react";
 import { useEffect } from "react";
-import { useFlow } from "@/contexts/flow";
+import { useFlow } from "@/contexts/FlowContext";
 import { FlowLoading } from "./FlowLoading";
 import { KeyboardShortcuts } from "./layout/KeyboardShortcuts";
 import { Toolbar } from "./layout/Toolbar";

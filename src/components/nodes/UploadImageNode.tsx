@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
-import { useFlow } from "@/contexts/flow";
+import { useFlow } from "@/contexts/FlowContext";
 import type { ImageNodeService } from "@/services/node/ImageNodeService";
 import { Button } from "../ui/button";
 import {

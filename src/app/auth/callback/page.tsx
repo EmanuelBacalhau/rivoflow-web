@@ -2,14 +2,14 @@
 
 import { useMutation } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useContext, useEffect, useRef } from "react";
-import { AuthContext } from "@/contexts/AuthContext/AuthProvider";
+import { useEffect, useRef } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function AuthCallbackPage() {
   const router = useRouter();
   const queryParams = useSearchParams();
   const code = queryParams.get("code");
-  const { signInWithCode } = useContext(AuthContext);
+  const { signInWithCode } = useAuth();
 
   const { mutate } = useMutation({
     mutationFn: async (authCode: string) => {

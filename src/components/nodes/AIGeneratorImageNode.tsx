@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 
 import { useMemo, useState } from "react";
-import { useFlow } from "@/contexts/flow";
+import { useFlow } from "@/contexts/FlowContext";
 import {
   type AspectRatio,
   GenerationStatusEnum,

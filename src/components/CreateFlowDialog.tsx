@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 import { useCreateFlow } from "@/hooks/mutations/useCreateFlow";
 import { Button } from "./ui/button";
 import {
@@ -12,23 +13,27 @@ import {
 } from "./ui/dialog";
 import { Input } from "./ui/input";
 
-interface CreateProjectDialogProps {
+interface CreateFlowDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export function CreateProjectDialog({
+export function CreateFlowDialog({
   open,
   onOpenChange,
-}: CreateProjectDialogProps) {
+}: CreateFlowDialogProps) {
   const router = useRouter();
   const [name, setName] = useState("");
 
   const { createFlow, isCreatingFlow } = useCreateFlow();
 
   const handleCreateFlow = async (flowName: string) => {
-    const { flow } = await createFlow(flowName);
-    router.push(`/dashboard/flow/${flow.id}`);
+    try {
+      const { flow } = await createFlow(flowName);
+      router.push(`/dashboard/flow/${flow.id}`);
+    } catch {
+      toast.error("Erro ao criar flow. Tente novamente.");
+    }
   };
 
   const handleOpenChange = (value: boolean) => {

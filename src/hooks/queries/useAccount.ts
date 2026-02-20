@@ -14,7 +14,7 @@ export function useAccount(params?: IUseAccountParams) {
   });
 
   return {
-    account: data,
+    me: data,
     loadAccount: refetch,
   };
 }

@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { CreateProjectDialog } from "@/components/CreateFlowDialog";
+import { CreateFlowDialog } from "@/components/CreateFlowDialog";
 import { Button } from "@/components/ui/button";
 import type { ProjectService } from "@/services/ProjectService";
 
@@ -74,7 +74,7 @@ export default function DashboardPage() {
 
   return (
     <div className="p-8 max-w-5xl mx-auto">
-      <CreateProjectDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} />
+      <CreateFlowDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} />
 
       {/* Header */}
       <div className="flex items-center justify-between mb-8">

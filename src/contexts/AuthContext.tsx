@@ -1,7 +1,11 @@
+"use client";
+
 import { useQueryClient } from "@tanstack/react-query";
 import {
+  createContext,
   type PropsWithChildren,
   useCallback,
+  useContext,
   useLayoutEffect,
   useState,
 } from "react";
@@ -10,12 +14,23 @@ import { useAccount } from "@/hooks/queries/useAccount";
 import { AuthTokensManager } from "@/lib/AuthTokenManager";
 import { AuthService } from "@/services/AuthService";
 import { Service } from "@/services/Service";
-import { AuthContext } from "./AuthProvider";
+
+interface AuthContextType {
+  signedIn: boolean;
+  signInWithCode: (code: string) => Promise<void>;
+  signOut: () => void;
+}
+
+export const AuthContext = createContext({} as AuthContextType);
+
+export function useAuth() {
+  return useContext(AuthContext);
+}
 
 export function AuthProvider({ children }: PropsWithChildren) {
   const queryClient = useQueryClient();
   const forceRender = useForceRender();
-  const { account, loadAccount } = useAccount({ enabled: false });
+  const { me, loadAccount } = useAccount({ enabled: false });
   const [isReady, setIsReady] = useState(false);
 
   const signOut = useCallback(() => {
@@ -74,9 +89,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   }
 
   return (
-    <AuthContext.Provider
-      value={{ signedIn: !!account, signInWithCode, signOut }}
-    >
+    <AuthContext.Provider value={{ signedIn: !!me, signInWithCode, signOut }}>
       {children}
     </AuthContext.Provider>
   );

@@ -22,17 +22,17 @@ import {
   useRef,
   useState,
 } from "react";
-import { useCreateNodeGenerationImageController } from "@/hooks/flow/generation-image/create";
-import { useGenerateImageController } from "@/hooks/flow/generation-image/generate";
-import { useUpdateDataGenerationImageNodeController } from "@/hooks/flow/generation-image/update";
-import { useCreateNodeImageController } from "@/hooks/flow/image/create";
-import { useUploadImageNodeController } from "@/hooks/flow/image/upload";
-import { useCreateNodePromptController } from "@/hooks/flow/prompt/create";
-import { useUpdateDataPromptNodeController } from "@/hooks/flow/prompt/update";
-import { useCreateEdgeController } from "@/hooks/flow/useCreateEdge";
-import { useDeleteEdgeController } from "@/hooks/flow/useDeleteEdge";
-import { useDeleteNodeController } from "@/hooks/flow/useDeleteNode";
-import { useUpdateNodePositionController } from "@/hooks/flow/useUpdatePosition";
+import { useCreateEdgeController } from "@/hooks/mutations/useCreateEdge";
+import { useCreateNodeGenerationImageController } from "@/hooks/mutations/useCreateGenerationImageNode";
+import { useCreateNodeImageController } from "@/hooks/mutations/useCreateImageNode";
+import { useCreateNodePromptController } from "@/hooks/mutations/useCreatePromptNode";
+import { useDeleteEdgeController } from "@/hooks/mutations/useDeleteEdge";
+import { useDeleteNodeController } from "@/hooks/mutations/useDeleteNode";
+import { useGenerateImageController } from "@/hooks/mutations/useGenerateImage";
+import { useUpdateDataGenerationImageNodeController } from "@/hooks/mutations/useUpdateGenerationImageNode";
+import { useUpdateNodePositionController } from "@/hooks/mutations/useUpdateNodePosition";
+import { useUpdateDataPromptNodeController } from "@/hooks/mutations/useUpdatePromptNode";
+import { useUploadImageNodeController } from "@/hooks/mutations/useUploadImageNode";
 import { useFlowNodes } from "@/hooks/queries/useFlowNodes";
 import { GenerationImageNodeService } from "@/services/node/GenerationImageNodeService";
 import type { ImageNodeService } from "@/services/node/ImageNodeService";
