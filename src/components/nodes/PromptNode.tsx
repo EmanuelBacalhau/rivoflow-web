@@ -2,6 +2,7 @@
 
 import { Handle, type NodeProps, Position } from "@xyflow/react";
 import { CheckIcon, MessageCircleMoreIcon } from "lucide-react";
+import { useRef } from "react";
 import { useFlow } from "@/contexts/flow";
 import type { PromptNodeService } from "@/services/node/PromptNodeService";
 import { debounce } from "@/utils/debounce";
@@ -12,17 +13,32 @@ type PromptNodeData = PromptNodeService.Node["data"] & {
 };
 
 export function PromptNode({ id: nodeId, data, selected }: NodeProps) {
-  const { updateNodeData, flowId, updatePromptNode } = useFlow();
+  const {
+    updateNodeData,
+    flowId,
+    updatePromptNode,
+    markConnectedGeneratorsAsCalculating,
+  } = useFlow();
   const nodeData = data as PromptNodeData;
 
   const charCount = nodeData.prompt?.length ?? 0;
 
-  const updatePromptNodeDebounced = debounce(updatePromptNode, 1000);
+  // Keep a ref to the latest updatePromptNode so the debounced function is
+  // never recreated on re-renders (typing triggers re-renders via updateNodeData)
+  const updatePromptNodeRef = useRef(updatePromptNode);
+  updatePromptNodeRef.current = updatePromptNode;
+
+  const updatePromptNodeDebouncedRef = useRef(
+    debounce((params: PromptNodeService.UpdateParams) => {
+      updatePromptNodeRef.current(params);
+    }, 1000),
+  );
 
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = event.target.value;
     updateNodeData(nodeId, { prompt: value });
-    updatePromptNodeDebounced({
+    markConnectedGeneratorsAsCalculating(nodeId);
+    updatePromptNodeDebouncedRef.current({
       flowId,
       nodeId,
       data: { ...nodeData, prompt: value },

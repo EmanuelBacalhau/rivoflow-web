@@ -1,6 +1,5 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import type {
   Connection,
   Edge,
@@ -8,8 +7,13 @@ import type {
   Node,
   NodeChange,
 } from "@xyflow/react";
-import { addEdge, applyEdgeChanges, applyNodeChanges } from "@xyflow/react";
-import { useParams } from "next/navigation";
+import {
+  addEdge,
+  applyEdgeChanges,
+  applyNodeChanges,
+  useReactFlow,
+} from "@xyflow/react";
+import { useParams, useRouter } from "next/navigation";
 import {
   createContext,
   type ReactNode,
@@ -26,14 +30,14 @@ import { useUploadImageNodeController } from "@/hooks/flow/image/upload";
 import { useCreateNodePromptController } from "@/hooks/flow/prompt/create";
 import { useUpdateDataPromptNodeController } from "@/hooks/flow/prompt/update";
 import { useCreateEdgeController } from "@/hooks/flow/useCreateEdge";
-import { useDeleteEdgesController } from "@/hooks/flow/useDeleteEdge";
+import { useDeleteEdgeController } from "@/hooks/flow/useDeleteEdge";
 import { useDeleteNodeController } from "@/hooks/flow/useDeleteNode";
 import { useUpdateNodePositionController } from "@/hooks/flow/useUpdatePosition";
-import type { GenerationImageNodeService } from "@/services/node/GenerationImageNodeService";
+import { useFlowNodes } from "@/hooks/queries/useFlowNodes";
+import { GenerationImageNodeService } from "@/services/node/GenerationImageNodeService";
 import type { ImageNodeService } from "@/services/node/ImageNodeService";
-import { NodeService } from "@/services/node/NodeService";
 import type { PromptNodeService } from "@/services/node/PromptNodeService";
-import { GenerationStatusEnum, NodeTypeEnum } from "@/types";
+import { NodeTypeEnum } from "@/types";
 import { debounce } from "@/utils/debounce";
 
 const NODE_COLORS: Record<string, string> = {
@@ -69,6 +73,8 @@ interface FlowContextType {
   generateImageNode: (
     params: GenerationImageNodeService.GenerateImageParams,
   ) => Promise<void>;
+  calculateCreditsForNode: (nodeId: string) => void;
+  markConnectedGeneratorsAsCalculating: (sourceNodeId: string) => void;
   isLoading: boolean;
   getConnectedData: (nodeId: string) => ConnectedData;
   updateNodeData: (nodeId: string, data: Record<string, unknown>) => void;
@@ -80,31 +86,33 @@ export function FlowProvider({ children }: { children: ReactNode }) {
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
   const { id: flowId } = useParams<{ id: string }>();
+  const router = useRouter();
+  const { screenToFlowPosition } = useReactFlow();
+
+  const getViewportCenter = () =>
+    screenToFlowPosition({
+      x: window.innerWidth / 2,
+      y: window.innerHeight / 2,
+    });
+
+  // Always-current refs for async callbacks (avoids stale closures)
+  const nodesRef = useRef<Node[]>([]);
+  const edgesRef = useRef<Edge[]>([]);
+  nodesRef.current = nodes;
+  edgesRef.current = edges;
 
   // Tracks real node IDs that have been deleted — used to cancel in-flight operations
   const deletedNodeIdsRef = useRef<Set<string>>(new Set());
   // Tracks temp IDs deleted before the server responded to create — prevents ghost nodes
   const pendingDeleteRef = useRef<Set<string>>(new Set());
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["flow", flowId],
-    queryFn: () => NodeService.getNodesByFlowId(flowId),
-    refetchInterval: (query) => {
-      const hasProcessingNodes = query.state.data?.nodes.some((node) => {
-        if (node.data.type !== NodeTypeEnum.GENERATION_IMAGE) return false;
-        const generationNode = node as GenerationImageNodeService.Node;
+  const { data, isLoading, isError } = useFlowNodes({ flowId });
 
-        const isQueued =
-          generationNode.data.status === GenerationStatusEnum.QUEUED;
-        const isProcessing =
-          generationNode.data.status === GenerationStatusEnum.PROCESSING;
-
-        return isProcessing || isQueued;
-      });
-
-      return hasProcessingNodes ? 5000 : false;
-    },
-  });
+  useEffect(() => {
+    if (isError) {
+      router.replace("/dashboard");
+    }
+  }, [isError, router]);
 
   useEffect(() => {
     if (data?.nodes) {
@@ -148,14 +156,87 @@ export function FlowProvider({ children }: { children: ReactNode }) {
 
   const isDeleted = (nodeId: string) => deletedNodeIdsRef.current.has(nodeId);
 
+  // Credit calculation — uses setNodes (stable) and flowId (stable URL param)
+  const calculateCreditsForNode = (nodeId: string) => {
+    setNodes((nds) =>
+      nds.map((n) =>
+        n.id === nodeId
+          ? { ...n, data: { ...n.data, isCalculatingCredits: true } }
+          : n,
+      ),
+    );
+
+    GenerationImageNodeService.calculateCredits({ nodeId, flowId })
+      .then((result) => {
+        setNodes((nds) =>
+          nds.map((n) =>
+            n.id === nodeId
+              ? {
+                  ...n,
+                  data: {
+                    ...n.data,
+                    creditsRequired: result.creditsRequired,
+                    isCalculatingCredits: false,
+                  },
+                }
+              : n,
+          ),
+        );
+      })
+      .catch(() => {
+        setNodes((nds) =>
+          nds.map((n) =>
+            n.id === nodeId
+              ? { ...n, data: { ...n.data, isCalculatingCredits: false } }
+              : n,
+          ),
+        );
+      });
+  };
+
+  // Find generator node IDs that are targets of a given source node
+  const getConnectedGeneratorNodeIds = (sourceNodeId: string): string[] => {
+    return edgesRef.current
+      .filter((e) => e.source === sourceNodeId)
+      .map((e) => nodesRef.current.find((n) => n.id === e.target))
+      .filter((n): n is Node => n?.type === NodeTypeEnum.GENERATION_IMAGE)
+      .map((n) => n.id);
+  };
+
+  // Immediately marks connected generators as calculating (no API call).
+  // Call this on user interaction (typing, file select) so the animation
+  // starts right away, before the debounce/upload fires.
+  const markConnectedGeneratorsAsCalculating = (sourceNodeId: string) => {
+    getConnectedGeneratorNodeIds(sourceNodeId).forEach((nodeId) => {
+      setNodes((nds) =>
+        nds.map((n) =>
+          n.id === nodeId
+            ? { ...n, data: { ...n.data, isCalculatingCredits: true } }
+            : n,
+        ),
+      );
+    });
+  };
+
   const { createPromptNode } = useCreateNodePromptController({
     updateNodes: setNodes,
     isPendingDelete,
     onPendingDelete,
   });
-  const { updatePromptNode } = useUpdateDataPromptNodeController({
-    updateNodes: setNodes,
-  });
+  const { updatePromptNode: _updatePromptNode } =
+    useUpdateDataPromptNodeController({
+      updateNodes: setNodes,
+    });
+
+  const updatePromptNode = async (
+    params: PromptNodeService.UpdateParams,
+  ): Promise<void> => {
+    await _updatePromptNode(params);
+    getConnectedGeneratorNodeIds(params.nodeId).forEach(
+      calculateCreditsForNode,
+    );
+  };
+
   const { createImageNode } = useCreateNodeImageController({
     updateNodes: setNodes,
     isPendingDelete,
@@ -176,17 +257,30 @@ export function FlowProvider({ children }: { children: ReactNode }) {
   });
 
   const { updatePositionNode } = useUpdateNodePositionController();
-  const { uploadImageNode } = useUploadImageNodeController({
+
+  const { uploadImageNode: _uploadImageNode } = useUploadImageNodeController({
     updateNodes: setNodes,
     isDeleted,
+    onUploadComplete: (nodeId) => {
+      getConnectedGeneratorNodeIds(nodeId).forEach(calculateCreditsForNode);
+    },
   });
 
-  const updatePositionNodeDebounced = debounce(updatePositionNode, 300);
+  const uploadImageNode = (
+    params: ImageNodeService.UploadImageParams,
+  ): Promise<ImageNodeService.UploadImageResponse> => {
+    return _uploadImageNode(params);
+  };
+
+  const updatePositionNodeDebouncedRef = useRef(
+    debounce(updatePositionNode, 300),
+  );
 
   const { createEdge } = useCreateEdgeController({
     updateEdges: setEdges,
+    updateNodes: setNodes,
   });
-  const { deleteEdges } = useDeleteEdgesController();
+  const { deleteEdge } = useDeleteEdgeController({ updateNodes: setNodes });
 
   const onNodesChange = (changes: NodeChange[]) => {
     setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot));
@@ -199,7 +293,7 @@ export function FlowProvider({ children }: { children: ReactNode }) {
 
         if (nodeId.startsWith("temp-")) return;
 
-        updatePositionNodeDebounced({
+        updatePositionNodeDebouncedRef.current({
           nodeId,
           flowId,
           position: change.position,
@@ -235,21 +329,44 @@ export function FlowProvider({ children }: { children: ReactNode }) {
         flowId,
       }));
 
-    if (edgesForDelete.length > 0) {
-      deleteEdges({
-        edges: edgesForDelete,
-      });
-    }
+    edgesForDelete.forEach(({ edgeId, flowId }) => {
+      const edge = edges.find((e) => e.id === edgeId);
+      if (!edge) return;
+      const targetNode = nodes.find((n) => n.id === edge.target);
+      if (!targetNode) return;
+
+      deleteEdge({ edgeId, flowId, node: targetNode });
+    });
   };
 
   const onConnect = (params: Connection) => {
     const sourceNode = nodes.find((n) => n.id === params.source);
-    const strokeColor = NODE_COLORS[sourceNode?.type || ""] || "#6b7280";
+
+    if (!sourceNode) {
+      alert("Source node not found.");
+      return;
+    }
+
+    const strokeColor = NODE_COLORS[sourceNode.type || ""] || "#6b7280";
 
     const targetNode = nodes.find((n) => n.id === params.target);
 
+    if (!targetNode) {
+      alert("Target node not found.");
+      return;
+    }
+
     if (
-      targetNode &&
+      sourceNode.type === NodeTypeEnum.GENERATION_IMAGE &&
+      targetNode.type === NodeTypeEnum.GENERATION_IMAGE
+    ) {
+      alert(
+        "Cannot connect from a generation image node to another generation image node.",
+      );
+      return;
+    }
+
+    if (
       targetNode.type === NodeTypeEnum.GENERATION_IMAGE &&
       targetNode.data.isExecuted
     ) {
@@ -261,6 +378,7 @@ export function FlowProvider({ children }: { children: ReactNode }) {
       flowId,
       sourceNodeId: params.source,
       targetNodeId: params.target,
+      node: targetNode!,
     });
 
     setEdges((edgesSnapshot) =>
@@ -276,37 +394,22 @@ export function FlowProvider({ children }: { children: ReactNode }) {
   };
 
   const addPromptNode = () => {
-    const position = {
-      x: 0,
-      y: 0,
-    };
-
     createPromptNode({
-      position: position,
+      position: getViewportCenter(),
       flowId,
     });
   };
 
   const addImageNode = () => {
-    const position = {
-      x: 0,
-      y: 0,
-    };
-
     createImageNode({
-      position: position,
+      position: getViewportCenter(),
       flowId,
     });
   };
 
   const addGenerationImageNode = () => {
-    const position = {
-      x: 0,
-      y: 0,
-    };
-
     createGenerationImageNode({
-      position: position,
+      position: getViewportCenter(),
       flowId,
     });
   };
@@ -374,6 +477,8 @@ export function FlowProvider({ children }: { children: ReactNode }) {
         updatePromptNode,
         updateGenerationImageNode,
         generateImageNode,
+        calculateCreditsForNode,
+        markConnectedGeneratorsAsCalculating,
         getConnectedData,
         updateNodeData,
         uploadImageNode,

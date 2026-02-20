@@ -1,12 +1,15 @@
 "use client";
 
+import { ReactFlowProvider } from "@xyflow/react";
 import { FlowCanvas } from "@/components/FlowCanvas";
 import { FlowProvider } from "@/contexts/flow";
 
 export default function FlowPage() {
   return (
-    <FlowProvider>
-      <FlowCanvas />
-    </FlowProvider>
+    <ReactFlowProvider>
+      <FlowProvider>
+        <FlowCanvas />
+      </FlowProvider>
+    </ReactFlowProvider>
   );
 }

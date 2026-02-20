@@ -2,17 +2,18 @@
 
 import { useMutation } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
-import { AuthService } from "@/services/AuthService";
+import { useContext, useEffect, useRef } from "react";
+import { AuthContext } from "@/contexts/AuthContext/AuthProvider";
 
 export default function AuthCallbackPage() {
   const router = useRouter();
   const queryParams = useSearchParams();
   const code = queryParams.get("code");
+  const { signInWithCode } = useContext(AuthContext);
 
   const { mutate } = useMutation({
-    mutationFn: async () => {
-      await AuthService.exchangeCodeForToken(code!);
+    mutationFn: async (authCode: string) => {
+      await signInWithCode(authCode);
     },
     onSuccess: () => {
       router.replace("/dashboard");
@@ -22,8 +23,12 @@ export default function AuthCallbackPage() {
     },
   });
 
+  const calledRef = useRef(false);
   useEffect(() => {
-    if (code) mutate();
+    if (code && !calledRef.current) {
+      calledRef.current = true;
+      mutate(code);
+    }
   }, [code, mutate]);
 
   return (

@@ -8,16 +8,22 @@ import { ImageNodeService } from "@/services/node/ImageNodeService";
 interface UploadImageNodeParams {
   updateNodes: Dispatch<SetStateAction<Node[]>>;
   isDeleted?: (nodeId: string) => boolean;
+  onUploadComplete?: (nodeId: string) => void;
 }
 
 export function useUploadImageNodeController({
   updateNodes,
   isDeleted,
+  onUploadComplete,
 }: UploadImageNodeParams) {
   const { mutateAsync } = useMutation({
     mutationKey: ["uploadImageNode"],
     mutationFn: async (params: ImageNodeService.UploadImageParams) => {
       const response = await ImageNodeService.upload(params);
+      await ImageNodeService.confirmUpload({
+        nodeId: params.nodeId,
+        flowId: params.flowId,
+      });
       return {
         key: response.key,
         nodeId: params.nodeId,
@@ -47,7 +53,7 @@ export function useUploadImageNodeController({
       return { nodeId, previewUrl };
     },
     onSuccess: (response, _, context) => {
-      const { nodeId, key, imageUrl, flowId } = response;
+      const { nodeId, key, imageUrl } = response;
 
       if (context?.previewUrl) {
         URL.revokeObjectURL(context.previewUrl);
@@ -70,10 +76,7 @@ export function useUploadImageNodeController({
         );
       });
 
-      ImageNodeService.confirmUpload({
-        nodeId,
-        flowId,
-      });
+      onUploadComplete?.(nodeId);
     },
     onError: (error, _, context) => {
       if (context?.previewUrl) {

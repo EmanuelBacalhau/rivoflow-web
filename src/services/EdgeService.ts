@@ -5,21 +5,21 @@ export class EdgeService extends Service {
     params: EdgeService.CreateParams,
   ): Promise<EdgeService.CreateEdgeResponse> {
     const response =
-      await EdgeService.client.post<EdgeService.CreateEdgeResponse>("/edges", {
-        sourceNodeId: params.sourceNodeId,
-        targetNodeId: params.targetNodeId,
-        flowId: params.flowId,
-      });
+      await EdgeService.client.post<EdgeService.CreateEdgeResponse>(
+        `/flows/${params.flowId}/edges`,
+        {
+          sourceNodeId: params.sourceNodeId,
+          targetNodeId: params.targetNodeId,
+        },
+      );
 
     return { edge: response.data.edge };
   }
 
   static async delete(params: EdgeService.DeleteParams): Promise<void> {
-    await EdgeService.client.delete(`/edges/batch`, {
-      data: {
-        edges: params.edges,
-      },
-    });
+    await EdgeService.client.delete(
+      `/flows/${params.flowId}/edges/${params.edgeId}`,
+    );
   }
 }
 
@@ -44,9 +44,7 @@ export namespace EdgeService {
   };
 
   export type DeleteParams = {
-    edges: Array<{
-      edgeId: string;
-      flowId: string;
-    }>;
+    edgeId: string;
+    flowId: string;
   };
 }

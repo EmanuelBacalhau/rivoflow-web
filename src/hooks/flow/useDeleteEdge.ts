@@ -1,15 +1,65 @@
 import { useMutation } from "@tanstack/react-query";
+import type { Node } from "@xyflow/react";
+import type { Dispatch, SetStateAction } from "react";
 import { EdgeService } from "@/services/EdgeService";
+import { GenerationImageNodeService } from "@/services/node/GenerationImageNodeService";
+import { NodeTypeEnum } from "@/types";
 
-export function useDeleteEdgesController() {
+type DeleteEdgeParams = {
+  updateNodes: Dispatch<SetStateAction<Node[]>>;
+};
+
+export function useDeleteEdgeController({ updateNodes }: DeleteEdgeParams) {
   const { mutateAsync } = useMutation({
     mutationKey: ["deleteEdge"],
-    mutationFn: async (paramsEdge: EdgeService.DeleteParams) => {
+    mutationFn: async (
+      paramsEdge: EdgeService.DeleteParams & { node: Node },
+    ) => {
       await EdgeService.delete(paramsEdge);
+    },
+    onSuccess: async (_, paramsEdge) => {
+      if (paramsEdge.node.data.type === NodeTypeEnum.GENERATION_IMAGE) {
+        const nodeId = paramsEdge.node.id;
+        updateNodes((nds) =>
+          nds.map((n) =>
+            n.id === nodeId
+              ? { ...n, data: { ...n.data, isCalculatingCredits: true } }
+              : n,
+          ),
+        );
+        try {
+          const result = await GenerationImageNodeService.calculateCredits({
+            flowId: paramsEdge.flowId,
+            nodeId,
+          });
+          updateNodes((nds) =>
+            nds.map((n) =>
+              n.id === nodeId
+                ? {
+                    ...n,
+                    data: {
+                      ...n.data,
+                      creditsRequired: result.creditsRequired,
+                      isCalculatingCredits: false,
+                    },
+                  }
+                : n,
+            ),
+          );
+        } catch {
+          updateNodes((nds) =>
+            nds.map((n) =>
+              n.id === nodeId
+                ? { ...n, data: { ...n.data, isCalculatingCredits: false } }
+                : n,
+            ),
+          );
+        }
+      }
     },
   });
 
   return {
-    deleteEdges: mutateAsync,
+    deleteEdge: mutateAsync,
   };
 }

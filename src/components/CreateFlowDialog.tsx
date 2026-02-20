@@ -1,9 +1,8 @@
 "use client";
 
-import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ProjectService } from "@/services/ProjectService";
+import { useCreateFlow } from "@/hooks/mutations/useCreateFlow";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -25,14 +24,12 @@ export function CreateProjectDialog({
   const router = useRouter();
   const [name, setName] = useState("");
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: () => ProjectService.create(name.trim() || "Novo Projeto"),
-    onSuccess: ({ project }) => {
-      onOpenChange(false);
-      setName("");
-      router.push(`/dashboard/projects/${project.id}`);
-    },
-  });
+  const { createFlow, isCreatingFlow } = useCreateFlow();
+
+  const handleCreateFlow = async (flowName: string) => {
+    const { flow } = await createFlow(flowName);
+    router.push(`/dashboard/flow/${flow.id}`);
+  };
 
   const handleOpenChange = (value: boolean) => {
     if (!value) setName("");
@@ -42,16 +39,18 @@ export function CreateProjectDialog({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-sm">
-        <DialogTitle>Novo Projeto</DialogTitle>
+        <DialogTitle>Novo Flow</DialogTitle>
         <DialogDescription>
-          Dê um nome ao seu projeto para organizar seus flows.
+          Dê um nome ao seu flow para organizá-lo.
         </DialogDescription>
         <div className="space-y-4 pt-2">
           <Input
             placeholder="Ex: Campanha Verão 2025"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && !isPending && mutate()}
+            onKeyDown={(e) =>
+              e.key === "Enter" && !isCreatingFlow && handleCreateFlow(name)
+            }
             autoFocus
           />
           <div className="flex justify-end gap-2">
@@ -65,10 +64,10 @@ export function CreateProjectDialog({
             <Button
               size="sm"
               className="bg-indigo-600 hover:bg-indigo-700 text-white"
-              onClick={() => mutate()}
-              disabled={isPending}
+              onClick={() => handleCreateFlow(name)}
+              disabled={isCreatingFlow}
             >
-              {isPending ? "Criando..." : "Criar Projeto"}
+              {isCreatingFlow ? "Criando..." : "Criar Flow"}
             </Button>
           </div>
         </div>

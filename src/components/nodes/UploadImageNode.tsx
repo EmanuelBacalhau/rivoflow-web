@@ -24,7 +24,8 @@ type UploadImageNodeData = ImageNodeService.Node["data"] & {
 };
 
 export function UploadImageNode({ id, data, selected }: NodeProps) {
-  const { uploadImageNode, flowId } = useFlow();
+  const { uploadImageNode, flowId, markConnectedGeneratorsAsCalculating } =
+    useFlow();
   const nodeData = data as UploadImageNodeData;
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -33,6 +34,7 @@ export function UploadImageNode({ id, data, selected }: NodeProps) {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
+      markConnectedGeneratorsAsCalculating(id);
       uploadImageNode({
         flowId,
         nodeId: id,

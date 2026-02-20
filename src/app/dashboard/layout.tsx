@@ -1,6 +1,5 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import {
   FolderIcon,
   HistoryIcon,
@@ -15,12 +14,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { CreateProjectDialog } from "@/components/CreateProjectDialog";
+import { CreateProjectDialog } from "@/components/CreateFlowDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { ProjectService } from "@/services/ProjectService";
+import type { ProjectService } from "@/services/ProjectService";
 
 const SEARCH_THRESHOLD = 5;
 
@@ -51,12 +50,12 @@ function DashboardSidebar({ onNewProject }: { onNewProject: () => void }) {
   const pathname = usePathname();
   const [search, setSearch] = useState("");
 
-  const { data } = useQuery({
-    queryKey: ["projects"],
-    queryFn: ProjectService.getAll,
-  });
+  // const { data } = useQuery({
+  //   queryKey: ["projects"],
+  //   queryFn: ProjectService.getAll,
+  // });
 
-  const projects = data?.projects ?? [];
+  const projects: ProjectService.Project[] = [];
   const showSearch = projects.length > SEARCH_THRESHOLD;
   const filteredProjects = search.trim()
     ? projects.filter((p) =>

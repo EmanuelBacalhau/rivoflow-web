@@ -12,11 +12,10 @@ export class GenerationImageNodeService extends Service {
   ): Promise<GenerationImageNodeService.CreateImageNodeResponse> {
     const response =
       await GenerationImageNodeService.client.post<GenerationImageNodeService.CreateImageNodeResponse>(
-        "/nodes",
+        `/flows/${params.flowId}/nodes`,
         {
           nodeType: NodeTypeEnum.GENERATION_IMAGE,
           position: params.position,
-          flowId: params.flowId,
         },
       );
 
@@ -26,20 +25,34 @@ export class GenerationImageNodeService extends Service {
   }
 
   static async update(params: GenerationImageNodeService.UpdateParams) {
-    await GenerationImageNodeService.client.put(`/nodes/${params.nodeId}`, {
-      flowId: params.flowId,
-      data: params.data,
-    });
+    await GenerationImageNodeService.client.put(
+      `/flows/${params.flowId}/nodes/${params.nodeId}`,
+      {
+        data: params.data,
+      },
+    );
   }
 
   static async generate(
     params: GenerationImageNodeService.GenerateImageParams,
   ) {
-    await GenerationImageNodeService.client.post(`/nodes/generate-image`, {
-      flowId: params.flowId,
-      nodeGeneratorId: params.nodeGeneratorId,
-      inputs: params.inputs,
-    });
+    await GenerationImageNodeService.client.post(
+      `/flows/${params.flowId}/nodes/${params.nodeGeneratorId}/generate-image`,
+      {
+        inputs: params.inputs,
+      },
+    );
+  }
+
+  static async calculateCredits(
+    params: GenerationImageNodeService.CalculateCreditsParams,
+  ): Promise<GenerationImageNodeService.CalculateCreditsResponse> {
+    const response =
+      await GenerationImageNodeService.client.get<GenerationImageNodeService.CalculateCreditsResponse>(
+        `/flows/${params.flowId}/nodes/${params.nodeId}/calculate-credits`,
+      );
+
+    return response.data;
   }
 }
 
@@ -65,5 +78,14 @@ export namespace GenerationImageNodeService {
     flowId: string;
     nodeId: string;
     data: Partial<NodeDataGenerationImage>;
+  };
+
+  export type CalculateCreditsParams = {
+    nodeId: string;
+    flowId: string;
+  };
+
+  export type CalculateCreditsResponse = {
+    creditsRequired: number;
   };
 }

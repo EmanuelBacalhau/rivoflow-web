@@ -3,11 +3,13 @@
 import { Handle, type NodeProps, Position } from "@xyflow/react";
 import {
   ArrowRightIcon,
+  CoinsIcon,
   Loader2Icon,
   SparklesIcon,
   XIcon,
   ZapIcon,
 } from "lucide-react";
+
 import { useMemo, useState } from "react";
 import { useFlow } from "@/contexts/flow";
 import {
@@ -30,6 +32,8 @@ import { Separator } from "../ui/separator";
 
 type AIGeneratorNodeData = NodeDataGenerationImage & {
   isExecuted?: boolean;
+  creditsRequired?: number;
+  isCalculatingCredits?: boolean;
 };
 
 export function AIGeneratorNode({ id, data, selected }: NodeProps) {
@@ -39,6 +43,7 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
     flowId,
     updateGenerationImageNode,
     generateImageNode,
+    calculateCreditsForNode,
   } = useFlow();
   const nodeData = data as AIGeneratorNodeData;
 
@@ -48,9 +53,9 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
     return getConnectedData(id);
   }, [id, getConnectedData]);
 
-  const handleFormatChange = (value: string) => {
+  const handleFormatChange = async (value: string) => {
     updateNodeData(id, { format: value as AspectRatio });
-    updateGenerationImageNode({
+    await updateGenerationImageNode({
       flowId,
       nodeId: id,
       data: {
@@ -61,11 +66,12 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
         },
       },
     });
+    calculateCreditsForNode(id);
   };
 
-  const handleQualityChange = (value: string) => {
+  const handleQualityChange = async (value: string) => {
     updateNodeData(id, { quality: value as ImageSize });
-    updateGenerationImageNode({
+    await updateGenerationImageNode({
       flowId,
       nodeId: id,
       data: {
@@ -76,6 +82,7 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
         },
       },
     });
+    calculateCreditsForNode(id);
   };
 
   const handleGenerateImage = async () => {
@@ -96,8 +103,16 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
 
   const isCompleted = nodeData.status === GenerationStatusEnum.COMPLETED;
 
+  const isCalculating = nodeData.isCalculatingCredits === true;
+
   const isButtonDisabled =
-    false || !hasPrompts || nodeData.isExecuted || isProcessing || isCompleted;
+    !hasPrompts ||
+    nodeData.isExecuted ||
+    isProcessing ||
+    isCompleted ||
+    isCalculating;
+
+  const creditsRequired = nodeData.creditsRequired;
 
   return (
     <div
@@ -232,31 +247,57 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
           </div>
         )}
 
-        <Button
-          onClick={handleGenerateImage}
-          disabled={isButtonDisabled}
-          className="w-full bg-linear-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg shadow-sm nodrag h-9"
-        >
-          {isProcessing ? (
-            <>
-              <Loader2Icon
-                className="size-4 animate-spin mr-1.5"
-                strokeWidth={2}
-              />
-              <span className="text-sm">Gerando...</span>
-            </>
-          ) : isCompleted ? (
-            <>
-              <span className="text-sm">Imagem gerada!</span>
-              <ArrowRightIcon className="size-4 ml-1.5" strokeWidth={2} />
-            </>
-          ) : (
-            <>
-              <SparklesIcon className="size-4 mr-1.5" strokeWidth={2} />
-              <span className="text-sm">Gerar Imagem</span>
-            </>
-          )}
-        </Button>
+        <div className="space-y-1.5">
+          <Button
+            onClick={handleGenerateImage}
+            disabled={isButtonDisabled}
+            className="w-full bg-linear-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg shadow-sm nodrag h-9"
+          >
+            {isCalculating ? (
+              <>
+                <Loader2Icon
+                  className="size-4 animate-spin mr-1.5"
+                  strokeWidth={2}
+                />
+                <span className="text-sm">Calculando...</span>
+              </>
+            ) : isProcessing ? (
+              <>
+                <Loader2Icon
+                  className="size-4 animate-spin mr-1.5"
+                  strokeWidth={2}
+                />
+                <span className="text-sm">Gerando...</span>
+              </>
+            ) : isCompleted ? (
+              <>
+                <span className="text-sm">Imagem gerada!</span>
+                <ArrowRightIcon className="size-4 ml-1.5" strokeWidth={2} />
+              </>
+            ) : (
+              <>
+                <SparklesIcon className="size-4 mr-1.5" strokeWidth={2} />
+                <span className="text-sm">Gerar Imagem</span>
+                {creditsRequired !== undefined && (
+                  <span className="ml-auto flex items-center gap-0.5 text-[10px] bg-white/20 px-1.5 py-0.5 rounded-full leading-none">
+                    <CoinsIcon className="size-2.5" />
+                    {creditsRequired}
+                  </span>
+                )}
+              </>
+            )}
+          </Button>
+
+          {creditsRequired !== undefined &&
+            !isCalculating &&
+            !isProcessing &&
+            !isCompleted && (
+              <p className="text-center text-[10px] text-purple-600/60">
+                {creditsRequired} crédito{creditsRequired !== 1 ? "s" : ""}{" "}
+                serão consumidos
+              </p>
+            )}
+        </div>
       </div>
     </div>
   );

@@ -1,55 +1,26 @@
 import type { Position } from "@/types/node";
-import type { EdgeService } from "../EdgeService";
 import { Service } from "../Service";
-import type { GenerationImageNodeService } from "./GenerationImageNodeService";
-import type { ImageNodeService } from "./ImageNodeService";
-import type { PromptNodeService } from "./PromptNodeService";
 
 export class NodeService extends Service {
-  static async getNodesByFlowId(
-    flowId: string,
-  ): Promise<NodeService.GetNodesByFlowIdResponse> {
-    const response =
-      await NodeService.client.get<NodeService.GetNodesByFlowIdResponse>(
-        `/flows/${flowId}`,
-      );
-
-    return response.data;
-  }
-
   static async updatePosition(
     params: NodeService.UpdateNodePositionParams,
   ): Promise<void> {
-    await NodeService.client.put(`/nodes/${params.nodeId}`, {
-      position: params.position,
-      flowId: params.flowId,
-    });
+    await NodeService.client.put(
+      `/flows/${params.flowId}/nodes/${params.nodeId}`,
+      {
+        position: params.position,
+      },
+    );
   }
 
   static async delete(params: NodeService.DeleteNodeParams): Promise<void> {
     await NodeService.client.delete(
-      `/nodes/${params.nodeId}/flows/${params.flowId}`,
+      `/flows/${params.flowId}/nodes/${params.nodeId}`,
     );
   }
 }
 
 export namespace NodeService {
-  export type GetNodesByFlowIdResponse = {
-    flow: {
-      title: string;
-      projectId: string;
-      id: string;
-      createdAt: string;
-      updatedAt: string;
-    };
-    nodes: Array<
-      | PromptNodeService.Node
-      | ImageNodeService.Node
-      | GenerationImageNodeService.Node
-    >;
-    edges: Array<EdgeService.Edge>;
-  };
-
   export type UpdateNodePositionParams = {
     nodeId: string;
     flowId: string;

@@ -7,11 +7,10 @@ export class ImageNodeService extends Service {
   ): Promise<ImageNodeService.CreateImageNodeResponse> {
     const response =
       await ImageNodeService.client.post<ImageNodeService.CreateImageNodeResponse>(
-        "/nodes",
+        `/flows/${params.flowId}/nodes`,
         {
           nodeType: NodeTypeEnum.IMAGE,
           position: params.position,
-          flowId: params.flowId,
         },
       );
 
@@ -30,11 +29,8 @@ export class ImageNodeService extends Service {
 
     const response =
       await ImageNodeService.client.post<ImageNodeService.UploadImageAxiosResponse>(
-        `/nodes/${params.nodeId}/upload`,
-        {
-          flowId: params.flowId,
-          file,
-        },
+        `/flows/${params.flowId}/nodes/${params.nodeId}/upload`,
+        { file },
       );
     const { uploadSignature, key, imageUrl } = response.data;
 
@@ -48,10 +44,7 @@ export class ImageNodeService extends Service {
 
   static async confirmUpload(params: ImageNodeService.ConfirmUploadParams) {
     await ImageNodeService.client.patch(
-      `/nodes/${params.nodeId}/confirm-upload`,
-      {
-        flowId: params.flowId,
-      },
+      `/flows/${params.flowId}/nodes/${params.nodeId}/confirm-upload`,
     );
   }
 }

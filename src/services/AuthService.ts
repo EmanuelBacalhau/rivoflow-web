@@ -16,6 +16,7 @@ export class AuthService extends Service {
           },
         },
       );
+
     return response.data;
   }
 }

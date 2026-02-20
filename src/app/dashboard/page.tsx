@@ -1,6 +1,5 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import {
   ArrowRightIcon,
   CheckIcon,
@@ -13,9 +12,9 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { CreateProjectDialog } from "@/components/CreateProjectDialog";
+import { CreateProjectDialog } from "@/components/CreateFlowDialog";
 import { Button } from "@/components/ui/button";
-import { ProjectService } from "@/services/ProjectService";
+import type { ProjectService } from "@/services/ProjectService";
 
 const MOCK_PROJECTS: ProjectService.Project[] = [
   {
@@ -69,25 +68,9 @@ const STATS = [
   },
 ];
 
-function timeAgo(dateStr: string) {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const days = Math.floor(diff / 86400000);
-  if (days === 0) return "Hoje";
-  if (days === 1) return "Ontem";
-  return `${days} dias atrás`;
-}
-
 export default function DashboardPage() {
   const router = useRouter();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-
-  const { data, isLoading } = useQuery({
-    queryKey: ["projects"],
-    queryFn: ProjectService.getAll,
-    placeholderData: { projects: MOCK_PROJECTS },
-  });
-
-  const projects = data?.projects ?? [];
 
   return (
     <div className="p-8 max-w-5xl mx-auto">
@@ -124,7 +107,7 @@ export default function DashboardPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">
-                {"dynamic" in stat ? String(projects.length) : stat.value}
+                {"dynamic" in stat ? String(MOCK_PROJECTS.length) : stat.value}
               </p>
               <p className="text-xs text-muted-foreground mt-0.5">
                 {stat.label}
@@ -139,7 +122,7 @@ export default function DashboardPage() {
         <h2 className="text-base font-semibold">Seus Projetos</h2>
       </div>
 
-      {isLoading ? (
+      {/* {isLoading ? (
         <div className="grid md:grid-cols-3 gap-4">
           {[1, 2, 3].map((n) => (
             <div
@@ -184,7 +167,6 @@ export default function DashboardPage() {
             </button>
           ))}
 
-          {/* New project card */}
           <button
             type="button"
             onClick={() => setIsCreateOpen(true)}
@@ -194,7 +176,7 @@ export default function DashboardPage() {
             <span className="text-sm font-medium">Novo Projeto</span>
           </button>
         </div>
-      )}
+      )} */}
 
       {/* Credits recharge */}
       <div className="mt-10 rounded-xl border border-border/50 bg-card p-6">
