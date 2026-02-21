@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body
-        className={`${roboto.variable} ${roboto.variable} antialiased min-h-screen`}
+        className={`${roboto.variable} ${roboto.variable} antialiased min-h-screen dark`}
       >
         <MainProvider>{children}</MainProvider>
       </body>

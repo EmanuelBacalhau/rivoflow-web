@@ -4,7 +4,7 @@ import {
   type Position,
   type PromptNode,
 } from "@/types/node";
-import { Service } from "../Service";
+import { Service } from "../service";
 
 export class PromptNodeService extends Service {
   static async create(

@@ -6,12 +6,11 @@ import {
   CoinsIcon,
   Loader2Icon,
   SparklesIcon,
-  XIcon,
   ZapIcon,
 } from "lucide-react";
 
-import { useMemo, useState } from "react";
-import { useFlow } from "@/contexts/FlowContext";
+import { useMemo } from "react";
+import { useFlow } from "@/contexts/flow-context";
 import {
   type AspectRatio,
   GenerationStatusEnum,
@@ -19,6 +18,7 @@ import {
   type NodeDataGenerationImage,
 } from "@/types";
 import { Button } from "../ui/button";
+import { Card, CardContent, CardHeader } from "../ui/card";
 import {
   Select,
   SelectContent,
@@ -28,7 +28,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { Separator } from "../ui/separator";
 
 type AIGeneratorNodeData = NodeDataGenerationImage & {
   isExecuted?: boolean;
@@ -46,8 +45,6 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
     calculateCreditsForNode,
   } = useFlow();
   const nodeData = data as AIGeneratorNodeData;
-
-  const [error, _setError] = useState<string | null>(null);
 
   const connectedData = useMemo(() => {
     return getConnectedData(id);
@@ -115,8 +112,8 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
   const creditsRequired = nodeData.creditsRequired;
 
   return (
-    <div
-      className={`w-80 rounded-xl border bg-white shadow-md overflow-hidden transition-shadow ${selected ? "border-purple-400 ring-2 ring-purple-300 shadow-purple-100 shadow-lg" : "border-purple-200"}`}
+    <Card
+      className={`w-80 gap-0 py-0 shadow-md overflow-hidden transition-shadow ${selected ? "border-purple-400 ring-2 ring-purple-300 shadow-purple-400 shadow-lg" : "border-purple-200"}`}
     >
       <Handle
         type="source"
@@ -130,15 +127,15 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
       />
 
       {/* Header */}
-      <div className="flex items-center gap-2.5 px-3 py-2.5 bg-linear-to-r from-purple-50 to-violet-50 border-b border-purple-100">
+      <CardHeader className="flex flex-row items-center gap-2.5 px-3 py-2.5! bg-linear-to-r from-purple-500/10 to-violet-500/10 border-b border-purple-500/20 space-y-0">
         <div className="w-7 h-7 rounded-lg bg-linear-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow-sm shrink-0">
           <SparklesIcon className="size-3.5 text-white" strokeWidth={2} />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-sm text-gray-800 leading-tight">
+          <h3 className="font-semibold text-sm text-card-foreground leading-tight">
             Gerador AI
           </h3>
-          <p className="text-[10px] text-purple-600/80">Gere imagens com IA</p>
+          <p className="text-[10px] text-purple-500">Gere imagens com IA</p>
         </div>
         {hasAnyInput && (
           <div className="flex gap-1">
@@ -154,13 +151,13 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
             )}
           </div>
         )}
-      </div>
+      </CardHeader>
 
       {/* Body */}
-      <div className="p-3 space-y-3">
+      <CardContent className="p-3 space-y-3">
         {!hasAnyInput && (
-          <div className="py-2 px-3 bg-gray-50 border border-dashed border-gray-200 rounded-lg text-center">
-            <p className="text-[10px] text-gray-500">
+          <div className="py-2 px-3 bg-muted border border-dashed border-border rounded-lg text-center">
+            <p className="text-[10px] text-muted-foreground">
               Conecte um{" "}
               <span className="text-amber-600 font-medium">Prompt</span> ou{" "}
               <span className="text-blue-600 font-medium">Imagem</span>
@@ -168,11 +165,10 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
           </div>
         )}
 
-        <Separator />
-
         <div className="grid grid-cols-2 gap-2">
+          {/* FORMAT */}
           <div className="space-y-1">
-            <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wide">
+            <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">
               Formato
             </span>
             <Select
@@ -201,9 +197,9 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
               </SelectContent>
             </Select>
           </div>
-
+          {/* QUALITY */}
           <div className="space-y-1">
-            <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wide">
+            <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">
               Qualidade
             </span>
             <Select
@@ -240,13 +236,7 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
           </div>
         </div>
 
-        {error && (
-          <div className="flex items-start gap-1.5 p-2 bg-red-50 border border-red-200 rounded-lg">
-            <XIcon className="size-3 text-red-500 mt-0.5 shrink-0" />
-            <p className="text-[10px] text-red-600 line-clamp-2">{error}</p>
-          </div>
-        )}
-
+        {/* GENERATE BUTTON */}
         <div className="space-y-1.5">
           <Button
             onClick={handleGenerateImage}
@@ -292,13 +282,13 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
             !isCalculating &&
             !isProcessing &&
             !isCompleted && (
-              <p className="text-center text-[10px] text-purple-600/60">
+              <p className="text-center text-[10px] text-purple-500/70">
                 {creditsRequired} crédito{creditsRequired !== 1 ? "s" : ""}{" "}
                 serão consumidos
               </p>
             )}
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

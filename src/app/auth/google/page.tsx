@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { env } from "@/env";
 import { getOAuthCallbackURL } from "@/utils/getOAuthCallbackURL";
 
@@ -36,8 +35,6 @@ function GoogleIcon() {
 }
 
 export default function GoogleLoginPage() {
-  const router = useRouter();
-
   function handleGoogleSignIn() {
     const authorizationUrl = env.NEXT_PUBLIC_OUATH_AUTHORIZATION_URL;
     const clientId = env.NEXT_PUBLIC_CLIENT_ID;
@@ -63,7 +60,7 @@ export default function GoogleLoginPage() {
         <div className="rounded-2xl border border-border/60 bg-card/60 backdrop-blur-sm p-8 shadow-xl flex flex-col items-center gap-6">
           <Link href="/" className="flex flex-col items-center gap-2.5">
             <Image
-              src="/rivoflow.png"
+              src="/logo.png"
               alt="RIVOFLOW"
               width={52}
               height={52}

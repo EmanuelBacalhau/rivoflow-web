@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { AccountService } from "@/services/AccountService";
+import { AccountService } from "@/services/account-service";
 
 interface IUseAccountParams {
   enabled?: boolean;

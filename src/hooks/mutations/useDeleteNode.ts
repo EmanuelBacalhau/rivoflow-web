@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { NodeService } from "@/services/node/NodeService";
+import { NodeService } from "@/services/node/node-service";
 
 export function useDeleteNodeController() {
   const { mutateAsync } = useMutation({

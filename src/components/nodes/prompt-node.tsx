@@ -3,9 +3,10 @@
 import { Handle, type NodeProps, Position } from "@xyflow/react";
 import { CheckIcon, MessageCircleMoreIcon } from "lucide-react";
 import { useRef } from "react";
-import { useFlow } from "@/contexts/FlowContext";
-import type { PromptNodeService } from "@/services/node/PromptNodeService";
+import { useFlow } from "@/contexts/flow-context";
+import type { PromptNodeService } from "@/services/node/prompt-node-service";
 import { debounce } from "@/utils/debounce";
+import { Card, CardContent, CardHeader } from "../ui/card";
 import { Textarea } from "../ui/textarea";
 
 type PromptNodeData = PromptNodeService.Node["data"] & {
@@ -23,8 +24,6 @@ export function PromptNode({ id: nodeId, data, selected }: NodeProps) {
 
   const charCount = nodeData.prompt?.length ?? 0;
 
-  // Keep a ref to the latest updatePromptNode so the debounced function is
-  // never recreated on re-renders (typing triggers re-renders via updateNodeData)
   const updatePromptNodeRef = useRef(updatePromptNode);
   updatePromptNodeRef.current = updatePromptNode;
 
@@ -46,8 +45,8 @@ export function PromptNode({ id: nodeId, data, selected }: NodeProps) {
   };
 
   return (
-    <div
-      className={`w-72 rounded-xl border bg-white shadow-md overflow-hidden transition-shadow ${selected ? "border-amber-400 ring-2 ring-amber-300 shadow-amber-100 shadow-lg" : "border-amber-200"}`}
+    <Card
+      className={`w-72 gap-0 py-0 shadow-md overflow-hidden transition-shadow ${selected ? "border-amber-400 ring-2 ring-amber-300 shadow-amber-400 shadow-lg" : "border-amber-200"}`}
     >
       <Handle
         type="source"
@@ -55,7 +54,7 @@ export function PromptNode({ id: nodeId, data, selected }: NodeProps) {
         className="size-3! bg-amber-400! border-2! border-white!"
       />
 
-      <div className="flex items-center gap-2.5 px-3 py-2.5 bg-linear-to-r from-amber-50 to-orange-50 border-b border-amber-100">
+      <CardHeader className="flex flex-row items-center gap-2.5 px-3 py-2.5! bg-linear-to-r from-amber-500/10 to-orange-500/10 border-b border-amber-500/20 space-y-0">
         <div className="w-7 h-7 rounded-lg bg-linear-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-sm shrink-0">
           <MessageCircleMoreIcon
             className="size-3.5 text-white"
@@ -63,21 +62,21 @@ export function PromptNode({ id: nodeId, data, selected }: NodeProps) {
           />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-sm text-gray-800 leading-tight">
+          <h3 className="font-semibold text-sm text-card-foreground leading-tight">
             Prompt
           </h3>
-          <p className="text-[10px] text-amber-600/80">Descreva o estilo</p>
+          <p className="text-[10px] text-amber-500">Descreva o estilo</p>
         </div>
         {nodeData.isExecuted && (
-          <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+          <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center shrink-0">
             <CheckIcon className="size-3 text-green-600" />
           </div>
         )}
-      </div>
+      </CardHeader>
 
-      <div className="p-3 space-y-2">
+      <CardContent className="p-3 space-y-2">
         <Textarea
-          className="nodrag resize-none h-24 text-xs bg-gray-50 border-amber-200 focus-visible:ring-amber-300 placeholder:text-gray-400"
+          className="nodrag resize-none h-24 text-xs bg-muted border-amber-500/30 focus-visible:ring-amber-500/30 placeholder:text-muted-foreground"
           placeholder="Ex: produto minimalista, fundo clean, luz natural suave..."
           value={nodeData.prompt || ""}
           onChange={handleChange}
@@ -85,10 +84,12 @@ export function PromptNode({ id: nodeId, data, selected }: NodeProps) {
         />
         {charCount > 0 && (
           <div className="flex justify-end">
-            <span className="text-[10px] text-gray-400">{charCount} chars</span>
+            <span className="text-[10px] text-muted-foreground">
+              {charCount} chars
+            </span>
           </div>
         )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

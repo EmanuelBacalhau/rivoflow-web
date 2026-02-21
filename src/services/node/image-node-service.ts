@@ -1,5 +1,5 @@
 import { type ImageNode, NodeTypeEnum, type Position } from "@/types/node";
-import { Service } from "../Service";
+import { Service } from "../service";
 
 export class ImageNodeService extends Service {
   static async create(

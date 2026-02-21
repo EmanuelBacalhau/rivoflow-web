@@ -1,8 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
 import type { Edge, Node } from "@xyflow/react";
 import type { Dispatch, SetStateAction } from "react";
-import { EdgeService } from "@/services/EdgeService";
-import { GenerationImageNodeService } from "@/services/node/GenerationImageNodeService";
+import { EdgeService } from "@/services/edge-service";
+import { GenerationImageNodeService } from "@/services/node/generation-image-node-service";
 import { NodeTypeEnum } from "@/types";
 
 type CreateEdgeParams = {

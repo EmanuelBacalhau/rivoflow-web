@@ -3,7 +3,7 @@ import type { Node } from "@xyflow/react";
 import { isAxiosError } from "axios";
 import type { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
-import { ImageNodeService } from "@/services/node/ImageNodeService";
+import { ImageNodeService } from "@/services/node/image-node-service";
 
 interface UploadImageNodeParams {
   updateNodes: Dispatch<SetStateAction<Node[]>>;

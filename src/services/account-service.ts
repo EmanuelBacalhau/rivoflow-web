@@ -1,9 +1,11 @@
-import { Service } from "./Service";
+import { Service } from "./service";
 
 export class AccountService extends Service {
   static async getMe(): Promise<AccountService.GetMeResponse> {
     const response =
-      await AccountService.client.get<AccountService.GetMeResponse>("/me");
+      await AccountService.client.get<AccountService.GetMeResponse>(
+        "/account/me",
+      );
     return response.data;
   }
 }

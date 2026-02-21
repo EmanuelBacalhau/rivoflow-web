@@ -1,5 +1,5 @@
 import type { Position } from "@/types/node";
-import { Service } from "../Service";
+import { Service } from "../service";
 
 export class NodeService extends Service {
   static async updatePosition(

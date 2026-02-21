@@ -13,7 +13,7 @@ export default function NotFound() {
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center">
           <Link href="/">
             <Image
-              src="/rivoflow.png"
+              src="/logo.png"
               alt="RIVOFLOW"
               width={36}
               height={36}

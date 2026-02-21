@@ -22,6 +22,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { toast } from "sonner";
 import { useCreateEdgeController } from "@/hooks/mutations/useCreateEdge";
 import { useCreateNodeGenerationImageController } from "@/hooks/mutations/useCreateGenerationImageNode";
 import { useCreateNodeImageController } from "@/hooks/mutations/useCreateImageNode";
@@ -34,9 +35,9 @@ import { useUpdateNodePositionController } from "@/hooks/mutations/useUpdateNode
 import { useUpdateDataPromptNodeController } from "@/hooks/mutations/useUpdatePromptNode";
 import { useUploadImageNodeController } from "@/hooks/mutations/useUploadImageNode";
 import { useFlowNodes } from "@/hooks/queries/useFlowNodes";
-import { GenerationImageNodeService } from "@/services/node/GenerationImageNodeService";
-import type { ImageNodeService } from "@/services/node/ImageNodeService";
-import type { PromptNodeService } from "@/services/node/PromptNodeService";
+import { GenerationImageNodeService } from "@/services/node/generation-image-node-service";
+import type { ImageNodeService } from "@/services/node/image-node-service";
+import type { PromptNodeService } from "@/services/node/prompt-node-service";
 import { NodeTypeEnum } from "@/types";
 import { debounce } from "@/utils/debounce";
 
@@ -95,15 +96,12 @@ export function FlowProvider({ children }: { children: ReactNode }) {
       y: window.innerHeight / 2,
     });
 
-  // Always-current refs for async callbacks (avoids stale closures)
   const nodesRef = useRef<Node[]>([]);
   const edgesRef = useRef<Edge[]>([]);
   nodesRef.current = nodes;
   edgesRef.current = edges;
 
-  // Tracks real node IDs that have been deleted — used to cancel in-flight operations
   const deletedNodeIdsRef = useRef<Set<string>>(new Set());
-  // Tracks temp IDs deleted before the server responded to create — prevents ghost nodes
   const pendingDeleteRef = useRef<Set<string>>(new Set());
 
   const { data, isLoading, isError } = useFlowNodes({ flowId });
@@ -144,7 +142,6 @@ export function FlowProvider({ children }: { children: ReactNode }) {
     }
   }, [data]);
 
-  // deleteNode is initialised first so it can be referenced by create hooks' onPendingDelete
   const { deleteNode } = useDeleteNodeController();
 
   const isPendingDelete = (tempId: string) =>
@@ -156,8 +153,7 @@ export function FlowProvider({ children }: { children: ReactNode }) {
 
   const isDeleted = (nodeId: string) => deletedNodeIdsRef.current.has(nodeId);
 
-  // Credit calculation — uses setNodes (stable) and flowId (stable URL param)
-  const calculateCreditsForNode = (nodeId: string) => {
+  const calculateCreditsForNode = async (nodeId: string) => {
     setNodes((nds) =>
       nds.map((n) =>
         n.id === nodeId
@@ -166,35 +162,37 @@ export function FlowProvider({ children }: { children: ReactNode }) {
       ),
     );
 
-    GenerationImageNodeService.calculateCredits({ nodeId, flowId })
-      .then((result) => {
-        setNodes((nds) =>
-          nds.map((n) =>
-            n.id === nodeId
-              ? {
-                  ...n,
-                  data: {
-                    ...n.data,
-                    creditsRequired: result.creditsRequired,
-                    isCalculatingCredits: false,
-                  },
-                }
-              : n,
-          ),
-        );
-      })
-      .catch(() => {
-        setNodes((nds) =>
-          nds.map((n) =>
-            n.id === nodeId
-              ? { ...n, data: { ...n.data, isCalculatingCredits: false } }
-              : n,
-          ),
-        );
+    try {
+      const result = await GenerationImageNodeService.calculateCredits({
+        nodeId,
+        flowId,
       });
+
+      setNodes((nds) =>
+        nds.map((n) =>
+          n.id === nodeId
+            ? {
+                ...n,
+                data: {
+                  ...n.data,
+                  creditsRequired: result.creditsRequired,
+                  isCalculatingCredits: false,
+                },
+              }
+            : n,
+        ),
+      );
+    } catch {
+      setNodes((nds) =>
+        nds.map((n) =>
+          n.id === nodeId
+            ? { ...n, data: { ...n.data, isCalculatingCredits: false } }
+            : n,
+        ),
+      );
+    }
   };
 
-  // Find generator node IDs that are targets of a given source node
   const getConnectedGeneratorNodeIds = (sourceNodeId: string): string[] => {
     return edgesRef.current
       .filter((e) => e.source === sourceNodeId)
@@ -203,9 +201,6 @@ export function FlowProvider({ children }: { children: ReactNode }) {
       .map((n) => n.id);
   };
 
-  // Immediately marks connected generators as calculating (no API call).
-  // Call this on user interaction (typing, file select) so the animation
-  // starts right away, before the debounce/upload fires.
   const markConnectedGeneratorsAsCalculating = (sourceNodeId: string) => {
     getConnectedGeneratorNodeIds(sourceNodeId).forEach((nodeId) => {
       setNodes((nds) =>
@@ -343,7 +338,7 @@ export function FlowProvider({ children }: { children: ReactNode }) {
     const sourceNode = nodes.find((n) => n.id === params.source);
 
     if (!sourceNode) {
-      alert("Source node not found.");
+      toast.error("Node de origem não encontrado.");
       return;
     }
 
@@ -352,7 +347,7 @@ export function FlowProvider({ children }: { children: ReactNode }) {
     const targetNode = nodes.find((n) => n.id === params.target);
 
     if (!targetNode) {
-      alert("Target node not found.");
+      toast.error("Node de destino não encontrado.");
       return;
     }
 
@@ -360,8 +355,8 @@ export function FlowProvider({ children }: { children: ReactNode }) {
       sourceNode.type === NodeTypeEnum.GENERATION_IMAGE &&
       targetNode.type === NodeTypeEnum.GENERATION_IMAGE
     ) {
-      alert(
-        "Cannot connect from a generation image node to another generation image node.",
+      toast.error(
+        "Não é permitido conectar um node de geração de imagem a outro node de geração de imagem.",
       );
       return;
     }
@@ -370,7 +365,9 @@ export function FlowProvider({ children }: { children: ReactNode }) {
       targetNode.type === NodeTypeEnum.GENERATION_IMAGE &&
       targetNode.data.isExecuted
     ) {
-      alert("Cannot connect from an executed generation image node.");
+      toast.error(
+        "Não é permitido conectar um node a um node de geração de imagem já executado.",
+      );
       return;
     }
 

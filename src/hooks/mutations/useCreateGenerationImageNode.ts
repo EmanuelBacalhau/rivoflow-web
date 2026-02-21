@@ -2,8 +2,8 @@ import { useMutation } from "@tanstack/react-query";
 import type { Node } from "@xyflow/react";
 import type { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
-import { GenerationImageNodeService } from "@/services/node/GenerationImageNodeService";
-import { NodeService } from "@/services/node/NodeService";
+import { GenerationImageNodeService } from "@/services/node/generation-image-node-service";
+import { NodeService } from "@/services/node/node-service";
 import { GenerationStatusEnum, NodeTypeEnum } from "@/types";
 
 interface CreateNodeGenerationImageParams {

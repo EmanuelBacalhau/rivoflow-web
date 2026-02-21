@@ -67,7 +67,7 @@ export default function TermsPage() {
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
             <Image
-              src="/rivoflow.png"
+              src="/logo.png"
               alt="RIVOFLOW"
               width={26}
               height={26}

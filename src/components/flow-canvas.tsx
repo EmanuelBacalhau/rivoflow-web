@@ -2,14 +2,14 @@
 
 import { Background, BackgroundVariant, ReactFlow } from "@xyflow/react";
 import { useEffect } from "react";
-import { useFlow } from "@/contexts/FlowContext";
-import { FlowLoading } from "./FlowLoading";
-import { KeyboardShortcuts } from "./layout/KeyboardShortcuts";
-import { Toolbar } from "./layout/Toolbar";
-import { AIGeneratorNode } from "./nodes/AIGeneratorImageNode";
-import { PromptNode } from "./nodes/PromptNode";
-import { ResultImageNode } from "./nodes/ResultImageNode";
-import { UploadImageNode } from "./nodes/UploadImageNode";
+import { useFlow } from "@/contexts/flow-context";
+import { FlowLoading } from "./flow-loading";
+import { KeyboardShortcuts } from "./layout/keyboard-shortcuts";
+import { Toolbar } from "./layout/toolbar";
+import { AIGeneratorNode } from "./nodes/ai-generator-image-node";
+import { PromptNode } from "./nodes/prompt-node";
+import { ResultImageNode } from "./nodes/result-image-node";
+import { UploadImageNode } from "./nodes/upload-image-node";
 
 const nodeTypes = {
   PROMPT: PromptNode,
@@ -68,7 +68,12 @@ export function FlowCanvas() {
         fitView
         className="bg-gray-50"
       >
-        <Background variant={BackgroundVariant.Dots} gap={20} size={2} />
+        <Background
+          variant={BackgroundVariant.Dots}
+          gap={20}
+          size={2}
+          className="bg-background!"
+        />
       </ReactFlow>
 
       <KeyboardShortcuts />

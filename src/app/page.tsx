@@ -209,7 +209,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/">
             <Image
-              src="/rivoflow.png"
+              src="/logo.png"
               alt="RIVOFLOW"
               width={36}
               height={36}
@@ -819,7 +819,7 @@ export default function LandingPage() {
             <div className="flex flex-col items-center md:items-start gap-1.5">
               <Link href="/">
                 <Image
-                  src="/rivoflow.png"
+                  src="/logo.png"
                   alt="RIVOFLOW"
                   width={26}
                   height={26}

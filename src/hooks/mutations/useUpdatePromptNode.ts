@@ -3,7 +3,7 @@ import type { Node } from "@xyflow/react";
 import { isAxiosError } from "axios";
 import type { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
-import { PromptNodeService } from "@/services/node/PromptNodeService";
+import { PromptNodeService } from "@/services/node/prompt-node-service";
 
 interface UpdateDataPromptNodeParams {
   updateNodes: Dispatch<SetStateAction<Node[]>>;

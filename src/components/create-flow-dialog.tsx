@@ -30,6 +30,8 @@ export function CreateFlowDialog({
   const handleCreateFlow = async (flowName: string) => {
     try {
       const { flow } = await createFlow(flowName);
+      onOpenChange(false);
+      setName("");
       router.push(`/dashboard/flow/${flow.id}`);
     } catch {
       toast.error("Erro ao criar flow. Tente novamente.");
@@ -68,7 +70,6 @@ export function CreateFlowDialog({
             </Button>
             <Button
               size="sm"
-              className="bg-indigo-600 hover:bg-indigo-700 text-white"
               onClick={() => handleCreateFlow(name)}
               disabled={isCreatingFlow}
             >

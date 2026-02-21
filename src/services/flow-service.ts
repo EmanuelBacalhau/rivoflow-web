@@ -1,8 +1,8 @@
-import type { EdgeService } from "./EdgeService";
-import type { GenerationImageNodeService } from "./node/GenerationImageNodeService";
-import type { ImageNodeService } from "./node/ImageNodeService";
-import type { PromptNodeService } from "./node/PromptNodeService";
-import { Service } from "./Service";
+import type { EdgeService } from "./edge-service";
+import type { GenerationImageNodeService } from "./node/generation-image-node-service";
+import type { ImageNodeService } from "./node/image-node-service";
+import type { PromptNodeService } from "./node/prompt-node-service";
+import { Service } from "./service";
 
 export class FlowService extends Service {
   static async create(title: string): Promise<FlowService.CreateFlowResponse> {
@@ -28,6 +28,10 @@ export class FlowService extends Service {
       );
     return response.data;
   }
+
+  static async delete(flowId: string): Promise<void> {
+    await FlowService.client.delete(`/flows/${flowId}`);
+  }
 }
 
 export namespace FlowService {
@@ -44,7 +48,7 @@ export namespace FlowService {
   export type Flow = {
     id: string;
     title: string;
-    projectId: string;
+    accountId: string;
     createdAt: string;
     updatedAt: string;
   };

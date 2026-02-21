@@ -2,8 +2,8 @@ import { useMutation } from "@tanstack/react-query";
 import type { Node } from "@xyflow/react";
 import type { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
-import { NodeService } from "@/services/node/NodeService";
-import { PromptNodeService } from "@/services/node/PromptNodeService";
+import { NodeService } from "@/services/node/node-service";
+import { PromptNodeService } from "@/services/node/prompt-node-service";
 import { NodeTypeEnum } from "@/types";
 
 interface CreateNodePromptParams {

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { FlowService } from "@/services/FlowService";
-import type { GenerationImageNodeService } from "@/services/node/GenerationImageNodeService";
+import { FlowService } from "@/services/flow-service";
+import type { GenerationImageNodeService } from "@/services/node/generation-image-node-service";
 import { GenerationStatusEnum, NodeTypeEnum } from "@/types";
 
 interface UseFlowNodesParams {

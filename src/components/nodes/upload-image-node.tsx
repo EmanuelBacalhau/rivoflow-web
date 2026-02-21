@@ -9,9 +9,10 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
-import { useFlow } from "@/contexts/FlowContext";
-import type { ImageNodeService } from "@/services/node/ImageNodeService";
+import { useFlow } from "@/contexts/flow-context";
+import type { ImageNodeService } from "@/services/node/image-node-service";
 import { Button } from "../ui/button";
+import { Card, CardContent, CardHeader } from "../ui/card";
 import {
   Dialog,
   DialogContent,
@@ -44,8 +45,8 @@ export function UploadImageNode({ id, data, selected }: NodeProps) {
   };
 
   return (
-    <div
-      className={`w-64 rounded-xl border bg-white shadow-md overflow-hidden transition-shadow ${selected ? "border-blue-400 ring-2 ring-blue-300 shadow-blue-100 shadow-lg" : "border-blue-200"}`}
+    <Card
+      className={`w-64 gap-0 py-0 shadow-md overflow-hidden transition-shadow ${selected ? "border-blue-400 ring-2 ring-blue-300 shadow-blue-400 shadow-lg" : "border-blue-200"}`}
     >
       <Handle
         type="source"
@@ -53,26 +54,26 @@ export function UploadImageNode({ id, data, selected }: NodeProps) {
         className="bg-blue-400! size-3! border-2! border-white!"
       />
 
-      <div className="flex items-center gap-2.5 px-3 py-2.5 bg-linear-to-r from-blue-50 to-sky-50 border-b border-blue-100">
+      <CardHeader className="flex flex-row items-center gap-2.5 px-3 py-2.5! bg-linear-to-r from-blue-500/10 to-sky-500/10 border-b border-blue-500/20 space-y-0">
         <div className="w-7 h-7 rounded-lg bg-linear-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-sm shrink-0">
           <ImagePlusIcon className="size-3.5 text-white" strokeWidth={2} />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-sm text-gray-800 leading-tight">
+          <h3 className="font-semibold text-sm text-card-foreground leading-tight">
             Imagem
           </h3>
-          <p className="text-[10px] text-blue-600/80">Produto ou referência</p>
+          <p className="text-[10px] text-blue-500">Produto ou referência</p>
         </div>
         {nodeData.isExecuted && (
-          <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+          <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center shrink-0">
             <CheckIcon className="size-3 text-green-600" />
           </div>
         )}
-      </div>
+      </CardHeader>
 
-      <div className="p-3">
+      <CardContent className="p-3">
         {nodeData.imageUrl ? (
-          <div className="w-full h-40 overflow-hidden rounded-lg relative group border border-blue-100">
+          <div className="w-full h-40 overflow-hidden rounded-lg relative group border border-blue-500/20">
             <Image
               src={nodeData.imageUrl}
               alt="Uploaded Reference"
@@ -116,18 +117,20 @@ export function UploadImageNode({ id, data, selected }: NodeProps) {
               onChange={handleFileChange}
               id={inputId}
             />
-            <div className="cursor-pointer text-center border-2 border-dashed border-blue-200 rounded-lg p-5 hover:border-blue-400 hover:bg-blue-50/50 transition-all group">
-              <div className="bg-blue-100 rounded-full p-2.5 mx-auto mb-2.5 w-fit group-hover:bg-blue-200 transition-colors">
+            <div className="cursor-pointer text-center border-2 border-dashed border-blue-500/30 rounded-lg p-5 hover:border-blue-400 hover:bg-blue-500/10 transition-all group">
+              <div className="bg-blue-500/20 rounded-full p-2.5 mx-auto mb-2.5 w-fit group-hover:bg-blue-500/30 transition-colors">
                 <UploadCloudIcon className="size-5 text-blue-500" />
               </div>
-              <p className="text-xs font-medium text-gray-600 mb-0.5">
+              <p className="text-xs font-medium text-card-foreground mb-0.5">
                 Clique para carregar
               </p>
-              <p className="text-[10px] text-gray-400">JPG, PNG ou WebP</p>
+              <p className="text-[10px] text-muted-foreground">
+                JPG, PNG ou WebP
+              </p>
             </div>
           </label>
         )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
