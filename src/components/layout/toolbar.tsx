@@ -5,6 +5,9 @@ import {
   MessageCircleMoreIcon,
   SparklesIcon,
 } from "lucide-react";
+import { Card, CardContent } from "../ui/card";
+import { Separator } from "../ui/separator";
+import { SidebarTrigger, useSidebar } from "../ui/sidebar";
 
 interface ToolbarProps {
   onAddPromptNode: () => void;
@@ -15,31 +18,26 @@ interface ToolbarProps {
 interface NodeButtonProps {
   icon: React.ReactNode;
   label: string;
-  shortcut: string;
-  color: string;
   iconColor: string;
   onClick: () => void;
+  isMobile?: boolean;
 }
 
 function NodeButton({
   icon,
   label,
-  shortcut,
-  color,
   iconColor,
   onClick,
+  isMobile,
 }: NodeButtonProps) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`group flex items-center gap-2 px-3 py-2 rounded-lg border transition-all hover:shadow-sm ${color}`}
+      className={`flex items-center ${isMobile ? "gap-1 px-2 py-1" : "gap-2 px-3 py-2"} rounded-lg transition-all hover:shadow-sm hover:bg-muted`}
     >
       <span className={`shrink-0 ${iconColor}`}>{icon}</span>
-      <span className="text-xs font-medium text-gray-700">{label}</span>
-      <span className="ml-1 text-[10px] text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded font-mono hidden group-hover:inline">
-        {shortcut}
-      </span>
+      <span className="text-xs font-medium text-white">{label}</span>
     </button>
   );
 }
@@ -49,48 +47,61 @@ export function Toolbar({
   onAddImageNode,
   onAddGenerationImageNode,
 }: ToolbarProps) {
+  const { isMobile } = useSidebar();
+
   return (
-    <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1 bg-white/95 backdrop-blur-sm px-2 py-1.5 rounded-xl shadow-lg border border-gray-200/80">
-      {/* Label */}
-      <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-1 mr-1">
-        Nós
-      </span>
+    <Card
+      className={`absolute top-4 ${isMobile ? "left-4 right-4" : "left-1/2 -translate-x-1/2"} z-10 flex items-center gap-1 backdrop-blur-sm p-1.5 rounded-xl shadow-lg`}
+    >
+      <CardContent className="items-center">
+        {isMobile && <SidebarTrigger />}
 
-      <div className="w-px h-5 bg-gray-200" />
+        <div className="flex items-center">
+          {/* Label */}
+          <span className="text-[10px] font-semibold text-white uppercase tracking-wider px-1 mr-1">
+            Nós
+          </span>
 
-      {/* Inputs group */}
-      <div className="flex items-center gap-1 px-1">
-        <NodeButton
-          icon={<MessageCircleMoreIcon className="size-3.5" />}
-          label="Prompt"
-          shortcut="P"
-          color="border-amber-200 bg-amber-50/80 hover:bg-amber-100 hover:border-amber-300"
-          iconColor="text-amber-600"
-          onClick={onAddPromptNode}
-        />
-        <NodeButton
-          icon={<ImagePlusIcon className="size-3.5" />}
-          label="Imagem"
-          shortcut="I"
-          color="border-blue-200 bg-blue-50/80 hover:bg-blue-100 hover:border-blue-300"
-          iconColor="text-blue-600"
-          onClick={onAddImageNode}
-        />
-      </div>
+          <Separator
+            orientation="vertical"
+            className={isMobile ? "h-4!" : "h-6!"}
+          />
 
-      <div className="w-px h-5 bg-gray-200" />
+          <div className="flex items-center gap-1 ">
+            {/* Prompt */}
+            <NodeButton
+              icon={<MessageCircleMoreIcon className="size-3.5" />}
+              label="Prompt"
+              iconColor="text-amber-600"
+              onClick={onAddPromptNode}
+              isMobile={isMobile}
+            />
 
-      {/* Generator */}
-      <div className="px-1">
-        <NodeButton
-          icon={<SparklesIcon className="size-3.5" />}
-          label="Gerar Imagem"
-          shortcut="G"
-          color="border-purple-200 bg-purple-50/80 hover:bg-purple-100 hover:border-purple-300"
-          iconColor="text-purple-600"
-          onClick={onAddGenerationImageNode}
-        />
-      </div>
-    </div>
+            {/* Image */}
+            <NodeButton
+              icon={<ImagePlusIcon className="size-3.5" />}
+              label="Imagem"
+              iconColor="text-blue-600"
+              onClick={onAddImageNode}
+              isMobile={isMobile}
+            />
+
+            <Separator
+              orientation="vertical"
+              className={isMobile ? "h-4!" : "h-6!"}
+            />
+
+            {/* Generator */}
+            <NodeButton
+              icon={<SparklesIcon className="size-3.5" />}
+              label="Gerar Imagem"
+              iconColor="text-purple-600"
+              onClick={onAddGenerationImageNode}
+              isMobile={isMobile}
+            />
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

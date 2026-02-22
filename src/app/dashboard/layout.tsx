@@ -7,7 +7,7 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
     <div className="flex h-screen overflow-hidden bg-background">
       <SidebarProvider>
         <AppSidebar />
-        <SidebarInset className="flex-1 flex flex-col overflow-hidden relative">
+        <SidebarInset className="flex-1 flex flex-col overflow-auto relative">
           {children}
         </SidebarInset>
       </SidebarProvider>

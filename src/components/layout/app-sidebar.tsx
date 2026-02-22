@@ -7,24 +7,20 @@ import {
   CreditCard,
   LayersIcon,
   LayoutDashboardIcon,
-  LoaderIcon,
   LogOut,
   SearchIcon,
-  Trash2Icon,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
 import { CreateFlowDialog } from "@/components/create-flow-dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/contexts/auth-context";
-import { useDeleteFlow } from "@/hooks/mutations/useDeleteFlow";
 import { useAccount } from "@/hooks/queries/useAccount";
 import { useFlows } from "@/hooks/queries/useFlows";
+import { CreditBalance } from "../credit-balance";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
   DropdownMenu,
@@ -59,7 +55,6 @@ const pages = [
 const SEARCH_THRESHOLD = 5;
 
 export function AppSidebar() {
-  const router = useRouter();
   const { isMobile } = useSidebar();
   const pathname = usePathname();
   const [search, setSearch] = useState("");
@@ -68,24 +63,11 @@ export function AppSidebar() {
 
   const { flows, isLoading } = useFlows();
   const { me } = useAccount();
-  const { deleteFlow } = useDeleteFlow();
-  const [flowsForDelete, setFlowsForDelete] = useState<string[]>([]);
 
   const showSearch = flows.length > SEARCH_THRESHOLD;
   const filteredFlows = search.trim()
     ? flows.filter((p) => p.title.toLowerCase().includes(search.toLowerCase()))
     : flows;
-
-  const handleDeleteFlow = async (flowId: string) => {
-    try {
-      setFlowsForDelete((prev) => [...prev, flowId]);
-      await deleteFlow(flowId);
-      toast.success("Flow deletado com sucesso.");
-    } catch (error) {
-      setFlowsForDelete((prev) => prev.filter((id) => id !== flowId));
-      toast.error("Erro ao deletar flow. Tente novamente.");
-    }
-  };
 
   return (
     <Sidebar>
@@ -114,6 +96,18 @@ export function AppSidebar() {
             <LayersIcon className="mr-1 size-5" />
             Criar Flow
           </Button>
+          {showSearch && (
+            <div className="flex items-center gap-2 rounded-md border border-border bg-secondary px-3 py-2 text-sm text-muted-foreground transition-colors focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/20 mt-2">
+              <SearchIcon className="size-3 text-muted-foreground" />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Buscar flows..."
+                className="w-full bg-transparent text-sidebar-foreground placeholder:text-muted-foreground outline-none"
+              />
+            </div>
+          )}
         </SidebarGroup>
 
         {/* MAIN MENU SECTION */}
@@ -144,18 +138,6 @@ export function AppSidebar() {
         <SidebarGroup className="flex flex-col flex-1 min-h-0 overflow-hidden">
           <SidebarGroupLabel>Flows</SidebarGroupLabel>
 
-          {showSearch && (
-            <div className="relative mb-1.5 px-2 shrink-0">
-              <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground" />
-              <Input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Buscar..."
-                className="h-7 pl-6 text-xs"
-              />
-            </div>
-          )}
-
           <div className="flex-1 min-h-0 overflow-y-auto">
             <SidebarMenu className="px-2 pb-2">
               {isLoading &&
@@ -176,38 +158,16 @@ export function AppSidebar() {
                 filteredFlows.map((flow) => {
                   const isCurrentPage =
                     pathname === `/dashboard/flow/${flow.id}`;
-                  const isDeleting = flowsForDelete.includes(flow.id);
                   return (
                     <SidebarMenuItem key={flow.id}>
                       <SidebarMenuButton asChild>
                         <Link
                           href={`/dashboard/flow/${flow.id}`}
-                          aria-disabled={isDeleting}
                           className={`flex items-center gap-2 ${isCurrentPage ? "bg-muted" : ""}`}
                         >
                           <LayersIcon className="mr-2 size-5" />
 
                           <span className="truncate">{flow.title}</span>
-
-                          <Button
-                            size="xs"
-                            className="ml-auto hover:bg-destructive! cursor-pointer"
-                            variant="ghost"
-                            disabled={isDeleting}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              if (isCurrentPage) {
-                                router.push("/dashboard");
-                              }
-                              handleDeleteFlow(flow.id);
-                            }}
-                          >
-                            {isDeleting ? (
-                              <LoaderIcon className="size-3 animate-spin" />
-                            ) : (
-                              <Trash2Icon className="size-3" />
-                            )}
-                          </Button>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -247,28 +207,33 @@ export function AppSidebar() {
                 <DropdownMenu>
                   {/* TRIGGER FOR USER MENU */}
                   <DropdownMenuTrigger asChild>
-                    <SidebarMenuButton
-                      size="lg"
-                      className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-                    >
-                      <Avatar className="size-8 rounded-lg">
-                        <AvatarImage
-                          src={me?.account.picture}
-                          alt={me?.account.firstName}
-                        />
-                        <AvatarFallback className="rounded-lg">
-                          {me?.account.firstName?.[0] || "CN"}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="grid flex-1 text-left text-sm leading-tight">
-                        <span className="truncate font-medium">
-                          {`${me?.account.firstName} ${me?.account.lastName}`}
-                        </span>
-                        <span className="truncate text-xs">
-                          {me?.account.email}
-                        </span>
+                    <SidebarMenuButton className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground h-fit">
+                      <div className="space-y-2">
+                        <div className="flex gap-3 items-center">
+                          <Avatar className="size-8 rounded-lg">
+                            <AvatarImage
+                              src={me?.account.picture}
+                              alt={me?.account.firstName}
+                            />
+                            <AvatarFallback className="rounded-lg">
+                              {me?.account.firstName?.[0] || "CN"}
+                            </AvatarFallback>
+                          </Avatar>
+
+                          <div className="grid flex-1 text-left text-sm leading-tight">
+                            <span className="truncate font-medium">
+                              {`${me?.account.firstName} ${me?.account.lastName}`}
+                            </span>
+                            <span className="truncate text-xs">
+                              {me?.account.email}
+                            </span>
+                          </div>
+
+                          <ChevronsUpDown className="ml-auto size-4" />
+                        </div>
+
+                        <CreditBalance balance={me.balance} />
                       </div>
-                      <ChevronsUpDown className="ml-auto size-4" />
                     </SidebarMenuButton>
                   </DropdownMenuTrigger>
 

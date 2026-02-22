@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { Background } from "@/components/background";
 import { env } from "@/env";
 import { getOAuthCallbackURL } from "@/utils/getOAuthCallbackURL";
 
@@ -52,9 +53,7 @@ export default function GoogleLoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-indigo-500/5 blur-3xl" />
-      </div>
+      <Background />
 
       <div className="w-full max-w-sm">
         <div className="rounded-2xl border border-border/60 bg-card/60 backdrop-blur-sm p-8 shadow-xl flex flex-col items-center gap-6">

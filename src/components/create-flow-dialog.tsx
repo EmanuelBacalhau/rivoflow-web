@@ -30,9 +30,9 @@ export function CreateFlowDialog({
   const handleCreateFlow = async (flowName: string) => {
     try {
       const { flow } = await createFlow(flowName);
+      router.push(`/dashboard/flow/${flow.id}`);
       onOpenChange(false);
       setName("");
-      router.push(`/dashboard/flow/${flow.id}`);
     } catch {
       toast.error("Erro ao criar flow. Tente novamente.");
     }

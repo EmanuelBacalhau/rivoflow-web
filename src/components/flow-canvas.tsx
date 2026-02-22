@@ -10,6 +10,7 @@ import { AIGeneratorNode } from "./nodes/ai-generator-image-node";
 import { PromptNode } from "./nodes/prompt-node";
 import { ResultImageNode } from "./nodes/result-image-node";
 import { UploadImageNode } from "./nodes/upload-image-node";
+import { useSidebar } from "./ui/sidebar";
 
 const nodeTypes = {
   PROMPT: PromptNode,
@@ -30,6 +31,7 @@ export function FlowCanvas() {
     addImageNode,
     addGenerationImageNode,
   } = useFlow();
+  const { isMobile } = useSidebar();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -50,7 +52,7 @@ export function FlowCanvas() {
   }
 
   return (
-    <div className="h-screen bg-gray-50 relative">
+    <div className="h-screen relative">
       <Toolbar
         onAddPromptNode={addPromptNode}
         onAddImageNode={addImageNode}
@@ -66,7 +68,6 @@ export function FlowCanvas() {
         nodeTypes={nodeTypes}
         proOptions={{ hideAttribution: true }}
         fitView
-        className="bg-gray-50"
       >
         <Background
           variant={BackgroundVariant.Dots}
@@ -76,7 +77,7 @@ export function FlowCanvas() {
         />
       </ReactFlow>
 
-      <KeyboardShortcuts />
+      {!isMobile && <KeyboardShortcuts />}
     </div>
   );
 }

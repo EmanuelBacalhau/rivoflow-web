@@ -32,6 +32,14 @@ export class FlowService extends Service {
   static async delete(flowId: string): Promise<void> {
     await FlowService.client.delete(`/flows/${flowId}`);
   }
+
+  static async updateTitle(
+    params: FlowService.UpdateFlowTitleParams,
+  ): Promise<void> {
+    await FlowService.client.patch(`/flows/${params.flowId}`, {
+      title: params.title,
+    });
+  }
 }
 
 export namespace FlowService {
@@ -59,5 +67,10 @@ export namespace FlowService {
 
   export type GetByAccountResponse = {
     flows: Flow[];
+  };
+
+  export type UpdateFlowTitleParams = {
+    flowId: string;
+    title: string;
   };
 }

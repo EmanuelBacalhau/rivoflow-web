@@ -1,9 +1,7 @@
-import axios, { type InternalAxiosRequestConfig, isAxiosError } from "axios";
+import axios, { isAxiosError } from "axios";
 import { env } from "@/env";
 
-type RetryableConfig = InternalAxiosRequestConfig & { _retry?: boolean };
-
-const SKIP_REFRESH_URLS = ["/auth/refresh", "/auth/sign-out"];
+const SKIP_REFRESH_URLS = ["/auth/refresh-token"];
 
 export abstract class Service {
   private static refreshTokenInterceptorId: number | null = null;
@@ -46,25 +44,36 @@ export abstract class Service {
   static setRefreshTokenHandler(onRefresh: () => Promise<void>) {
     Service.removeRefreshTokenHandler();
 
+    let refreshPromise: Promise<void> | null = null;
+
     Service.refreshTokenInterceptorId =
       Service.client.interceptors.response.use(
         (response) => response,
         async (error) => {
-          const config = error.config as RetryableConfig | undefined;
+          const config = error.config;
 
           const shouldSkip =
             !isAxiosError(error) ||
             error.response?.status !== 401 ||
             !config ||
-            config._retry ||
             SKIP_REFRESH_URLS.some((url) => config.url === url);
 
-          if (shouldSkip) return Promise.reject(error);
+          if (shouldSkip) {
+            return Promise.reject(error);
+          }
 
-          config._retry = true;
+          if (!refreshPromise) {
+            refreshPromise = onRefresh().finally(() => {
+              refreshPromise = null;
+            });
+          }
 
-          await onRefresh();
-          return Service.client(config);
+          try {
+            await refreshPromise;
+            return Service.client(config);
+          } catch (refreshError) {
+            return Promise.reject(refreshError);
+          }
         },
       );
   }

@@ -11,6 +11,7 @@ import {
 
 import { useMemo } from "react";
 import { useFlow } from "@/contexts/flow-context";
+import { useAccount } from "@/hooks/queries/useAccount";
 import {
   type AspectRatio,
   GenerationStatusEnum,
@@ -19,6 +20,11 @@ import {
 } from "@/types";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader } from "../ui/card";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "../ui/hover-card";
 import {
   Select,
   SelectContent,
@@ -45,6 +51,7 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
     calculateCreditsForNode,
   } = useFlow();
   const nodeData = data as AIGeneratorNodeData;
+  const { me } = useAccount();
 
   const connectedData = useMemo(() => {
     return getConnectedData(id);
@@ -102,12 +109,18 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
 
   const isCalculating = nodeData.isCalculatingCredits === true;
 
+  const isCreditsInsufficient =
+    nodeData.creditsRequired !== undefined &&
+    me?.balance.credits !== undefined &&
+    nodeData.creditsRequired > me.balance.credits;
+
   const isButtonDisabled =
     !hasPrompts ||
     nodeData.isExecuted ||
     isProcessing ||
     isCompleted ||
-    isCalculating;
+    isCalculating ||
+    isCreditsInsufficient;
 
   const creditsRequired = nodeData.creditsRequired;
 
@@ -282,10 +295,22 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
             !isCalculating &&
             !isProcessing &&
             !isCompleted && (
-              <p className="text-center text-[10px] text-purple-500/70">
-                {creditsRequired} crédito{creditsRequired !== 1 ? "s" : ""}{" "}
-                serão consumidos
-              </p>
+              <HoverCard>
+                <HoverCardTrigger asChild>
+                  <p className="text-center text-[10px] text-purple-500/70 cursor-help underline decoration-dotted underline-offset-2">
+                    {creditsRequired} crédito{creditsRequired !== 1 ? "s" : ""}{" "}
+                    estimado{creditsRequired !== 1 ? "s" : ""}
+                  </p>
+                </HoverCardTrigger>
+                <HoverCardContent
+                  side="bottom"
+                  align="center"
+                  className="w-48 text-[11px] text-muted-foreground p-2 text-center z-50 shadow-xl"
+                >
+                  O consumo final pode variar um pouco de acordo com o peso da
+                  geração e imagens enviadas.
+                </HoverCardContent>
+              </HoverCard>
             )}
         </div>
       </CardContent>

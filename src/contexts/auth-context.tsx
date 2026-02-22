@@ -1,22 +1,23 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   createContext,
   type PropsWithChildren,
   useCallback,
   useContext,
   useLayoutEffect,
+  useRef,
   useState,
 } from "react";
+import { FlowLoading } from "@/components/flow-loading";
 import { useAccount } from "@/hooks/queries/useAccount";
 import { AuthService } from "@/services/auth-service";
 import { Service } from "@/services/service";
 
 interface AuthContextType {
   signedIn: boolean;
-  signInWithCode: (code: string) => Promise<void>;
   signOut: () => void;
 }
 
@@ -31,6 +32,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const { me, loadAccount } = useAccount({ enabled: false });
   const [isReady, setIsReady] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
+  const isInitialCallbackRoute = useRef(pathname?.startsWith("/auth/callback"));
 
   const signOut = useCallback(async () => {
     queryClient.clear();
@@ -39,37 +42,48 @@ export function AuthProvider({ children }: PropsWithChildren) {
     router.push("/");
   }, [queryClient, router]);
 
-  console.log(isReady);
-
   const setupAuth = useCallback(async () => {
     Service.setRefreshTokenHandler(async () => {
       try {
         await AuthService.refreshToken();
-        await loadAccount();
-        setIsReady(true);
       } catch {
         await signOut();
       }
     });
+
+    if (!isInitialCallbackRoute.current) {
+      await loadAccount();
+    }
+
+    setIsReady(true);
   }, [loadAccount, signOut]);
 
   useLayoutEffect(() => {
     setupAuth();
-    setIsReady(true);
   }, [setupAuth]);
 
-  const signInWithCode = async (code: string) => {
-    await AuthService.exchangeCodeForToken(code);
-    await setupAuth();
-    router.push("/");
-  };
+  useLayoutEffect(() => {
+    if (!isReady) return;
+
+    const isPublicRoute =
+      pathname === "/" ||
+      pathname.startsWith("/auth") ||
+      pathname === "/terms" ||
+      pathname === "/privacy";
+
+    if (!me && !isPublicRoute) {
+      router.replace("/");
+    } else if (me && isPublicRoute) {
+      router.replace("/dashboard");
+    }
+  }, [isReady, me, pathname, router]);
 
   if (!isReady) {
-    return <h1>djadkljasl</h1>;
+    return <FlowLoading />;
   }
 
   return (
-    <AuthContext.Provider value={{ signedIn: !!me, signInWithCode, signOut }}>
+    <AuthContext.Provider value={{ signedIn: !!me, signOut }}>
       {children}
     </AuthContext.Provider>
   );

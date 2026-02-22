@@ -3,7 +3,7 @@ import { queryClient } from "@/providers/main-provider";
 import { FlowService } from "@/services/flow-service";
 
 export function useDeleteFlow() {
-  const { mutateAsync } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: FlowService.delete,
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -14,5 +14,6 @@ export function useDeleteFlow() {
 
   return {
     deleteFlow: mutateAsync,
+    isFlowDeleting: isPending,
   };
 }
