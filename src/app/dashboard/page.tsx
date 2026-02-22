@@ -3,6 +3,7 @@
 import { CircleDollarSignIcon, LayersIcon, SearchIcon } from "lucide-react";
 import { useState } from "react";
 import { NumericFormat } from "react-number-format";
+import { toast } from "sonner";
 import { CreateFlowDialog } from "@/components/create-flow-dialog";
 import { ListFlows } from "@/components/list-flows";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import { useCreateLinkCharge } from "@/hooks/mutations/useCreateLinkCharge";
 import { useAccount } from "@/hooks/queries/useAccount";
 import { useFlows } from "@/hooks/queries/useFlows";
 
@@ -27,8 +29,18 @@ export default function DashboardPage() {
   const [search, setSearch] = useState("");
   const { me } = useAccount();
   const [credits, setCredits] = useState<number>(MIN_CREDITS_IN_REALS);
+  const { createLinkCharge, isCreatingLinkCharge } = useCreateLinkCharge();
 
   const fastCredits = [30, 50, 100, 200];
+
+  const handleCreateLinkCharge = async () => {
+    try {
+      const result = await createLinkCharge({ amount: credits });
+      window.location.href = result.link;
+    } catch {
+      toast.error("Erro ao criar link de pagamento. Tente novamente.");
+    }
+  };
 
   return (
     <div className="p-8 flex flex-col flex-1">
@@ -55,7 +67,7 @@ export default function DashboardPage() {
 
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Comprar Créditos</DialogTitle>
+                <DialogTitle>Créditos</DialogTitle>
               </DialogHeader>
               <DialogDescription>
                 Você tem {me?.balance.credits} créditos.
@@ -105,7 +117,14 @@ export default function DashboardPage() {
                 )}
               </div>
 
-              <Button disabled={credits < MIN_CREDITS_IN_REALS}>Comprar</Button>
+              <Button
+                disabled={
+                  credits < MIN_CREDITS_IN_REALS || isCreatingLinkCharge
+                }
+                onClick={handleCreateLinkCharge}
+              >
+                {isCreatingLinkCharge ? "Criando link..." : "Comprar créditos"}
+              </Button>
             </DialogContent>
           </Dialog>
         </div>
