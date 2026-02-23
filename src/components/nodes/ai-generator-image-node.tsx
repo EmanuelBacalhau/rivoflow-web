@@ -254,7 +254,11 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
           <Button
             onClick={handleGenerateImage}
             disabled={isButtonDisabled}
-            className="w-full bg-linear-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg shadow-sm nodrag h-9"
+            className={`w-full text-white rounded-lg shadow-sm nodrag h-9 ${
+              isCreditsInsufficient
+                ? "bg-red-500 hover:bg-red-600 opacity-90"
+                : "bg-linear-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
+            }`}
           >
             {isCalculating ? (
               <>
@@ -280,7 +284,11 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
             ) : (
               <>
                 <SparklesIcon className="size-4 mr-1.5" strokeWidth={2} />
-                <span className="text-sm">Gerar Imagem</span>
+                <span className="text-sm">
+                  {isCreditsInsufficient
+                    ? "Créditos Insuficientes"
+                    : "Gerar Imagem"}
+                </span>
                 {creditsRequired !== undefined && (
                   <span className="ml-auto flex items-center gap-0.5 text-[10px] bg-white/20 px-1.5 py-0.5 rounded-full leading-none">
                     <CoinsIcon className="size-2.5" />

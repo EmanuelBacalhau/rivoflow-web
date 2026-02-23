@@ -1,7 +1,7 @@
 "use client";
 
 import { CircleDollarSignIcon, LayersIcon, SearchIcon } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { NumericFormat } from "react-number-format";
 import { toast } from "sonner";
 import { CreateFlowDialog } from "@/components/create-flow-dialog";
@@ -31,10 +31,22 @@ export default function DashboardPage() {
   const [credits, setCredits] = useState<number>(MIN_CREDITS_IN_REALS);
   const { createLinkCharge, isCreatingLinkCharge } = useCreateLinkCharge();
 
+  const filteredFlows = useMemo(() => {
+    return flows.filter((flow) =>
+      flow.title.toLowerCase().includes(search.toLowerCase()),
+    );
+  }, [flows, search]);
+
   const fastCredits = [30, 50, 100, 200];
 
   const handleCreateLinkCharge = async () => {
     try {
+      if (me?.balance.credits !== undefined) {
+        localStorage.setItem(
+          "prePaymentCredits",
+          me.balance.credits.toString(),
+        );
+      }
       const result = await createLinkCharge({ amount: credits });
       window.location.href = result.link;
     } catch {
@@ -152,7 +164,7 @@ export default function DashboardPage() {
 
       <CreateFlowDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} />
 
-      <ListFlows flows={flows} loading={isLoading} />
+      <ListFlows flows={filteredFlows} loading={isLoading} />
     </div>
   );
 }

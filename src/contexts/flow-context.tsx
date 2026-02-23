@@ -371,6 +371,39 @@ export function FlowProvider({ children }: { children: ReactNode }) {
       return;
     }
 
+    if (targetNode.type === NodeTypeEnum.GENERATION_IMAGE) {
+      const incomingEdges = edges.filter((e) => e.target === params.target);
+
+      let imageCount = 0;
+      let promptCount = 0;
+
+      for (const edge of incomingEdges) {
+        const existingNode = nodes.find((n) => n.id === edge.source);
+        if (
+          existingNode?.type === NodeTypeEnum.IMAGE ||
+          existingNode?.type === NodeTypeEnum.RESULT_IMAGE
+        ) {
+          imageCount++;
+        } else if (existingNode?.type === NodeTypeEnum.PROMPT) {
+          promptCount++;
+        }
+      }
+
+      const isSourceImage =
+        sourceNode.type === NodeTypeEnum.IMAGE ||
+        sourceNode.type === NodeTypeEnum.RESULT_IMAGE;
+
+      if (isSourceImage && imageCount >= 14) {
+        toast.error("O node pode receber no máximo 14 imagens.");
+        return;
+      }
+
+      if (sourceNode.type === NodeTypeEnum.PROMPT && promptCount >= 1) {
+        toast.error("O node pode receber apenas 1 prompt.");
+        return;
+      }
+    }
+
     createEdge({
       flowId,
       sourceNodeId: params.source,

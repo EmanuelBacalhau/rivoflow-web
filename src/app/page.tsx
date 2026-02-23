@@ -4,6 +4,7 @@ import {
   ArrowRightIcon,
   CheckIcon,
   ChevronRightIcon,
+  CloudIcon,
   ImageIcon,
   LayersIcon,
   LayoutGridIcon,
@@ -36,7 +37,7 @@ const metrics = [
   { value: "10K+", label: "Criativos gerados" },
   { value: "500+", label: "Times ativos" },
   { value: "4.9★", label: "Avaliação média" },
-  { value: "99.9%", label: "Uptime" },
+  { value: "24/7", label: "Geração sob demanda" },
 ];
 
 const features = [
@@ -52,9 +53,9 @@ const features = [
   },
   {
     id: "speed",
-    title: "Geração em Segundos",
+    title: "Geração Imediata",
     description:
-      "IA de última geração que entrega seu criativo em instantes, sem fila.",
+      "IA de última geração que entrega seu criativo em instantes. Custando centavos por arte gerada.",
     wide: false,
     icon: ZapIcon,
     color: "text-amber-500",
@@ -74,18 +75,28 @@ const features = [
     id: "references",
     title: "Referências Visuais",
     description:
-      "Envie imagens de referência para guiar a geração com precisão e consistência de marca.",
-    wide: false,
+      "Envie imagens de referência para guiar a geração com precisão. O resultado mantém a consistência da sua marca e identidade visual.",
+    wide: true,
     icon: ImageIcon,
     color: "text-green-500",
     bg: "bg-green-500/10",
   },
   {
-    id: "quality",
-    title: "Exportação em Alta Qualidade",
+    id: "history",
+    title: "Histórico Seguro na Nuvem",
     description:
-      "Arquivos prontos para publicar em qualquer plataforma, resolução até 4K.",
+      "Todas as suas gerações ficam salvas automaticamente. Acesse, baixe ou reutilize seus melhores resultados a qualquer momento no seu painel.",
     wide: true,
+    icon: CloudIcon,
+    color: "text-purple-500",
+    bg: "bg-purple-500/10",
+  },
+  {
+    id: "quality",
+    title: "Exportação 4K",
+    description:
+      "Arquivos em altíssima resolução, totalmente prontos para publicações.",
+    wide: false,
     icon: Settings2Icon,
     color: "text-pink-500",
     bg: "bg-pink-500/10",
@@ -111,7 +122,7 @@ const steps = [
     title: "Gere e exporte",
     description: "Um clique. Criativo em alta qualidade pronto para publicar.",
     icon: RocketIcon,
-    time: "~30s",
+    time: "~1 min",
   },
 ];
 
@@ -144,34 +155,34 @@ const testimonials = [
 
 const pricingPlans = [
   {
-    name: "Gratuito",
-    price: "R$0",
-    period: "/mês",
-    description: "Para começar a explorar",
+    name: "Pay-as-you-go",
+    price: "R$ 20",
+    period: "depósito mínimo",
+    description: "Sem assinaturas. Recarregue e use quando precisar.",
     features: [
-      "10 criativos por mês",
-      "Formatos básicos (1:1, 16:9)",
-      "Qualidade até 1K",
-      "Editor visual de fluxos",
+      "Acesso completo a todos os recursos",
+      "Formatos, proporções e qualidade 4K liberados",
+      "Créditos só são descontados se a IA gerar com sucesso",
+      "Editor visual de fluxos sem limites",
     ],
-    cta: "Começar grátis",
-    highlight: false,
+    cta: "Começar e recarregar",
+    highlight: true,
+    disabled: false,
   },
   {
-    name: "Pro",
-    price: "R$49",
-    period: "/mês",
-    description: "Para criar profissionalmente",
+    name: "Planos Mensais",
+    price: "Em breve",
+    period: "",
+    description: "Para times com alto volume contínuo de produção.",
     features: [
-      "Criativos ilimitados",
-      "Todos os formatos e proporções",
-      "Qualidade até 4K",
-      "Referências visuais",
-      "Exportação em lote",
-      "Suporte prioritário",
+      "Desconto na compra de lotes de créditos",
+      "Recursos premium exclusivos para assinantes",
+      "Acesso antecipado a novos modelos de IA",
+      "Suporte prioritário e onboarding",
     ],
-    cta: "Assinar Pro",
-    highlight: true,
+    cta: "Aguarde as novidades",
+    highlight: false,
+    disabled: true,
   },
 ];
 
@@ -182,19 +193,19 @@ const faqs = [
       "Não. O editor é completamente visual — arraste, conecte e configure os nós sem escrever uma linha de código.",
   },
   {
-    question: "Que tipos de imagem posso gerar?",
+    question: "Como funcionam os pagamentos?",
     answer:
-      "Posts para redes sociais, banners, thumbnails para YouTube, imagens para e-commerce e muito mais. Você controla a proporção e o estilo.",
+      "Trabalhamos com um sistema de recargas (Pay-as-you-go). Você faz um depósito mínimo de R$20 e ganha créditos para usar na plataforma. Sem cobranças supresas ou assinaturas escondidas.",
   },
   {
-    question: "Posso cancelar a qualquer momento?",
+    question: "Os créditos possuem prazo de validade?",
     answer:
-      "Sim. Sem fidelidade. Cancele pelo painel quando quiser e seu acesso continua até o fim do período pago.",
+      "Não! Seus créditos não expiram. Eles ficam guardados na sua conta para você utilizar no seu próprio ritmo, seja hoje ou daqui a 6 meses.",
   },
   {
-    question: "Como funciona o limite de criativos do plano grátis?",
+    question: "Vocês terão planos de assinatura no futuro?",
     answer:
-      "Você tem 10 gerações por mês. Ao atingir o limite, pode fazer upgrade para o Pro e continuar criando sem interrupções.",
+      "Sim. Em breve lançaremos pacotes mensais desenhados especialmente para times e agências de alta demanda, que oferecerão descontos e ferramentas extras.",
   },
 ];
 
@@ -206,8 +217,8 @@ export default function LandingPage() {
     <div className="min-h-screen bg-background">
       {/* Navbar */}
       <header className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-3">
             <Image
               src="/logo.png"
               alt="RIVOFLOW"
@@ -215,9 +226,10 @@ export default function LandingPage() {
               height={36}
               className="rounded-xl"
             />
+            <span className="font-bold text-lg hidden sm:block">RivoFlow</span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-7">
+          <nav className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
               <Link
                 key={link.label}
@@ -230,19 +242,13 @@ export default function LandingPage() {
           </nav>
 
           <div className="hidden md:flex items-center gap-4">
-            <Link
-              href="/auth/google"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Entrar
-            </Link>
             <Link href="/auth/google">
               <Button
                 size="sm"
                 className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg"
               >
-                Começar grátis
-                <ChevronRightIcon className="w-3.5 h-3.5 ml-1" />
+                Começar agora
+                <ChevronRightIcon className="w-3.5 h-3.5 ml-0.5" />
               </Button>
             </Link>
           </div>
@@ -278,7 +284,7 @@ export default function LandingPage() {
                 size="sm"
                 className="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 text-white"
               >
-                Começar grátis
+                Criar minha conta
               </Button>
             </Link>
           </div>
@@ -302,23 +308,23 @@ export default function LandingPage() {
           {/* Badge — credibilidade real */}
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-xs font-medium mb-8">
             <SparklesIcon className="w-3.5 h-3.5" />
-            <span>Integrado com Google Gemini 2.0</span>
+            <span>Sem mensalidades. Pague apenas pelo que usar.</span>
           </div>
 
           {/* Headline — resultado claro */}
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.08] mb-6">
-            <span>Crie criativos</span>
+            <span>A forma mais fácil de</span>
             <br />
+            <span>criar seus </span>
             <span className="bg-linear-to-r from-indigo-500 via-blue-500 to-cyan-500 bg-clip-text text-transparent">
-              que vendem
+              criativos
             </span>
-            <br />
-            <span>em segundos</span>
           </h1>
 
           <p className="max-w-xl mx-auto text-lg text-muted-foreground leading-relaxed mb-4">
-            Editor visual de fluxos com IA para times de marketing e agências
-            que precisam criar mais, com mais velocidade e menos esforço.
+            Utilize nosso editor visual de fluxos com IA para gerar campanhas e
+            imagens de alta qualidade instantaneamente. Sem mensalidades, com a
+            mais alta precisão.
           </p>
 
           {/* Social proof inline */}
@@ -361,7 +367,7 @@ export default function LandingPage() {
                 className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 h-12 text-base rounded-xl shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30 transition-all hover:scale-[1.02]"
               >
                 <RocketIcon className="w-4 h-4 mr-2" />
-                Começar grátis
+                Criar minha conta
                 <ArrowRightIcon className="w-4 h-4 ml-2" />
               </Button>
             </Link>
@@ -522,14 +528,14 @@ export default function LandingPage() {
               Produto
             </p>
             <h2 className="text-3xl md:text-5xl font-bold mb-4">
-              Tudo que você precisa para{" "}
+              Acelere toda sua{" "}
               <span className="bg-linear-to-r from-indigo-500 to-blue-500 bg-clip-text text-transparent">
-                criar rápido
+                produção visual
               </span>
             </h2>
             <p className="text-muted-foreground max-w-lg mx-auto">
-              Interface que conecta sua ideia direto ao resultado. Sem idas e
-              vindas.
+              Tudo que você precisa em uma única interface inteligente. Crie
+              melhor, em menos tempo e pague apenas pelo que usar.
             </p>
           </div>
 
@@ -564,7 +570,7 @@ export default function LandingPage() {
             <h2 className="text-3xl md:text-5xl font-bold mb-4">
               Do zero ao criativo em{" "}
               <span className="bg-linear-to-r from-indigo-500 to-blue-500 bg-clip-text text-transparent">
-                menos de 1 minuto
+                poucos minutos
               </span>
             </h2>
             <p className="text-muted-foreground max-w-lg mx-auto">
@@ -660,10 +666,11 @@ export default function LandingPage() {
               Preços
             </p>
             <h2 className="text-3xl md:text-5xl font-bold mb-4">
-              Simples e transparente
+              Pague apenas pelo uso
             </h2>
             <p className="text-muted-foreground max-w-lg mx-auto">
-              Comece grátis. Faça upgrade quando precisar de mais.
+              Abandone assinaturas. Faça um depósito e use seus créditos no seu
+              ritmo.
             </p>
           </div>
 
@@ -675,7 +682,7 @@ export default function LandingPage() {
                   plan.highlight
                     ? "border-indigo-500 bg-card shadow-2xl shadow-indigo-500/10 relative"
                     : "border-border/50 bg-card/50"
-                }`}
+                } ${plan.disabled ? "opacity-60 pointer-events-none" : ""}`}
               >
                 {plan.highlight && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-indigo-600 text-white text-[11px] font-semibold rounded-full">
@@ -703,10 +710,10 @@ export default function LandingPage() {
                       className="flex items-center gap-2.5 text-sm"
                     >
                       <div
-                        className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${plan.highlight ? "bg-indigo-500/20" : "bg-green-500/20"}`}
+                        className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${plan.highlight ? "bg-indigo-500/20" : plan.disabled ? "bg-muted-foreground/20" : "bg-green-500/20"}`}
                       >
                         <CheckIcon
-                          className={`w-2.5 h-2.5 ${plan.highlight ? "text-indigo-600" : "text-green-600"}`}
+                          className={`w-2.5 h-2.5 ${plan.highlight ? "text-indigo-600" : plan.disabled ? "text-muted-foreground" : "text-green-600"}`}
                         />
                       </div>
                       {feature}
@@ -784,17 +791,17 @@ export default function LandingPage() {
         <div className="relative z-10 max-w-3xl mx-auto px-6 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-600 text-xs font-medium mb-6">
             <SparklesIcon className="w-3.5 h-3.5" />
-            <span>Plano gratuito disponível agora</span>
+            <span>Créditos que nunca expiram</span>
           </div>
           <h2 className="text-3xl md:text-5xl font-bold mb-5">
-            Comece a criar hoje.{" "}
+            Sua próxima campanha pronta{" "}
             <span className="bg-linear-to-r from-indigo-500 to-blue-500 bg-clip-text text-transparent">
-              Sem custo.
+              hoje mesmo.
             </span>
           </h2>
           <p className="text-muted-foreground text-lg mb-10 max-w-xl mx-auto">
-            Sua próxima campanha pode estar pronta ainda hoje. Sem cartão de
-            crédito, sem burocracia.
+            Abandone os bloqueios criativos. Crie sua conta em 1 clique sem
+            informar cartão de crédito no cadastro e veja a mágica acontecer.
           </p>
           <Link href="/auth/google">
             <Button
@@ -807,7 +814,7 @@ export default function LandingPage() {
             </Button>
           </Link>
           <p className="text-xs text-muted-foreground mt-4">
-            Sem cartão de crédito · Cancele quando quiser
+            Acesso via Google · Recargas e pagamentos seguros via Pix
           </p>
         </div>
       </section>
@@ -816,7 +823,7 @@ export default function LandingPage() {
       <footer className="border-t border-border/50 py-12">
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex flex-col items-center md:items-start gap-1.5">
+            <div className="flex flex-col items-center justify-center gap-1.5">
               <Link href="/">
                 <Image
                   src="/logo.png"
@@ -826,19 +833,11 @@ export default function LandingPage() {
                   className="rounded-md"
                 />
               </Link>
+
               <p className="text-[11px] text-muted-foreground">
                 Feito por{" "}
                 <span className="font-medium text-foreground">RivoCode</span>
               </p>
-            </div>
-
-            <div className="flex items-center gap-7 text-xs text-muted-foreground">
-              <Link
-                href="#"
-                className="hover:text-foreground transition-colors"
-              >
-                Suporte
-              </Link>
             </div>
 
             <p className="text-xs text-muted-foreground">
