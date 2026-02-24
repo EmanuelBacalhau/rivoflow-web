@@ -255,7 +255,7 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
             onClick={handleGenerateImage}
             disabled={isButtonDisabled}
             className={`w-full text-white rounded-lg shadow-sm nodrag h-9 ${
-              isCreditsInsufficient
+              isCreditsInsufficient && !nodeData.isExecuted
                 ? "bg-red-500 hover:bg-red-600 opacity-90"
                 : "bg-linear-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
             }`}
