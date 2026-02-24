@@ -18,7 +18,7 @@ import { Service } from "@/services/service";
 
 interface AuthContextType {
   signedIn: boolean;
-  signOut: () => void;
+  signOut: (skipApiCall?: boolean) => void;
 }
 
 export const AuthContext = createContext({} as AuthContextType);
