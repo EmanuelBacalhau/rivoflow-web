@@ -41,7 +41,7 @@ export default function AuthCallbackPage() {
 
       <div className="relative z-10 flex flex-col items-center gap-6 p-8 rounded-2xl bg-background/40 backdrop-blur-xl border border-white/10 shadow-2xl">
         <div className="relative">
-          <div className="absolute inset-0 bg-indigo-500/30 blur-xl rounded-full" />
+          <div className="absolute inset-0 bg-primary/30 blur-xl rounded-full" />
           <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-lg relative z-10 border border-border">
             <svg
               className="size-8 relative z-10"
@@ -70,11 +70,11 @@ export default function AuthCallbackPage() {
         </div>
 
         <div className="flex flex-col items-center gap-2 text-center">
-          <h2 className="text-xl font-semibold bg-linear-to-r from-indigo-200 to-white bg-clip-text text-transparent">
+          <h2 className="text-xl font-semibold bg-linear-to-r from-primary/50 to-white bg-clip-text text-transparent">
             Autenticando com Google
           </h2>
           <div className="flex items-center justify-center gap-2 text-muted-foreground">
-            <Loader2Icon className="size-4 animate-spin text-indigo-400" />
+            <Loader2Icon className="size-4 animate-spin text-primary" />
             <span className="text-sm">Conectando ao RivoFlow...</span>
           </div>
         </div>

@@ -26,7 +26,7 @@ export default function NotFound() {
       {/* Content */}
       <main className="flex-1 flex items-center justify-center relative overflow-hidden">
         {/* Background */}
-        <div className="absolute inset-0 bg-linear-to-b from-indigo-500/8 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-b from-primary/8 via-transparent to-transparent" />
         <div
           className="absolute inset-0 opacity-[0.025]"
           style={{
@@ -54,7 +54,7 @@ export default function NotFound() {
             <Link href="/">
               <Button
                 size="lg"
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 h-11 rounded-xl shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30 transition-all hover:scale-[1.02]"
+                className="bg-primary hover:bg-primary/90 text-white px-8 h-11 rounded-xl shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all hover:scale-[1.02]"
               >
                 <HomeIcon className="w-4 h-4 mr-2" />
                 Ir para o início

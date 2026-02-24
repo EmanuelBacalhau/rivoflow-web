@@ -49,7 +49,7 @@ const features = [
     wide: true,
     icon: LayersIcon,
     color: "text-indigo-500",
-    bg: "bg-indigo-500/10",
+    bg: "bg-primary/10",
   },
   {
     id: "speed",
@@ -244,7 +244,7 @@ export default function LandingPage() {
             <Link href="/auth/google">
               <Button
                 size="sm"
-                className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg"
+                className="bg-primary hover:bg-primary/90 text-white rounded-lg"
               >
                 Começar agora
                 <ChevronRightIcon className="w-3.5 h-3.5 ml-0.5" />
@@ -281,7 +281,7 @@ export default function LandingPage() {
             <Link href="/auth/google">
               <Button
                 size="sm"
-                className="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 text-white"
+                className="w-full mt-2 bg-primary hover:bg-primary/90 text-white"
               >
                 Começar agora
               </Button>
@@ -292,7 +292,7 @@ export default function LandingPage() {
 
       {/* HERO */}
       <section className="relative overflow-hidden pt-20 pb-12 md:pt-28 md:pb-20">
-        <div className="absolute inset-0 bg-linear-to-b from-indigo-500/8 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-b from-primary/8 via-transparent to-transparent" />
         <div
           className="absolute inset-0 opacity-[0.025]"
           style={{
@@ -303,7 +303,7 @@ export default function LandingPage() {
         />
 
         <div className="relative z-10 max-w-6xl mx-auto px-6 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-xs font-medium mb-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary dark:text-primary text-xs font-medium mb-8">
             <SparklesIcon className="w-3.5 h-3.5" />
             <span>Sem mensalidades. Pague apenas pelo que usar.</span>
           </div>
@@ -326,7 +326,7 @@ export default function LandingPage() {
 
           {/* MEDIA TYPE TAGS */}
           <div className="flex items-center justify-center gap-3 mb-10 text-xs">
-            <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-500/10 text-indigo-600 border border-indigo-500/20">
+            <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/20">
               <ImageIcon className="w-3.5 h-3.5" />
               Imagens
             </span>
@@ -344,7 +344,7 @@ export default function LandingPage() {
             <Link href="/auth/google">
               <Button
                 size="lg"
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 h-12 text-base rounded-xl shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30 transition-all hover:scale-[1.02]"
+                className="bg-primary hover:bg-primary/90 text-white px-8 h-12 text-base rounded-xl shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all hover:scale-[1.02]"
               >
                 <RocketIcon className="w-4 h-4 mr-2" />
                 Criar minha conta
@@ -413,8 +413,8 @@ export default function LandingPage() {
                       Proporção: 1:1 · Qualidade: 4K
                     </p>
                     <div className="mt-2 flex items-center gap-1">
-                      <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
-                      <span className="text-[9px] text-indigo-600 font-medium">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                      <span className="text-[9px] text-primary font-medium">
                         Processando
                       </span>
                     </div>
@@ -495,7 +495,7 @@ export default function LandingPage() {
       <section id="features" className="py-24">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
-            <p className="text-xs text-indigo-600 font-semibold uppercase tracking-widest mb-3">
+            <p className="text-xs text-primary font-semibold uppercase tracking-widest mb-3">
               Produto
             </p>
             <h2 className="text-3xl md:text-5xl font-bold mb-4">
@@ -514,7 +514,7 @@ export default function LandingPage() {
             {features.map((feat) => (
               <div
                 key={feat.id}
-                className={`${feat.wide ? "md:col-span-2" : "md:col-span-1"} p-7 rounded-2xl border border-border/50 bg-card/50 hover:border-indigo-500/30 hover:bg-card/80 transition-all group`}
+                className={`${feat.wide ? "md:col-span-2" : "md:col-span-1"} p-7 rounded-2xl border border-border/50 bg-card/50 hover:border-primary/30 hover:bg-card/80 transition-all group`}
               >
                 <div
                   className={`w-11 h-11 rounded-xl ${feat.bg} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform`}
@@ -535,7 +535,7 @@ export default function LandingPage() {
       <section id="how-it-works" className="py-24 bg-muted/30">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
-            <p className="text-xs text-indigo-600 font-semibold uppercase tracking-widest mb-3">
+            <p className="text-xs text-primary font-semibold uppercase tracking-widest mb-3">
               Como funciona
             </p>
             <h2 className="text-3xl md:text-5xl font-bold mb-4">
@@ -569,7 +569,7 @@ export default function LandingPage() {
                 <p className="text-sm text-muted-foreground leading-relaxed mb-3">
                   {step.description}
                 </p>
-                <span className="text-[11px] font-medium text-indigo-600 bg-indigo-500/10 px-2.5 py-1 rounded-full border border-indigo-500/20">
+                <span className="text-[11px] font-medium text-primary bg-primary/10 px-2.5 py-1 rounded-full border border-primary/20">
                   {step.time}
                 </span>
               </div>
@@ -582,7 +582,7 @@ export default function LandingPage() {
       <section className="py-24">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
-            <p className="text-xs text-indigo-600 font-semibold uppercase tracking-widest mb-3">
+            <p className="text-xs text-primary font-semibold uppercase tracking-widest mb-3">
               Depoimentos
             </p>
             <h2 className="text-3xl md:text-5xl font-bold mb-4">
@@ -631,7 +631,7 @@ export default function LandingPage() {
       <section id="pricing" className="py-24 bg-muted/30">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
-            <p className="text-xs text-indigo-600 font-semibold uppercase tracking-widest mb-3">
+            <p className="text-xs text-primary font-semibold uppercase tracking-widest mb-3">
               Preços
             </p>
             <h2 className="text-3xl md:text-5xl font-bold mb-4">
@@ -682,7 +682,7 @@ export default function LandingPage() {
                         className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${plan.highlight ? "bg-indigo-500/20" : plan.disabled ? "bg-muted-foreground/20" : "bg-green-500/20"}`}
                       >
                         <CheckIcon
-                          className={`w-2.5 h-2.5 ${plan.highlight ? "text-indigo-600" : plan.disabled ? "text-muted-foreground" : "text-green-600"}`}
+                          className={`w-2.5 h-2.5 ${plan.highlight ? "text-primary" : plan.disabled ? "text-muted-foreground" : "text-green-600"}`}
                         />
                       </div>
                       {feature}
@@ -694,7 +694,7 @@ export default function LandingPage() {
                   <Button
                     className={`w-full ${
                       plan.highlight
-                        ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-500/25"
+                        ? "bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/25"
                         : ""
                     }`}
                     variant={plan.highlight ? "default" : "outline"}
@@ -713,7 +713,7 @@ export default function LandingPage() {
       <section className="py-24">
         <div className="max-w-2xl mx-auto px-6">
           <div className="text-center mb-14">
-            <p className="text-xs text-indigo-600 font-semibold uppercase tracking-widest mb-3">
+            <p className="text-xs text-primary font-semibold uppercase tracking-widest mb-3">
               Dúvidas
             </p>
             <h2 className="text-3xl md:text-4xl font-bold">
@@ -758,7 +758,7 @@ export default function LandingPage() {
       <section className="py-28 relative overflow-hidden bg-muted/20">
         <div className="absolute inset-0 bg-linear-to-b from-transparent via-indigo-500/5 to-transparent" />
         <div className="relative z-10 max-w-3xl mx-auto px-6 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-600 text-xs font-medium mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs font-medium mb-6">
             <SparklesIcon className="w-3.5 h-3.5" />
             <span>Créditos que nunca expiram</span>
           </div>
@@ -775,7 +775,7 @@ export default function LandingPage() {
           <Link href="/auth/google">
             <Button
               size="lg"
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-10 h-12 text-base rounded-xl shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30 transition-all hover:scale-[1.02]"
+              className="bg-primary hover:bg-primary/90 text-white px-10 h-12 text-base rounded-xl shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all hover:scale-[1.02]"
             >
               <SparklesIcon className="w-4 h-4 mr-2" />
               Criar meu primeiro criativo

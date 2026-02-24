@@ -35,18 +35,12 @@ import { useUpdateNodePositionController } from "@/hooks/mutations/useUpdateNode
 import { useUpdateDataPromptNodeController } from "@/hooks/mutations/useUpdatePromptNode";
 import { useUploadImageNodeController } from "@/hooks/mutations/useUploadImageNode";
 import { useFlowNodes } from "@/hooks/queries/useFlowNodes";
+import { NODE_COLORS } from "@/lib/node-colors";
 import { GenerationImageNodeService } from "@/services/node/generation-image-node-service";
 import type { ImageNodeService } from "@/services/node/image-node-service";
 import type { PromptNodeService } from "@/services/node/prompt-node-service";
 import { NodeTypeEnum } from "@/types";
 import { debounce } from "@/utils/debounce";
-
-const NODE_COLORS: Record<string, string> = {
-  PROMPT: "#f59e0b", // amber
-  IMAGE: "#3b82f6", // blue
-  GENERATION_IMAGE: "#a855f7", // purple
-  RESULT_IMAGE: "#22c55e", // green
-};
 
 interface ConnectedData {
   prompts: string[];

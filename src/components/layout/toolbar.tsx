@@ -37,7 +37,7 @@ function NodeButton({
       className={`flex items-center ${isMobile ? "gap-1 px-2 py-1" : "gap-2 px-3 py-2"} rounded-lg transition-all hover:shadow-sm hover:bg-muted`}
     >
       <span className={`shrink-0 ${iconColor}`}>{icon}</span>
-      <span className="text-xs font-medium text-white">{label}</span>
+      <span className="text-xs font-medium text-foreground">{label}</span>
     </button>
   );
 }
@@ -58,7 +58,7 @@ export function Toolbar({
 
         <div className="flex items-center">
           {/* Label */}
-          <span className="text-[10px] font-semibold text-white uppercase tracking-wider px-1 mr-1">
+          <span className="text-[10px] font-semibold text-foreground uppercase tracking-wider px-1 mr-1">
             Nós
           </span>
 

@@ -1,7 +1,7 @@
 export function Background() {
   return (
     <div>
-      <div className="absolute inset-0 bg-linear-to-b from-indigo-500/8 via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-linear-to-b from-primary/8 via-transparent to-transparent" />
       <div
         className="absolute inset-0 opacity-[0.025]"
         style={{

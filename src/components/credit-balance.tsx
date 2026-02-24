@@ -26,7 +26,7 @@ export function CreditBalance({ balance }: CreditBalanceProps) {
       </div>
 
       <div className="flex flex-col gap-1">
-        <div className="overflow-hidden rounded-lg bg-gray-200">
+        <div className="overflow-hidden rounded-lg bg-muted">
           <div
             className={`bg-primary h-2`}
             style={{
