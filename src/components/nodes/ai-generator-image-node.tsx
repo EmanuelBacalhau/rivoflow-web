@@ -60,41 +60,49 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
   }, [id, getConnectedData]);
 
   const handleFormatChange = async (value: string) => {
-    updateNodeData(id, {
-      format: value as AspectRatio,
-      isCalculatingCredits: true,
-    });
-    await updateGenerationImageNode({
-      flowId,
-      nodeId: id,
-      data: {
-        ...nodeData,
-        parameters: {
-          quality: nodeData.parameters.quality ?? "1K",
-          aspectRatio: value as AspectRatio,
+    try {
+      updateNodeData(id, {
+        format: value as AspectRatio,
+        isCalculatingCredits: true,
+      });
+      await updateGenerationImageNode({
+        flowId,
+        nodeId: id,
+        data: {
+          ...nodeData,
+          parameters: {
+            quality: nodeData.parameters.quality ?? "1K",
+            aspectRatio: value as AspectRatio,
+          },
         },
-      },
-    });
-    calculateCreditsForNode(id);
+      });
+      await calculateCreditsForNode(id);
+    } catch {
+      updateNodeData(id, { isCalculatingCredits: false });
+    }
   };
 
   const handleQualityChange = async (value: string) => {
-    updateNodeData(id, {
-      quality: value as ImageSize,
-      isCalculatingCredits: true,
-    });
-    await updateGenerationImageNode({
-      flowId,
-      nodeId: id,
-      data: {
-        ...nodeData,
-        parameters: {
-          aspectRatio: nodeData.parameters.aspectRatio ?? "1:1",
-          quality: value as ImageSize,
+    try {
+      updateNodeData(id, {
+        quality: value as ImageSize,
+        isCalculatingCredits: true,
+      });
+      await updateGenerationImageNode({
+        flowId,
+        nodeId: id,
+        data: {
+          ...nodeData,
+          parameters: {
+            aspectRatio: nodeData.parameters.aspectRatio ?? "1:1",
+            quality: value as ImageSize,
+          },
         },
-      },
-    });
-    calculateCreditsForNode(id);
+      });
+      await calculateCreditsForNode(id);
+    } catch {
+      updateNodeData(id, { isCalculatingCredits: false });
+    }
   };
 
   const handleGenerateImage = async () => {
@@ -176,6 +184,7 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
           onClick={() => removeNode(id)}
           className="text-purple-500/50 hover:text-red-500 transition-colors shrink-0 nodrag cursor-pointer md:hidden"
           type="button"
+          aria-label="Remover nó gerador de IA"
         >
           <Trash2Icon className="size-3.5" />
         </button>

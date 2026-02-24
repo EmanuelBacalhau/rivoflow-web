@@ -48,10 +48,20 @@ export type NodeDataGenerationImage = {
   status: GenerationStatusEnum;
 };
 
+export type NodeDataResultImage = {
+  type: NodeTypeEnum.RESULT_IMAGE;
+  imageUrl?: string;
+};
+
 export type PromptNode = NodeBase & { data: NodeDataPrompt };
 export type ImageNode = NodeBase & { data: NodeDataImage };
 export type GenerationImageNode = NodeBase & { data: NodeDataGenerationImage };
-export type AnyNode = PromptNode | ImageNode | GenerationImageNode;
+export type ResultImageNode = NodeBase & { data: NodeDataResultImage };
+export type AnyNode =
+  | PromptNode
+  | ImageNode
+  | GenerationImageNode
+  | ResultImageNode;
 
 export type AspectRatio = "9:16" | "1:1" | "16:9" | "4:3";
 export type ImageSize = "1K" | "2K" | "4K";

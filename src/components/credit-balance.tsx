@@ -7,7 +7,8 @@ interface CreditBalanceProps {
 
 export function CreditBalance({ balance }: CreditBalanceProps) {
   const { lifetimeSpent, lifetimeDeposited, credits } = balance;
-  const percentage = (lifetimeSpent / lifetimeDeposited) * 100;
+  const percentage =
+    lifetimeDeposited === 0 ? 0 : (lifetimeSpent / lifetimeDeposited) * 100;
   const remainingPercentage = 100 - percentage;
 
   return (

@@ -3,7 +3,10 @@ import { Background } from "./background";
 
 export function FlowLoading() {
   return (
-    <div className="h-screen bg-background flex items-center justify-center">
+    <div
+      className="h-screen bg-background flex items-center justify-center"
+      aria-busy="true"
+    >
       <Background />
       <Image
         src="/logo.png"

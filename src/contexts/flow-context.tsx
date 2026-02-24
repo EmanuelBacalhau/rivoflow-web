@@ -74,7 +74,7 @@ interface FlowContextType {
   generateImageNode: (
     params: GenerationImageNodeService.GenerateImageParams,
   ) => Promise<void>;
-  calculateCreditsForNode: (nodeId: string) => void;
+  calculateCreditsForNode: (nodeId: string) => Promise<void>;
   markConnectedGeneratorsAsCalculating: (sourceNodeId: string) => void;
   isLoading: boolean;
   getConnectedData: (nodeId: string) => ConnectedData;
@@ -203,15 +203,16 @@ export function FlowProvider({ children }: { children: ReactNode }) {
   };
 
   const markConnectedGeneratorsAsCalculating = (sourceNodeId: string) => {
-    getConnectedGeneratorNodeIds(sourceNodeId).forEach((nodeId) => {
-      setNodes((nds) =>
-        nds.map((n) =>
-          n.id === nodeId
-            ? { ...n, data: { ...n.data, isCalculatingCredits: true } }
-            : n,
-        ),
-      );
-    });
+    const generatorNodeIds = getConnectedGeneratorNodeIds(sourceNodeId);
+    if (generatorNodeIds.length === 0) return;
+
+    setNodes((nds) =>
+      nds.map((n) =>
+        generatorNodeIds.includes(n.id)
+          ? { ...n, data: { ...n.data, isCalculatingCredits: true } }
+          : n,
+      ),
+    );
   };
 
   const { createPromptNode } = useCreateNodePromptController({
@@ -284,7 +285,7 @@ export function FlowProvider({ children }: { children: ReactNode }) {
     changes.forEach((change) => {
       if (change.type === "position" && change.position) {
         const nodeId = change.id;
-        const node = nodes.find((n) => n.id === nodeId);
+        const node = nodesRef.current.find((n) => n.id === nodeId);
         if (!node) return;
 
         if (nodeId.startsWith("temp-")) return;
@@ -298,7 +299,7 @@ export function FlowProvider({ children }: { children: ReactNode }) {
 
       if (change.type === "remove") {
         const nodeId = change.id;
-        const node = nodes.find((n) => n.id === nodeId);
+        const node = nodesRef.current.find((n) => n.id === nodeId);
         if (!node) return;
 
         if (nodeId.startsWith("temp-")) {
@@ -311,6 +312,8 @@ export function FlowProvider({ children }: { children: ReactNode }) {
         deleteNode({
           nodeId,
           flowId,
+        }).catch(() => {
+          toast.error("Erro ao deletar nó. Tente novamente.");
         });
       }
     });
@@ -326,17 +329,19 @@ export function FlowProvider({ children }: { children: ReactNode }) {
       }));
 
     edgesForDelete.forEach(({ edgeId, flowId }) => {
-      const edge = edges.find((e) => e.id === edgeId);
+      const edge = edgesRef.current.find((e) => e.id === edgeId);
       if (!edge) return;
-      const targetNode = nodes.find((n) => n.id === edge.target);
+      const targetNode = nodesRef.current.find((n) => n.id === edge.target);
       if (!targetNode) return;
 
-      deleteEdge({ edgeId, flowId, node: targetNode });
+      deleteEdge({ edgeId, flowId, node: targetNode }).catch(() => {
+        toast.error("Erro ao deletar conexão. Tente novamente.");
+      });
     });
   };
 
   const onConnect = (params: Connection) => {
-    const sourceNode = nodes.find((n) => n.id === params.source);
+    const sourceNode = nodesRef.current.find((n) => n.id === params.source);
 
     if (!sourceNode) {
       toast.error("Node de origem não encontrado.");
@@ -345,7 +350,7 @@ export function FlowProvider({ children }: { children: ReactNode }) {
 
     const strokeColor = NODE_COLORS[sourceNode.type || ""] || "#6b7280";
 
-    const targetNode = nodes.find((n) => n.id === params.target);
+    const targetNode = nodesRef.current.find((n) => n.id === params.target);
 
     if (!targetNode) {
       toast.error("Node de destino não encontrado.");
@@ -409,7 +414,7 @@ export function FlowProvider({ children }: { children: ReactNode }) {
       flowId,
       sourceNodeId: params.source,
       targetNodeId: params.target,
-      node: targetNode!,
+      node: targetNode,
     });
 
     setEdges((edgesSnapshot) =>

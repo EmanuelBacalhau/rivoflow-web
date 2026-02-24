@@ -77,6 +77,7 @@ export function PromptNode({ id: nodeId, data, selected }: NodeProps) {
           onClick={() => removeNode(nodeId)}
           className="text-amber-500/50 hover:text-red-500 transition-colors shrink-0 nodrag cursor-pointer md:hidden"
           type="button"
+          aria-label="Remover nó de prompt"
         >
           <Trash2Icon className="size-3.5" />
         </button>

@@ -37,7 +37,7 @@ function GoogleIcon() {
 
 export default function GoogleLoginPage() {
   function handleGoogleSignIn() {
-    const authorizationUrl = env.NEXT_PUBLIC_OUATH_AUTHORIZATION_URL;
+    const authorizationUrl = env.NEXT_PUBLIC_OAUTH_AUTHORIZATION_URL;
     const clientId = env.NEXT_PUBLIC_CLIENT_ID;
 
     const params = new URLSearchParams({

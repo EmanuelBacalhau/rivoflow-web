@@ -19,6 +19,8 @@ const nodeTypes = {
   RESULT_IMAGE: ResultImageNode,
 };
 
+const PRO_OPTIONS = { hideAttribution: true };
+
 export function FlowCanvas() {
   const {
     isLoading,
@@ -66,7 +68,7 @@ export function FlowCanvas() {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         nodeTypes={nodeTypes}
-        proOptions={{ hideAttribution: true }}
+        proOptions={PRO_OPTIONS}
         fitView
       >
         <Background

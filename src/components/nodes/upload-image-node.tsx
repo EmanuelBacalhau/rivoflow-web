@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
+import { toast } from "sonner";
 import { useFlow } from "@/contexts/flow-context";
 import type { ImageNodeService } from "@/services/node/image-node-service";
 import { Button } from "../ui/button";
@@ -39,14 +40,20 @@ export function UploadImageNode({ id, data, selected }: NodeProps) {
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
-    if (selectedFile) {
-      markConnectedGeneratorsAsCalculating(id);
-      uploadImageNode({
-        flowId,
-        nodeId: id,
-        file: selectedFile,
-      });
+    if (!selectedFile) return;
+
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    if (selectedFile.size > MAX_FILE_SIZE) {
+      toast.error("Arquivo muito grande. Máximo 10MB.");
+      return;
     }
+
+    markConnectedGeneratorsAsCalculating(id);
+    uploadImageNode({
+      flowId,
+      nodeId: id,
+      file: selectedFile,
+    });
   };
 
   return (
@@ -78,6 +85,7 @@ export function UploadImageNode({ id, data, selected }: NodeProps) {
           onClick={() => removeNode(id)}
           className="text-blue-500/50 hover:text-red-500 transition-colors shrink-0 nodrag cursor-pointer md:hidden"
           type="button"
+          aria-label="Remover nó de imagem"
         >
           <Trash2Icon className="size-3.5" />
         </button>

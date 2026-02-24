@@ -4,6 +4,7 @@ import { Handle, type NodeProps, Position } from "@xyflow/react";
 import { DownloadIcon, EyeIcon, Trash2Icon, ZoomInIcon } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useState } from "react";
+import { toast } from "sonner";
 import { useFlow } from "@/contexts/flow-context";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader } from "../ui/card";
@@ -37,8 +38,8 @@ export function ResultImageNode({ id, data, selected }: NodeProps) {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-    } catch (e) {
-      console.error("Failed to download image", e);
+    } catch {
+      toast.error("Erro ao baixar imagem. Tente novamente.");
     } finally {
       setDownloading(false);
     }
@@ -81,6 +82,7 @@ export function ResultImageNode({ id, data, selected }: NodeProps) {
           onClick={() => removeNode(id)}
           className="text-green-500/50 hover:text-red-500 transition-colors shrink-0 nodrag cursor-pointer md:hidden"
           type="button"
+          aria-label="Remover nó de resultado"
         >
           <Trash2Icon className="size-3.5" />
         </button>

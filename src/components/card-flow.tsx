@@ -33,7 +33,7 @@ export function CardFlow({ flow }: CardFlowProps) {
   return (
     <Card key={flow.id} className="p-0 overflow-hidden">
       <CardContent className="p-0">
-        <Link href={`/dashboard/flow/${flow.id}`} key={flow.id}>
+        <Link href={`/dashboard/flow/${flow.id}`}>
           <div className="p-6 bg-primary/25 grid place-items-center">
             <LayersIcon className="size-12 text-muted-foreground" />
           </div>
@@ -43,7 +43,6 @@ export function CardFlow({ flow }: CardFlowProps) {
           <div className="min-w-0">
             <Link
               href={`/dashboard/flow/${flow.id}`}
-              key={flow.id}
               className="hover:underline"
             >
               <h3 className="text-lg font-bold truncate">{flow.title}</h3>
