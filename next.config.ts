@@ -6,7 +6,11 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "cdn-flow.rivocode.com.br",
+        hostname: "assets-flow.rivocode.com.br",
+      },
+      {
+        protocol: "https",
+        hostname: "assets-dev-flow.rivocode.com.br",
       },
     ],
     qualities: [100, 75],
