@@ -87,13 +87,14 @@ export default function GoogleLoginPage() {
             <GoogleIcon />
             Continuar com o Google
           </button>
-        </div>
 
-        <p className="text-center text-xs text-muted-foreground mt-6">
-          <Link href="/" className="hover:text-foreground transition-colors">
+          <Link
+            href="/"
+            className="hover:text-foreground transition-colors text-xs hover:underline text-muted-foreground"
+          >
             ← Voltar ao início
           </Link>
-        </p>
+        </div>
       </div>
     </div>
   );
