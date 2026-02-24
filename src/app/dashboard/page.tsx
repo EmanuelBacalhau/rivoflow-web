@@ -1,7 +1,7 @@
 "use client";
 
 import { CircleDollarSignIcon, LayersIcon, SearchIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { NumericFormat } from "react-number-format";
 import { toast } from "sonner";
 import { CreateFlowDialog } from "@/components/create-flow-dialog";
@@ -19,6 +19,7 @@ import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { useCreateLinkCharge } from "@/hooks/mutations/useCreateLinkCharge";
 import { useAccount } from "@/hooks/queries/useAccount";
 import { useFlows } from "@/hooks/queries/useFlows";
+import { useSimulateCredits } from "@/hooks/queries/useSimulateCredits";
 
 const MIN_CREDITS_IN_REALS = 20;
 
@@ -29,7 +30,21 @@ export default function DashboardPage() {
   const [search, setSearch] = useState("");
   const { me } = useAccount();
   const [credits, setCredits] = useState<number>(MIN_CREDITS_IN_REALS);
+  const [debouncedCredits, setDebouncedCredits] =
+    useState<number>(MIN_CREDITS_IN_REALS);
   const { createLinkCharge, isCreatingLinkCharge } = useCreateLinkCharge();
+
+  const { simulatedCredits, isSimulating } = useSimulateCredits(
+    debouncedCredits,
+    debouncedCredits >= MIN_CREDITS_IN_REALS,
+  );
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedCredits(credits);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [credits]);
 
   const filteredFlows = useMemo(() => {
     return flows.filter((flow) =>
@@ -89,9 +104,12 @@ export default function DashboardPage() {
                 {fastCredits.map((c) => (
                   <Button
                     key={c}
-                    variant="outline"
-                    onClick={() => setCredits(c)}
-                    className={`mr-2 mb-2 ${credits === c ? "bg-primary text-primary-foreground" : ""}`}
+                    variant={credits === c ? "default" : "outline"}
+                    onClick={() => {
+                      setCredits(c);
+                      setDebouncedCredits(c); // Immediate update for shortcut buttons
+                    }}
+                    className="mr-2 mb-2 transition-all"
                   >
                     {c.toLocaleString("pt-BR", {
                       style: "currency",
@@ -117,8 +135,8 @@ export default function DashboardPage() {
                   className="placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
                 />
 
-                {credits < MIN_CREDITS_IN_REALS && (
-                  <p className="text-xs text-destructive text-right">
+                {credits < MIN_CREDITS_IN_REALS ? (
+                  <p className="text-xs text-destructive text-right mt-1">
                     O valor mínimo para compra é de{" "}
                     {MIN_CREDITS_IN_REALS.toLocaleString("pt-BR", {
                       style: "currency",
@@ -126,6 +144,22 @@ export default function DashboardPage() {
                     })}
                     .
                   </p>
+                ) : (
+                  <div className="flex justify-end mt-1 min-h-[20px]">
+                    {isSimulating ? (
+                      <p className="text-xs text-muted-foreground animate-pulse">
+                        Calculando créditos...
+                      </p>
+                    ) : simulatedCredits !== undefined ? (
+                      <p className="text-xs text-muted-foreground">
+                        Você receberá{" "}
+                        <span className="font-semibold text-primary">
+                          {simulatedCredits}
+                        </span>{" "}
+                        créditos
+                      </p>
+                    ) : null}
+                  </div>
                 )}
               </div>
 

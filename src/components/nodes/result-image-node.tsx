@@ -1,11 +1,17 @@
 "use client";
 
 import { Handle, type NodeProps, Position } from "@xyflow/react";
-import { DownloadIcon, EyeIcon, ShareIcon, ZoomInIcon } from "lucide-react";
+import { DownloadIcon, EyeIcon, ZoomInIcon } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useState } from "react";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader } from "../ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
 
 interface ResultNodeData {
   imageUrl?: string;
@@ -14,6 +20,7 @@ interface ResultNodeData {
 export function ResultImageNode({ data, selected }: NodeProps) {
   const nodeData = data as ResultNodeData;
   const [downloading, setDownloading] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleDownload = useCallback(async () => {
     if (!nodeData.imageUrl) return;
@@ -22,26 +29,16 @@ export function ResultImageNode({ data, selected }: NodeProps) {
     try {
       const link = document.createElement("a");
       link.href = nodeData.imageUrl;
-      link.download = `orion-flow-${Date.now()}.png`;
+      link.download = `rivo-flow-${Date.now()}.png`;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+    } catch (e) {
+      console.error("Failed to download image", e);
     } finally {
-      setTimeout(() => setDownloading(false), 1000);
-    }
-  }, [nodeData.imageUrl]);
-
-  const handleShare = useCallback(async () => {
-    if (!nodeData.imageUrl) return;
-
-    try {
-      const blob = await fetch(nodeData.imageUrl).then((r) => r.blob());
-      const file = new File([blob], "orion-flow-image.png", {
-        type: "image/png",
-      });
-      await navigator.share({ files: [file] });
-    } catch {
-      await navigator.clipboard.writeText(nodeData.imageUrl);
+      setDownloading(false);
     }
   }, [nodeData.imageUrl]);
 
@@ -94,14 +91,33 @@ export function ResultImageNode({ data, selected }: NodeProps) {
                 priority
                 className="object-cover"
               />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <Button
-                  size="icon"
-                  variant="secondary"
-                  onClick={() => window.open(nodeData.imageUrl, "_blank")}
-                >
-                  <ZoomInIcon className="size-5" />
-                </Button>
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      className="cursor-pointer"
+                    >
+                      <ZoomInIcon className="size-5" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-4xl p-0 overflow-hidden border-none outline-none">
+                    <DialogTitle className="sr-only">
+                      Visualização da imagem gerada
+                    </DialogTitle>
+                    <div className="relative w-full h-[80vh] bg-black/5 rounded-lg border border-border">
+                      <Image
+                        src={nodeData.imageUrl}
+                        alt="Visualização da imagem gerada"
+                        fill
+                        sizes="(max-width: 896px) 100vw, 896px"
+                        quality={100}
+                        className="object-contain"
+                      />
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
             </div>
 
@@ -115,14 +131,6 @@ export function ResultImageNode({ data, selected }: NodeProps) {
               >
                 <DownloadIcon className="size-3.5 mr-1.5" />
                 {downloading ? "Baixando..." : "Baixar"}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-8 text-xs"
-                onClick={handleShare}
-              >
-                <ShareIcon className="size-3.5" />
               </Button>
             </div>
 

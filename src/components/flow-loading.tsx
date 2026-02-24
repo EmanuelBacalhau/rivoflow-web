@@ -7,7 +7,7 @@ export function FlowLoading() {
       <Background />
       <Image
         src="/logo.png"
-        alt="Orion Flow logo"
+        alt="RivoFlow logo"
         width={160}
         height={160}
         className="animate-pulse"

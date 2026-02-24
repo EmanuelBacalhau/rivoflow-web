@@ -41,10 +41,10 @@ export default function AuthCallbackPage() {
 
       <div className="relative z-10 flex flex-col items-center gap-6 p-8 rounded-2xl bg-background/40 backdrop-blur-xl border border-white/10 shadow-2xl">
         <div className="relative">
-          <div className="absolute inset-0 bg-indigo-500/30 blur-xl rounded-full animate-pulse" />
+          <div className="absolute inset-0 bg-indigo-500/30 blur-xl rounded-full" />
           <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-lg relative z-10 border border-border">
             <svg
-              className="size-8 relative z-10 animate-[pulse_2s_ease-in-out_infinite]"
+              className="size-8 relative z-10"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
             >
@@ -75,7 +75,7 @@ export default function AuthCallbackPage() {
           </h2>
           <div className="flex items-center justify-center gap-2 text-muted-foreground">
             <Loader2Icon className="size-4 animate-spin text-indigo-400" />
-            <span className="text-sm">Conectando ao Orion Flow...</span>
+            <span className="text-sm">Conectando ao RivoFlow...</span>
           </div>
         </div>
       </div>

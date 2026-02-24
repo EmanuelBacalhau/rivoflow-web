@@ -12,6 +12,17 @@ export class PaymentService extends Service {
 
     return response.data;
   }
+
+  static async simulateCredits(
+    params: PaymentService.SimulateCreditsParams,
+  ): Promise<PaymentService.SimulateCreditsResponse> {
+    const response =
+      await PaymentService.client.get<PaymentService.SimulateCreditsResponse>(
+        `/payments/simulate-credits?amount=${params.amount}`,
+      );
+
+    return response.data;
+  }
 }
 
 export namespace PaymentService {
@@ -21,5 +32,13 @@ export namespace PaymentService {
 
   export type CreateLinkChargeResponse = {
     link: string;
+  };
+
+  export type SimulateCreditsParams = {
+    amount: number;
+  };
+
+  export type SimulateCreditsResponse = {
+    credits: number;
   };
 }
