@@ -86,7 +86,7 @@ export function UploadImageNode({ id, data, selected }: NodeProps) {
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button size="icon" className="cursor-pointer">
+                  <Button size="icon" className="cursor-pointer nodrag">
                     <ZoomInIcon className="size-5" />
                   </Button>
                 </DialogTrigger>
@@ -109,7 +109,7 @@ export function UploadImageNode({ id, data, selected }: NodeProps) {
             </div>
           </div>
         ) : (
-          <label htmlFor={inputId} className="block">
+          <label htmlFor={inputId} className="block nodrag nopan">
             <input
               type="file"
               accept="image/jpeg,image/png,image/webp"

@@ -76,7 +76,7 @@ export function PromptNode({ id: nodeId, data, selected }: NodeProps) {
 
       <CardContent className="p-3 space-y-2">
         <Textarea
-          className="nodrag resize-none h-24 text-xs bg-muted border-amber-500/30 focus-visible:ring-amber-500/30 placeholder:text-muted-foreground"
+          className="nodrag nopan nowheel resize-none min-h-24 text-xs bg-muted border-amber-500/30 focus-visible:ring-amber-500/30 placeholder:text-muted-foreground"
           placeholder="Ex: produto minimalista, fundo clean, luz natural suave..."
           value={nodeData.prompt || ""}
           onChange={handleChange}

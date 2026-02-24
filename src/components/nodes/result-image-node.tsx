@@ -97,7 +97,7 @@ export function ResultImageNode({ data, selected }: NodeProps) {
                     <Button
                       size="icon"
                       variant="secondary"
-                      className="cursor-pointer"
+                      className="cursor-pointer nodrag"
                     >
                       <ZoomInIcon className="size-5" />
                     </Button>
@@ -125,7 +125,7 @@ export function ResultImageNode({ data, selected }: NodeProps) {
               <Button
                 variant="outline"
                 size="sm"
-                className="flex-1 h-8 text-xs"
+                className="flex-1 h-8 text-xs nodrag"
                 onClick={handleDownload}
                 disabled={downloading}
               >

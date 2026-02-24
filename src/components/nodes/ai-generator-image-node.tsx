@@ -188,7 +188,7 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
               value={nodeData.parameters.aspectRatio}
               onValueChange={handleFormatChange}
             >
-              <SelectTrigger className="w-full nodrag h-8 text-xs">
+              <SelectTrigger className="w-full nodrag nopan h-8 text-xs">
                 <SelectValue placeholder="1:1" />
               </SelectTrigger>
               <SelectContent>
@@ -219,7 +219,7 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
               value={nodeData.parameters.quality}
               onValueChange={handleQualityChange}
             >
-              <SelectTrigger className="w-full nodrag h-8 text-xs">
+              <SelectTrigger className="w-full nodrag nopan h-8 text-xs">
                 <SelectValue placeholder="1K" />
               </SelectTrigger>
               <SelectContent>
@@ -254,7 +254,7 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
           <Button
             onClick={handleGenerateImage}
             disabled={isButtonDisabled}
-            className={`w-full text-white rounded-lg shadow-sm nodrag h-9 ${
+            className={`w-full text-white rounded-lg shadow-sm nodrag nopan h-9 ${
               isCreditsInsufficient && !nodeData.isExecuted
                 ? "bg-red-500 hover:bg-red-600 opacity-90"
                 : "bg-linear-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
