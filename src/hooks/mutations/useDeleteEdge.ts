@@ -17,7 +17,7 @@ export function useDeleteEdgeController({ updateNodes }: DeleteEdgeParams) {
     ) => {
       await EdgeService.delete(paramsEdge);
     },
-    onSuccess: async (_, paramsEdge) => {
+    onMutate: async (paramsEdge) => {
       if (paramsEdge.node.data.type === NodeTypeEnum.GENERATION_IMAGE) {
         const nodeId = paramsEdge.node.id;
         updateNodes((nds) =>
@@ -27,6 +27,11 @@ export function useDeleteEdgeController({ updateNodes }: DeleteEdgeParams) {
               : n,
           ),
         );
+      }
+    },
+    onSuccess: async (_, paramsEdge) => {
+      if (paramsEdge.node.data.type === NodeTypeEnum.GENERATION_IMAGE) {
+        const nodeId = paramsEdge.node.id;
         try {
           const result = await GenerationImageNodeService.calculateCredits({
             flowId: paramsEdge.flowId,
@@ -55,6 +60,18 @@ export function useDeleteEdgeController({ updateNodes }: DeleteEdgeParams) {
             ),
           );
         }
+      }
+    },
+    onError: (_, paramsEdge) => {
+      if (paramsEdge.node.data.type === NodeTypeEnum.GENERATION_IMAGE) {
+        const nodeId = paramsEdge.node.id;
+        updateNodes((nds) =>
+          nds.map((n) =>
+            n.id === nodeId
+              ? { ...n, data: { ...n.data, isCalculatingCredits: false } }
+              : n,
+          ),
+        );
       }
     },
   });

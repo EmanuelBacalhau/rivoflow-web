@@ -24,6 +24,18 @@ export function useCreateEdgeController({
       const response = await EdgeService.create(paramsEdge);
       return response.edge;
     },
+    onMutate: async (params) => {
+      if (params.node.data.type === NodeTypeEnum.GENERATION_IMAGE) {
+        const nodeId = params.node.id;
+        updateNodes((nds) =>
+          nds.map((n) =>
+            n.id === nodeId
+              ? { ...n, data: { ...n.data, isCalculatingCredits: true } }
+              : n,
+          ),
+        );
+      }
+    },
     onSuccess: async (edge, params) => {
       const { sourceNodeId, targetNodeId, id } = edge;
 
@@ -42,13 +54,7 @@ export function useCreateEdgeController({
 
       if (params.node.data.type === NodeTypeEnum.GENERATION_IMAGE) {
         const nodeId = params.node.id;
-        updateNodes((nds) =>
-          nds.map((n) =>
-            n.id === nodeId
-              ? { ...n, data: { ...n.data, isCalculatingCredits: true } }
-              : n,
-          ),
-        );
+        // isCalculatingCredits is already true from onMutate
         try {
           const result = await GenerationImageNodeService.calculateCredits({
             flowId: params.flowId,
@@ -77,6 +83,18 @@ export function useCreateEdgeController({
             ),
           );
         }
+      }
+    },
+    onError: (_error, params) => {
+      if (params.node.data.type === NodeTypeEnum.GENERATION_IMAGE) {
+        const nodeId = params.node.id;
+        updateNodes((nds) =>
+          nds.map((n) =>
+            n.id === nodeId
+              ? { ...n, data: { ...n.data, isCalculatingCredits: false } }
+              : n,
+          ),
+        );
       }
     },
   });

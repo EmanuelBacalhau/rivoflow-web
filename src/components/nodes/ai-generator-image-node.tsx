@@ -60,7 +60,10 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
   }, [id, getConnectedData]);
 
   const handleFormatChange = async (value: string) => {
-    updateNodeData(id, { format: value as AspectRatio });
+    updateNodeData(id, {
+      format: value as AspectRatio,
+      isCalculatingCredits: true,
+    });
     await updateGenerationImageNode({
       flowId,
       nodeId: id,
@@ -76,7 +79,10 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
   };
 
   const handleQualityChange = async (value: string) => {
-    updateNodeData(id, { quality: value as ImageSize });
+    updateNodeData(id, {
+      quality: value as ImageSize,
+      isCalculatingCredits: true,
+    });
     await updateGenerationImageNode({
       flowId,
       nodeId: id,
