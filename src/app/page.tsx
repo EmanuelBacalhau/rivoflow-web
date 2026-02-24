@@ -54,8 +54,7 @@ const features = [
   {
     id: "speed",
     title: "Geração Imediata",
-    description:
-      "IA de última geração que entrega seu criativo em instantes. Custando centavos por arte gerada.",
+    description: "IA de última geração que entrega seu criativo em instantes.",
     wide: false,
     icon: ZapIcon,
     color: "text-amber-500",
@@ -215,7 +214,7 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Navbar */}
+      {/* NAVBAR */}
       <header className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
@@ -291,10 +290,9 @@ export default function LandingPage() {
         )}
       </header>
 
-      {/* ── Hero ──────────────────────────────────────────── */}
+      {/* HERO */}
       <section className="relative overflow-hidden pt-20 pb-12 md:pt-28 md:pb-20">
         <div className="absolute inset-0 bg-linear-to-b from-indigo-500/8 via-transparent to-transparent" />
-        {/* Subtle grid background */}
         <div
           className="absolute inset-0 opacity-[0.025]"
           style={{
@@ -305,7 +303,6 @@ export default function LandingPage() {
         />
 
         <div className="relative z-10 max-w-6xl mx-auto px-6 text-center">
-          {/* Badge — credibilidade real */}
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-xs font-medium mb-8">
             <SparklesIcon className="w-3.5 h-3.5" />
             <span>Sem mensalidades. Pague apenas pelo que usar.</span>
@@ -327,24 +324,7 @@ export default function LandingPage() {
             mais alta precisão.
           </p>
 
-          {/* Social proof inline */}
-          <div className="flex items-center justify-center gap-2 mb-10">
-            <div className="flex -space-x-1.5">
-              {["#6366f1", "#3b82f6", "#8b5cf6", "#06b6d4"].map((color, i) => (
-                <div
-                  key={color}
-                  className="w-6 h-6 rounded-full border-2 border-background"
-                  style={{ backgroundColor: color, zIndex: 4 - i }}
-                />
-              ))}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              <span className="font-semibold text-foreground">+500 times</span>{" "}
-              já escalam a produção de criativos
-            </p>
-          </div>
-
-          {/* Media type tags */}
+          {/* MEDIA TYPE TAGS */}
           <div className="flex items-center justify-center gap-3 mb-10 text-xs">
             <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-500/10 text-indigo-600 border border-indigo-500/20">
               <ImageIcon className="w-3.5 h-3.5" />
@@ -371,15 +351,6 @@ export default function LandingPage() {
                 <ArrowRightIcon className="w-4 h-4 ml-2" />
               </Button>
             </Link>
-            <Button
-              variant="outline"
-              size="lg"
-              className="h-12 px-8 text-base rounded-xl border-border/60"
-              type="button"
-            >
-              <PlayCircleIcon className="w-4 h-4 mr-2" />
-              Ver demonstração
-            </Button>
           </div>
 
           {/* Metrics */}
@@ -398,13 +369,13 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Product mockup */}
+        {/* PRODUCT MOCKUP */}
         <div className="relative z-10 max-w-5xl mx-auto px-6 mt-16">
           <div className="relative">
             <div className="absolute -inset-3 bg-linear-to-r from-indigo-500/20 to-blue-500/20 rounded-3xl blur-2xl opacity-60" />
             <div className="absolute inset-0 bg-linear-to-t from-background via-transparent to-transparent z-10 pointer-events-none" />
             <div className="relative rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm shadow-2xl overflow-hidden">
-              {/* Browser chrome */}
+              {/* BROWSER CHROME */}
               <div className="flex items-center gap-1.5 px-4 h-10 bg-muted/60 border-b border-border/50">
                 <div className="w-3 h-3 rounded-full bg-red-400/80" />
                 <div className="w-3 h-3 rounded-full bg-yellow-400/80" />
@@ -415,7 +386,7 @@ export default function LandingPage() {
               </div>
               <div className="p-8 md:p-14 min-h-56 md:min-h-80 bg-muted/10 flex items-center justify-center">
                 <div className="flex items-center gap-4 md:gap-6">
-                  {/* Prompt node */}
+                  {/* PROMPT NODE */}
                   <div className="w-36 md:w-40 p-4 bg-card rounded-xl border border-amber-500/40 shadow-lg">
                     <div className="flex items-center gap-2 mb-3">
                       <div className="w-7 h-7 rounded-lg bg-linear-to-br from-amber-400 to-amber-600 flex items-center justify-center">
@@ -430,7 +401,7 @@ export default function LandingPage() {
 
                   <div className="w-8 md:w-12 h-0.5 bg-linear-to-r from-amber-400 to-indigo-500 rounded-full" />
 
-                  {/* Generation node */}
+                  {/* GENERATION NODE */}
                   <div className="w-36 md:w-40 p-4 bg-card rounded-xl border border-indigo-500/40 shadow-lg">
                     <div className="flex items-center gap-2 mb-3">
                       <div className="w-7 h-7 rounded-lg bg-linear-to-br from-indigo-400 to-indigo-600 flex items-center justify-center">
@@ -451,7 +422,7 @@ export default function LandingPage() {
 
                   <div className="w-8 md:w-12 h-0.5 bg-linear-to-r from-indigo-400 to-green-500 rounded-full" />
 
-                  {/* Result node */}
+                  {/* RESULT NODE */}
                   <div className="relative w-36 md:w-40 p-4 bg-card rounded-xl border border-green-500/40 shadow-lg">
                     <div className="absolute -top-2 -right-2 px-1.5 py-0.5 bg-green-500 text-white text-[9px] font-bold rounded-full">
                       ✓ Pronto
@@ -471,7 +442,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Use Cases Strip ───────────────────────────────── */}
+      {/* USE CASES */}
       <section className="py-14 border-y border-border/50 bg-muted/20">
         <div className="max-w-6xl mx-auto px-6">
           <p className="text-center text-xs text-muted-foreground uppercase tracking-widest mb-8">
@@ -520,7 +491,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Features (Bento) ──────────────────────────────── */}
+      {/* FEATURES */}
       <section id="features" className="py-24">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
@@ -560,7 +531,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── How It Works ──────────────────────────────────── */}
+      {/* HOW IT WORKS */}
       <section id="how-it-works" className="py-24 bg-muted/30">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
@@ -579,7 +550,6 @@ export default function LandingPage() {
           </div>
 
           <div className="relative grid md:grid-cols-3 gap-8">
-            {/* Connector line (desktop) */}
             <div className="hidden md:block absolute top-8 left-[calc(33.33%+8px)] right-[calc(33.33%+8px)] h-px bg-linear-to-r from-indigo-300/40 via-indigo-400/60 to-indigo-300/40" />
 
             {steps.map((step, idx) => (
@@ -608,7 +578,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Testimonials ──────────────────────────────────── */}
+      {/* TESTIMONIALS */}
       <section className="py-24">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
@@ -629,7 +599,6 @@ export default function LandingPage() {
                 key={t.name}
                 className="p-6 rounded-2xl border border-border/50 bg-card/50 flex flex-col gap-4"
               >
-                {/* Large decorative quote mark */}
                 <span className="text-5xl font-serif leading-none text-indigo-500/25 select-none">
                   "
                 </span>
@@ -658,7 +627,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Pricing ───────────────────────────────────────── */}
+      {/* PRICING */}
       <section id="pricing" className="py-24 bg-muted/30">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
@@ -740,7 +709,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── FAQ ───────────────────────────────────────────── */}
+      {/* FAQ */}
       <section className="py-24">
         <div className="max-w-2xl mx-auto px-6">
           <div className="text-center mb-14">
@@ -785,7 +754,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Final CTA ─────────────────────────────────────── */}
+      {/* FINAL CTA */}
       <section className="py-28 relative overflow-hidden bg-muted/20">
         <div className="absolute inset-0 bg-linear-to-b from-transparent via-indigo-500/5 to-transparent" />
         <div className="relative z-10 max-w-3xl mx-auto px-6 text-center">
@@ -819,7 +788,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Footer ────────────────────────────────────────── */}
+      {/* FOOTER */}
       <footer className="border-t border-border/50 py-12">
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
