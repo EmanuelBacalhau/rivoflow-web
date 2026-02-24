@@ -37,11 +37,11 @@ export const metadata: Metadata = {
     title: "RivoFlow - Acelere sua Produção Visual com IA",
     description:
       "Crie criativos em alta qualidade em segundos usando nosso editor visual de IA. Sem assinatura, pague pelo uso.",
-    url: "https://flow.rivocode.com.br",
+    url: process.env.NEXT_PUBLIC_APP_URL,
     siteName: "RivoFlow",
     images: [
       {
-        url: "/logo.png",
+        url: "/open-graph.png",
         width: 800,
         height: 600,
         alt: "RivoFlow Logo",
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
     title: "RivoFlow - Acelere sua Produção Visual com IA",
     description:
       "Crie criativos em alta qualidade em segundos usando nosso editor visual de IA.",
-    images: ["/logo.png"],
+    images: ["/open-graph.png"],
   },
   robots: {
     index: true,
