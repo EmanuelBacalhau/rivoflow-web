@@ -72,7 +72,7 @@ export default function DashboardPage() {
   return (
     <div className="p-8 flex flex-col flex-1">
       <div
-        className={`flex gap-3 flex-col sticky top-0 z-10 bg-background py-4 space-y-4`}
+        className={`flex gap-3 flex-col sticky top-0 z-20 bg-background py-4 space-y-4`}
       >
         <div
           className={`flex gap-3 ${isMobile ? "flex-col" : "flex-row justify-end"}`}
