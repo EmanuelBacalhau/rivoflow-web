@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeftIcon, HomeIcon } from "lucide-react";
+import { HomeIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -50,7 +50,7 @@ export default function NotFound() {
             Verifique o link ou volte para o início.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <div>
             <Link href="/">
               <Button
                 size="lg"
@@ -60,15 +60,6 @@ export default function NotFound() {
                 Ir para o início
               </Button>
             </Link>
-            <Button
-              variant="outline"
-              size="lg"
-              className="h-11 px-8 rounded-xl border-border/60"
-              onClick={() => history.back()}
-            >
-              <ArrowLeftIcon className="w-4 h-4 mr-2" />
-              Voltar
-            </Button>
           </div>
         </div>
       </main>
