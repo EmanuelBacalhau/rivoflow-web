@@ -267,12 +267,12 @@ export default function LandingPage() {
         </div>
 
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-border/50 bg-background px-6 py-4 space-y-3">
+          <div className="md:hidden border-t border-border/50 bg-background px-6 py-4 space-y-3 text-center">
             {navLinks.map((link) => (
               <Link
                 key={link.label}
                 href={link.href}
-                className="block text-sm text-muted-foreground py-1"
+                className="block text-sm text-muted-foreground py-1 hover:bg-muted rounded-md"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {link.label}
@@ -283,7 +283,7 @@ export default function LandingPage() {
                 size="sm"
                 className="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 text-white"
               >
-                Criar minha conta
+                Começar agora
               </Button>
             </Link>
           </div>

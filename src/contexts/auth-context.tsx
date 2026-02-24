@@ -35,19 +35,26 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const pathname = usePathname();
   const isInitialCallbackRoute = useRef(pathname?.startsWith("/auth/callback"));
 
-  const signOut = useCallback(async () => {
-    queryClient.clear();
-    Service.removeRefreshTokenHandler();
-    await AuthService.signOut();
-    router.push("/");
-  }, [queryClient, router]);
+  const signOut = useCallback(
+    async (skipApiCall = false) => {
+      queryClient.clear();
+      Service.removeRefreshTokenHandler();
+      if (!skipApiCall) {
+        try {
+          await AuthService.signOut();
+        } catch {}
+      }
+      router.push("/");
+    },
+    [queryClient, router],
+  );
 
   const setupAuth = useCallback(async () => {
     Service.setRefreshTokenHandler(async () => {
       try {
         await AuthService.refreshToken();
       } catch {
-        await signOut();
+        await signOut(true);
       }
     });
 
@@ -62,23 +69,23 @@ export function AuthProvider({ children }: PropsWithChildren) {
     setupAuth();
   }, [setupAuth]);
 
+  const isPublicRoute =
+    pathname === "/" ||
+    pathname?.startsWith("/auth") ||
+    pathname === "/terms" ||
+    pathname === "/privacy";
+
   useLayoutEffect(() => {
     if (!isReady) return;
-
-    const isPublicRoute =
-      pathname === "/" ||
-      pathname.startsWith("/auth") ||
-      pathname === "/terms" ||
-      pathname === "/privacy";
 
     if (!me && !isPublicRoute) {
       router.replace("/");
     } else if (me && isPublicRoute) {
       router.replace("/dashboard");
     }
-  }, [isReady, me, pathname, router]);
+  }, [isReady, me, isPublicRoute, router]);
 
-  if (!isReady) {
+  if (!isReady || (!me && !isPublicRoute) || (me && isPublicRoute)) {
     return <FlowLoading />;
   }
 
