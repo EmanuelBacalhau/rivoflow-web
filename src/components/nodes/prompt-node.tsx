@@ -1,7 +1,7 @@
 "use client";
 
 import { Handle, type NodeProps, Position } from "@xyflow/react";
-import { CheckIcon, MessageCircleMoreIcon } from "lucide-react";
+import { CheckIcon, MessageCircleMoreIcon, Trash2Icon } from "lucide-react";
 import { useRef } from "react";
 import { useFlow } from "@/contexts/flow-context";
 import type { PromptNodeService } from "@/services/node/prompt-node-service";
@@ -19,6 +19,7 @@ export function PromptNode({ id: nodeId, data, selected }: NodeProps) {
     flowId,
     updatePromptNode,
     markConnectedGeneratorsAsCalculating,
+    removeNode,
   } = useFlow();
   const nodeData = data as PromptNodeData;
 
@@ -72,6 +73,13 @@ export function PromptNode({ id: nodeId, data, selected }: NodeProps) {
             <CheckIcon className="size-3 text-green-600" />
           </div>
         )}
+        <button
+          onClick={() => removeNode(nodeId)}
+          className="text-amber-500/50 hover:text-red-500 transition-colors shrink-0 nodrag cursor-pointer md:hidden"
+          type="button"
+        >
+          <Trash2Icon className="size-3.5" />
+        </button>
       </CardHeader>
 
       <CardContent className="p-3 space-y-2">

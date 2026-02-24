@@ -1,9 +1,10 @@
 "use client";
 
 import { Handle, type NodeProps, Position } from "@xyflow/react";
-import { DownloadIcon, EyeIcon, ZoomInIcon } from "lucide-react";
+import { DownloadIcon, EyeIcon, Trash2Icon, ZoomInIcon } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useState } from "react";
+import { useFlow } from "@/contexts/flow-context";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import {
@@ -17,7 +18,8 @@ interface ResultNodeData {
   imageUrl?: string;
 }
 
-export function ResultImageNode({ data, selected }: NodeProps) {
+export function ResultImageNode({ id, data, selected }: NodeProps) {
+  const { removeNode } = useFlow();
   const nodeData = data as ResultNodeData;
   const [downloading, setDownloading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -75,6 +77,13 @@ export function ResultImageNode({ data, selected }: NodeProps) {
             Pronto
           </span>
         )}
+        <button
+          onClick={() => removeNode(id)}
+          className="text-green-500/50 hover:text-red-500 transition-colors shrink-0 nodrag cursor-pointer md:hidden"
+          type="button"
+        >
+          <Trash2Icon className="size-3.5" />
+        </button>
       </CardHeader>
 
       {/* Body */}

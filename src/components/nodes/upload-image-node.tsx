@@ -4,6 +4,7 @@ import { Handle, type NodeProps, Position } from "@xyflow/react";
 import {
   CheckIcon,
   ImagePlusIcon,
+  Trash2Icon,
   UploadCloudIcon,
   ZoomInIcon,
 } from "lucide-react";
@@ -25,8 +26,12 @@ type UploadImageNodeData = ImageNodeService.Node["data"] & {
 };
 
 export function UploadImageNode({ id, data, selected }: NodeProps) {
-  const { uploadImageNode, flowId, markConnectedGeneratorsAsCalculating } =
-    useFlow();
+  const {
+    uploadImageNode,
+    flowId,
+    markConnectedGeneratorsAsCalculating,
+    removeNode,
+  } = useFlow();
   const nodeData = data as UploadImageNodeData;
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -69,6 +74,13 @@ export function UploadImageNode({ id, data, selected }: NodeProps) {
             <CheckIcon className="size-3 text-green-600" />
           </div>
         )}
+        <button
+          onClick={() => removeNode(id)}
+          className="text-blue-500/50 hover:text-red-500 transition-colors shrink-0 nodrag cursor-pointer md:hidden"
+          type="button"
+        >
+          <Trash2Icon className="size-3.5" />
+        </button>
       </CardHeader>
 
       <CardContent className="p-3">

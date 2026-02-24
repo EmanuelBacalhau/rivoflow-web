@@ -6,6 +6,7 @@ import {
   CoinsIcon,
   Loader2Icon,
   SparklesIcon,
+  Trash2Icon,
   ZapIcon,
 } from "lucide-react";
 
@@ -49,6 +50,7 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
     updateGenerationImageNode,
     generateImageNode,
     calculateCreditsForNode,
+    removeNode,
   } = useFlow();
   const nodeData = data as AIGeneratorNodeData;
   const { me } = useAccount();
@@ -164,6 +166,13 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
             )}
           </div>
         )}
+        <button
+          onClick={() => removeNode(id)}
+          className="text-purple-500/50 hover:text-red-500 transition-colors shrink-0 nodrag cursor-pointer md:hidden"
+          type="button"
+        >
+          <Trash2Icon className="size-3.5" />
+        </button>
       </CardHeader>
 
       {/* Body */}

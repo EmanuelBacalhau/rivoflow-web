@@ -79,6 +79,7 @@ interface FlowContextType {
   isLoading: boolean;
   getConnectedData: (nodeId: string) => ConnectedData;
   updateNodeData: (nodeId: string, data: Record<string, unknown>) => void;
+  removeNode: (nodeId: string) => void;
 }
 
 const FlowContext = createContext<FlowContextType | null>(null);
@@ -454,6 +455,10 @@ export function FlowProvider({ children }: { children: ReactNode }) {
     );
   };
 
+  const removeNode = (nodeId: string) => {
+    onNodesChange([{ type: "remove", id: nodeId }]);
+  };
+
   const getConnectedData = (nodeId: string): ConnectedData => {
     const nodesSynced: string[] = [];
     const prompts: string[] = [];
@@ -512,6 +517,7 @@ export function FlowProvider({ children }: { children: ReactNode }) {
         getConnectedData,
         updateNodeData,
         uploadImageNode,
+        removeNode,
       }}
     >
       {children}
