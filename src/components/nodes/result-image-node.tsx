@@ -14,6 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
+import { useSidebar } from "../ui/sidebar";
 
 interface ResultNodeData {
   imageUrl?: string;
@@ -24,6 +25,7 @@ export function ResultImageNode({ id, data, selected }: NodeProps) {
   const nodeData = data as ResultNodeData;
   const [downloading, setDownloading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { isMobile } = useSidebar();
 
   const handleDownload = useCallback(async () => {
     if (!nodeData.imageUrl) return;
@@ -47,13 +49,15 @@ export function ResultImageNode({ id, data, selected }: NodeProps) {
       document.body.removeChild(link);
 
       window.URL.revokeObjectURL(blobUrl);
-      toast.success("Imagem baixada com sucesso!");
-    } catch (error) {
+      if (isMobile) {
+        toast.success("Imagem baixada com sucesso!");
+      }
+    } catch {
       toast.error("Erro ao baixar imagem. Tente novamente.");
     } finally {
       setDownloading(false);
     }
-  }, [nodeData.imageUrl]);
+  }, [nodeData.imageUrl, isMobile]);
 
   return (
     <Card
