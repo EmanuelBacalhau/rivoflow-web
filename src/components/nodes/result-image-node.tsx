@@ -30,15 +30,25 @@ export function ResultImageNode({ id, data, selected }: NodeProps) {
 
     setDownloading(true);
     try {
+      const response = await fetch(nodeData.imageUrl);
+
+      if (!response.ok)
+        throw new Error("Erro de rede ao tentar baixar a imagem");
+
+      const blob = await response.blob();
+
+      const blobUrl = window.URL.createObjectURL(blob);
+
       const link = document.createElement("a");
-      link.href = nodeData.imageUrl;
+      link.href = blobUrl;
       link.download = `rivo-flow-${Date.now()}.png`;
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-    } catch {
+
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error(error);
       toast.error("Erro ao baixar imagem. Tente novamente.");
     } finally {
       setDownloading(false);
