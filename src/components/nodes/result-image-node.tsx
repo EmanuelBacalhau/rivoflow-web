@@ -48,7 +48,6 @@ export function ResultImageNode({ id, data, selected }: NodeProps) {
 
       window.URL.revokeObjectURL(blobUrl);
     } catch (error) {
-      console.error(error);
       toast.error("Erro ao baixar imagem. Tente novamente.");
     } finally {
       setDownloading(false);
