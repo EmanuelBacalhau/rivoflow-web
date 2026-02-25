@@ -52,11 +52,11 @@ export default function GoogleLoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background px-4">
       <Background />
 
-      <div className="w-full max-w-sm">
-        <div className="rounded-2xl border border-border/60 bg-card/60 backdrop-blur-sm p-8 shadow-xl flex flex-col items-center gap-6">
+      <div className="w-full max-w-sm flex-1 flex items-center justify-center">
+        <div className="rounded-2xl border border-border/60 bg-card/60 backdrop-blur-sm p-8 shadow-xl flex flex-col items-center gap-6 w-full">
           <Link href="/" className="flex flex-col items-center gap-2.5">
             <Image
               src="/logo.png"
@@ -87,6 +87,23 @@ export default function GoogleLoginPage() {
             <GoogleIcon />
             Continuar com o Google
           </button>
+
+          <p className="text-center text-[11px] text-muted-foreground leading-relaxed">
+            Ao continuar, você concorda com nossos{" "}
+            <Link
+              href="/terms"
+              className="hover:text-foreground transition-colors underline"
+            >
+              Termos de Uso
+            </Link>{" "}
+            e{" "}
+            <Link
+              href="/privacy"
+              className="hover:text-foreground transition-colors underline"
+            >
+              Política de Privacidade
+            </Link>
+          </p>
 
           <Link
             href="/"

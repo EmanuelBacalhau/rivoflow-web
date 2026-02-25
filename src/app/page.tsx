@@ -809,10 +809,24 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <p className="text-xs text-muted-foreground">
-              © {new Date().getFullYear()} RivoFlow. Todos os direitos
-              reservados.
-            </p>
+            <div className="flex items-center gap-6 text-xs text-muted-foreground">
+              <Link
+                href="/privacy"
+                className="hover:text-foreground transition-colors"
+              >
+                Privacidade
+              </Link>
+              <Link
+                href="/terms"
+                className="hover:text-foreground transition-colors"
+              >
+                Termos
+              </Link>
+              <p>
+                © {new Date().getFullYear()} RivoFlow. Todos os direitos
+                reservados.
+              </p>
+            </div>
           </div>
         </div>
       </footer>
