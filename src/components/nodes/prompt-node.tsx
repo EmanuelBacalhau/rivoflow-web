@@ -94,7 +94,7 @@ export function PromptNode({ id: nodeId, data, selected }: NodeProps) {
         {charCount > 0 && (
           <div className="flex justify-end">
             <span className="text-[10px] text-muted-foreground">
-              {charCount} chars
+              {charCount} characters
             </span>
           </div>
         )}
