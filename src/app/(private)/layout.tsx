@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from "react";
-import { MainProvider } from "@/providers/main-provider";
+import { AuthProvider } from "@/contexts/auth-context";
 
 export default function PrivateLayout({ children }: PropsWithChildren) {
-  return <MainProvider>{children}</MainProvider>;
+  return <AuthProvider>{children}</AuthProvider>;
 }

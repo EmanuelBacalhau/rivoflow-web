@@ -5,19 +5,16 @@ import { Loader2Icon } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { Background } from "@/components/background";
-import { useAccount } from "@/hooks/queries/useAccount";
 import { AuthService } from "@/services/auth-service";
 
-export default function AuthCallbackPage() {
+export function AuthCallbackContent() {
   const router = useRouter();
   const queryParams = useSearchParams();
   const code = queryParams.get("code");
-  const { loadAccount } = useAccount({ enabled: false });
 
   const { mutate } = useMutation({
     mutationFn: async (authCode: string) => {
       await AuthService.exchangeCodeForToken(authCode);
-      await loadAccount();
     },
     onSuccess: () => {
       router.replace("/dashboard");
@@ -70,7 +67,7 @@ export default function AuthCallbackPage() {
         </div>
 
         <div className="flex flex-col items-center gap-2 text-center">
-          <h2 className="text-xl font-semibold bg-linear-to-r from-primary/50 to-white bg-clip-text text-transparent">
+          <h2 className="text-xl font-semibold text-white">
             Autenticando com Google
           </h2>
           <div className="flex items-center justify-center gap-2 text-muted-foreground">

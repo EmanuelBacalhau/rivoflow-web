@@ -211,6 +211,7 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
             <Select
               value={nodeData.parameters.aspectRatio}
               onValueChange={handleFormatChange}
+              disabled={isCalculating || isProcessing || isCompleted}
             >
               <SelectTrigger className="w-full nodrag nopan h-8 text-xs">
                 <SelectValue placeholder="1:1" />
@@ -230,6 +231,24 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
                   <SelectItem value="4:3">
                     <span className="text-xs">4:3 Post</span>
                   </SelectItem>
+                  <SelectItem value="2:3">
+                    <span className="text-xs">2:3 Retrato</span>
+                  </SelectItem>
+                  <SelectItem value="3:2">
+                    <span className="text-xs">3:2 Panorama</span>
+                  </SelectItem>
+                  <SelectItem value="3:4">
+                    <span className="text-xs">3:4 Tall</span>
+                  </SelectItem>
+                  <SelectItem value="4:5">
+                    <span className="text-xs">4:5 Tall+</span>
+                  </SelectItem>
+                  <SelectItem value="5:4">
+                    <span className="text-xs">5:4 Wide</span>
+                  </SelectItem>
+                  <SelectItem value="21:9">
+                    <span className="text-xs">21:9 Ultra Wide</span>
+                  </SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -242,6 +261,7 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
             <Select
               value={nodeData.parameters.quality}
               onValueChange={handleQualityChange}
+              disabled={isCalculating || isProcessing || isCompleted}
             >
               <SelectTrigger className="w-full nodrag nopan h-8 text-xs">
                 <SelectValue placeholder="1K" />

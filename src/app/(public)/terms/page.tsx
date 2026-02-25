@@ -1,5 +1,4 @@
-import Image from "next/image";
-import Link from "next/link";
+import { LegalPageLayout } from "@/components/layout/legal-page-layout";
 
 export const metadata = {
   title: "Termos de Uso – RIVOFLOW",
@@ -15,7 +14,7 @@ const sections = [
   {
     title: "2. Descrição do Serviço",
     content:
-      "O RIVOFLOW é uma plataforma online que permite a criação de imagens e criativos publicitários por meio de fluxos visuais e utilização de modelos de inteligência artificial fornecidos por terceiros. O serviço é disponibilizado na modalidade “como está”, podendo sofrer atualizações, modificações ou descontinuações a qualquer momento.",
+      'O RIVOFLOW é uma plataforma online que permite a criação de imagens e criativos publicitários por meio de fluxos visuais e utilização de modelos de inteligência artificial fornecidos por terceiros. O serviço é disponibilizado na modalidade "como está", podendo sofrer atualizações, modificações ou descontinuações a qualquer momento.',
   },
   {
     title: "3. Cadastro e Acesso",
@@ -50,7 +49,7 @@ const sections = [
   {
     title: "9. Limitação de Responsabilidade",
     content:
-      "O serviço é fornecido “como está”, sem garantias de disponibilidade contínua ou ausência de erros. O RIVOFLOW não se responsabiliza por perdas indiretas, lucros cessantes ou danos decorrentes de indisponibilidade temporária, falhas técnicas ou uso inadequado do conteúdo gerado.",
+      'O serviço é fornecido "como está", sem garantias de disponibilidade contínua ou ausência de erros. O RIVOFLOW não se responsabiliza por perdas indiretas, lucros cessantes ou danos decorrentes de indisponibilidade temporária, falhas técnicas ou uso inadequado do conteúdo gerado.',
   },
   {
     title: "10. Modificações",
@@ -71,77 +70,14 @@ const sections = [
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border/50 py-4 px-6">
-        <div className="max-w-3xl mx-auto flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5">
-            <Image
-              src="/logo.png"
-              alt="RIVOFLOW"
-              width={26}
-              height={26}
-              className="rounded-md"
-            />
-            <span className="text-sm font-semibold tracking-tight">
-              RIVOFLOW
-            </span>
-          </Link>
-          <Link
-            href="/"
-            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Voltar ao início
-          </Link>
-        </div>
-      </header>
-
-      {/* Content */}
-      <main className="max-w-3xl mx-auto px-6 py-12">
-        <div className="mb-10">
-          <h1 className="text-3xl font-bold mb-2">Termos de Uso</h1>
-          <p className="text-sm text-muted-foreground">
-            Última atualização: fevereiro de 2026
-          </p>
-        </div>
-
-        <p className="text-muted-foreground mb-10 leading-relaxed">
-          Por favor, leia atentamente estes Termos de Uso antes de utilizar a
-          plataforma RIVOFLOW. Eles definem as regras e condições para o uso dos
-          nossos serviços.
-        </p>
-
-        <div className="space-y-8">
-          {sections.map((section) => (
-            <section key={section.title}>
-              <h2 className="text-base font-semibold mb-2">{section.title}</h2>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {section.content}
-              </p>
-            </section>
-          ))}
-        </div>
-
-        <div className="mt-12 pt-8 border-t border-border/50 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
-          <p>
-            © {new Date().getFullYear()} RivoFlow. Todos os direitos reservados.
-          </p>
-          <div className="flex items-center gap-5">
-            <Link
-              href="/privacy"
-              className="hover:text-foreground transition-colors"
-            >
-              Política de Privacidade
-            </Link>
-            <Link
-              href="/auth/google"
-              className="hover:text-foreground transition-colors"
-            >
-              Entrar
-            </Link>
-          </div>
-        </div>
-      </main>
-    </div>
+    <LegalPageLayout
+      title="Termos de Uso"
+      subtitle="Por favor, leia atentamente estes Termos de Uso antes de utilizar a plataforma RIVOFLOW. Eles definem as regras e condições para o uso dos nossos serviços."
+      sections={sections}
+      footerLinks={[
+        { label: "Política de Privacidade", href: "/privacy" },
+        { label: "Entrar", href: "/auth/google" },
+      ]}
+    />
   );
 }

@@ -63,5 +63,15 @@ export type AnyNode =
   | GenerationImageNode
   | ResultImageNode;
 
-export type AspectRatio = "9:16" | "1:1" | "16:9" | "4:3";
+export type AspectRatio =
+  | "9:16"
+  | "1:1"
+  | "16:9"
+  | "4:3"
+  | "2:3"
+  | "3:2"
+  | "3:4"
+  | "4:5"
+  | "5:4"
+  | "21:9";
 export type ImageSize = "1K" | "2K" | "4K";

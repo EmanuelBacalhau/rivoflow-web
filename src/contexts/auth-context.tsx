@@ -1,7 +1,7 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   createContext,
   type PropsWithChildren,
@@ -31,9 +31,6 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const { me, loadAccount } = useAccount({ enabled: false });
   const [isReady, setIsReady] = useState(false);
   const router = useRouter();
-  const pathname = usePathname();
-  const isAuthRoute = pathname.startsWith("/auth");
-  const isAuthCallbackRoute = pathname.startsWith("/auth/callback");
 
   const signOut = useCallback(
     async (skipApiCall = false) => {
@@ -50,12 +47,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
       await AuthService.refreshToken();
     });
 
-    if (!isAuthCallbackRoute) {
-      await loadAccount();
-    }
+    await loadAccount();
 
     setIsReady(true);
-  }, [loadAccount, isAuthCallbackRoute]);
+  }, [loadAccount]);
 
   useLayoutEffect(() => {
     setupAuth();
@@ -64,11 +59,13 @@ export function AuthProvider({ children }: PropsWithChildren) {
   useLayoutEffect(() => {
     if (!isReady) return;
 
-    if (!me && !isAuthRoute) router.replace("/auth/google");
-    else if (me && isAuthRoute) router.replace("/dashboard");
-  }, [isReady, me, router, isAuthRoute]);
+    if (!me) {
+      router.replace("/auth/google");
+      return;
+    }
+  }, [isReady, me, router]);
 
-  if (!isReady || (isAuthRoute && me) || (!isAuthRoute && !me)) {
+  if (!isReady || !me) {
     return <FlowLoading />;
   }
 
