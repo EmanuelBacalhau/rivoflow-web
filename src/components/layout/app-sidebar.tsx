@@ -135,7 +135,7 @@ export function AppSidebar() {
           <SidebarGroupLabel>Flows</SidebarGroupLabel>
 
           <div className="flex-1 min-h-0 overflow-y-auto">
-            <SidebarMenu className="px-2 pb-2">
+            <SidebarMenu>
               {isLoading &&
                 [62, 80, 55, 72, 45].map((w) => (
                   <SidebarMenuItem key={w}>
