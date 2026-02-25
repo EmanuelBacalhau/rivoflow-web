@@ -109,7 +109,7 @@ export default function GoogleLoginPage() {
             href="/"
             className="hover:text-foreground transition-colors text-xs hover:underline text-muted-foreground"
           >
-            ← Voltar ao início
+            Voltar ao início
           </Link>
         </div>
       </div>
