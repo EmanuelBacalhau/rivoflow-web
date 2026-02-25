@@ -448,7 +448,7 @@ export default function LandingPage() {
           <p className="text-center text-xs text-muted-foreground uppercase tracking-widest mb-8">
             Ideal para qualquer tipo de campanha
           </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {[
               {
                 icon: LayoutGridIcon,
@@ -809,7 +809,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="flex items-center gap-6 text-xs text-muted-foreground">
+            <div className="flex flex-col lg:flex-row items-center gap-6 text-xs text-muted-foreground">
               <Link
                 href="/privacy"
                 className="hover:text-foreground transition-colors"
