@@ -8,7 +8,6 @@ import {
   useCallback,
   useContext,
   useLayoutEffect,
-  useRef,
   useState,
 } from "react";
 import { FlowLoading } from "@/components/flow-loading";
@@ -33,17 +32,14 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const [isReady, setIsReady] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-  const isInitialCallbackRoute = useRef(pathname?.startsWith("/auth/callback"));
+  const isAuthRoute = pathname.startsWith("/auth");
+  const isAuthCallbackRoute = pathname.startsWith("/auth/callback");
 
   const signOut = useCallback(
     async (skipApiCall = false) => {
       queryClient.clear();
       Service.removeRefreshTokenHandler();
-      if (!skipApiCall) {
-        try {
-          await AuthService.signOut();
-        } catch {}
-      }
+      if (skipApiCall) await AuthService.signOut();
       router.push("/");
     },
     [queryClient, router],
@@ -51,41 +47,28 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   const setupAuth = useCallback(async () => {
     Service.setRefreshTokenHandler(async () => {
-      try {
-        await AuthService.refreshToken();
-      } catch {
-        await signOut(true);
-      }
+      await AuthService.refreshToken();
     });
 
-    if (!isInitialCallbackRoute.current) {
+    if (!isAuthCallbackRoute) {
       await loadAccount();
     }
 
     setIsReady(true);
-  }, [loadAccount, signOut]);
+  }, [loadAccount, isAuthCallbackRoute]);
 
   useLayoutEffect(() => {
     setupAuth();
   }, [setupAuth]);
 
-  const isPublicRoute =
-    pathname === "/" ||
-    pathname?.startsWith("/auth") ||
-    pathname === "/terms" ||
-    pathname === "/privacy";
-
   useLayoutEffect(() => {
     if (!isReady) return;
 
-    if (!me && !isPublicRoute) {
-      router.replace("/");
-    } else if (me && isPublicRoute) {
-      router.replace("/dashboard");
-    }
-  }, [isReady, me, isPublicRoute, router]);
+    if (!me && !isAuthRoute) router.replace("/auth/google");
+    else if (me && isAuthRoute) router.replace("/dashboard");
+  }, [isReady, me, router, isAuthRoute]);
 
-  if (!isReady || (!me && !isPublicRoute) || (me && isPublicRoute)) {
+  if (!isReady || (isAuthRoute && me) || (!isAuthRoute && !me)) {
     return <FlowLoading />;
   }
 

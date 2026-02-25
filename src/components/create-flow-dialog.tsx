@@ -52,7 +52,7 @@ export function CreateFlowDialog({
         </DialogDescription>
         <div className="space-y-4 pt-2">
           <Input
-            placeholder="Ex: Campanha Verão 2025"
+            placeholder={`Ex: Campanha Verão ${new Date().getFullYear()}`}
             value={name}
             onChange={(e) => setName(e.target.value)}
             onKeyDown={(e) =>

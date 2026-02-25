@@ -264,7 +264,7 @@ export function AppSidebar() {
 
                     <DropdownMenuSeparator />
 
-                    <DropdownMenuItem onClick={() => signOut(false)}>
+                    <DropdownMenuItem onClick={() => signOut(true)}>
                       <LogOut />
                       Log out
                     </DropdownMenuItem>
