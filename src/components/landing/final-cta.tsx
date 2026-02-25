@@ -32,7 +32,7 @@ export function LandingFinalCta() {
           </Button>
         </Link>
         <p className="text-xs text-muted-foreground mt-4">
-          Acesso via Google · Recargas e pagamentos seguros via Pix
+          Acesso via Google · Recargas e pagamentos seguros via Pix ou Cartão
         </p>
       </div>
     </section>
