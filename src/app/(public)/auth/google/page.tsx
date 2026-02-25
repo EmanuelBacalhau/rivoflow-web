@@ -46,6 +46,7 @@ export default function GoogleLoginPage() {
       redirect_uri: getOAuthCallbackURL(),
       identity_provider: "Google",
       scope: "email openid profile",
+      prompt: "select_account",
     });
 
     window.location.href = `${authorizationUrl}?${params}`;
