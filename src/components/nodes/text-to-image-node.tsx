@@ -105,7 +105,6 @@ export function TextToImageNode({ id, data, selected }: NodeProps) {
     await generateImageNode({
       flowId,
       nodeGeneratorId: id,
-      inputs: connectedData.nodesSynced,
     });
   };
 

@@ -30,9 +30,6 @@ export class TriggerGenerationService extends Service {
   static async generate(params: TriggerGenerationService.GenerateImageParams) {
     await TriggerGenerationService.client.post(
       `/flows/${params.flowId}/nodes/${params.nodeGeneratorId}/generate`,
-      {
-        inputs: params.inputs,
-      },
     );
   }
 
@@ -74,7 +71,6 @@ export namespace TriggerGenerationService {
   export type GenerateImageParams = {
     flowId: string;
     nodeGeneratorId: string;
-    inputs: string[];
   };
 
   export type UpdateParams = {

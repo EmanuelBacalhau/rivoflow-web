@@ -1,4 +1,4 @@
-import type { NodeDataUpscale, Position, UpscaleNode } from "@/types/node";
+import type { Position, UpscaleNode } from "@/types/node";
 import { Service } from "../service";
 
 export class UpscaleNodeService extends Service {
@@ -39,6 +39,6 @@ export namespace UpscaleNodeService {
   export type UpdateParams = {
     flowId: string;
     nodeId: string;
-    data: Partial<Pick<NodeDataUpscale, "scale" | "face" | "upscaleModel">>;
+    data: { scale?: number };
   };
 }

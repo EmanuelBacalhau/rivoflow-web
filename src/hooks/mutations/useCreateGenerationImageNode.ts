@@ -29,7 +29,7 @@ export function useCreateNodeGenerationImageController({
       updateNodes((nds) =>
         nds.concat({
           id: tempId,
-          type: NodeTypeEnum.GENERATION_IMAGE,
+          type: NodeTypeEnum.GENERATION_IMAGE_EDIT,
           position: paramsNode.position,
           data: {
             aspectRatio: "1:1",

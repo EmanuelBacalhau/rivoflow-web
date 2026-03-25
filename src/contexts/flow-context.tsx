@@ -149,7 +149,7 @@ export function FlowProvider({ children }: { children: ReactNode }) {
     (nodeId: string) => {
       if (pollingIntervalsRef.current.has(nodeId)) return;
 
-      const interval = setInterval(async () => {
+      const poll = async () => {
         try {
           const { status, result } = await TriggerGenerationService.getStatus({
             flowId,
@@ -163,7 +163,6 @@ export function FlowProvider({ children }: { children: ReactNode }) {
           );
 
           if (status === GenerationStatusEnum.COMPLETED && result) {
-            clearInterval(interval);
             pollingIntervalsRef.current.delete(nodeId);
 
             // Add result node directly to canvas
@@ -202,18 +201,37 @@ export function FlowProvider({ children }: { children: ReactNode }) {
             }
 
             queryClient.invalidateQueries({ queryKey: ["account"] });
+            return;
           }
 
           if (status === GenerationStatusEnum.FAILED) {
-            clearInterval(interval);
             pollingIntervalsRef.current.delete(nodeId);
+            return;
           }
         } catch {
           // silently ignore polling errors
         }
-      }, 3000);
 
-      pollingIntervalsRef.current.set(nodeId, interval);
+        // Schedule next poll: video nodes take longer
+        const generationNode = nodesRef.current.find((n) => n.id === nodeId);
+        const isVideoGeneration =
+          generationNode?.type === "GENERATION_IMAGE_TO_VIDEO" ||
+          generationNode?.type === "GENERATION_MOTION_CONTROL";
+        const interval = isVideoGeneration ? 15000 : 5000;
+
+        const nextTimeout = setTimeout(poll, interval);
+        pollingIntervalsRef.current.set(nodeId, nextTimeout);
+      };
+
+      // Initial delay before first poll
+      const generationNode = nodesRef.current.find((n) => n.id === nodeId);
+      const isVideoGeneration =
+        generationNode?.type === "GENERATION_IMAGE_TO_VIDEO" ||
+        generationNode?.type === "GENERATION_MOTION_CONTROL";
+      const initialDelay = isVideoGeneration ? 10000 : 3000;
+
+      const timeout = setTimeout(poll, initialDelay);
+      pollingIntervalsRef.current.set(nodeId, timeout);
     },
     [flowId],
   );
@@ -223,7 +241,7 @@ export function FlowProvider({ children }: { children: ReactNode }) {
     const key = `metadata-${nodeId}`;
     if (pollingIntervalsRef.current.has(key)) return;
 
-    const interval = setInterval(async () => {
+    const poll = async () => {
       try {
         const { ready, duration } = await NodeService.getMetadata({
           flowId,
@@ -231,7 +249,6 @@ export function FlowProvider({ children }: { children: ReactNode }) {
         });
 
         if (ready && duration != null) {
-          clearInterval(interval);
           pollingIntervalsRef.current.delete(key);
 
           setNodes((nds) =>
@@ -241,19 +258,24 @@ export function FlowProvider({ children }: { children: ReactNode }) {
           );
 
           getConnectedGeneratorNodeIds(nodeId).forEach(calculateCreditsForNode);
+          return;
         }
       } catch {
         // silently ignore
       }
-    }, 1500);
 
-    pollingIntervalsRef.current.set(key, interval);
+      const nextTimeout = setTimeout(poll, 3000);
+      pollingIntervalsRef.current.set(key, nextTimeout);
+    };
+
+    const timeout = setTimeout(poll, 2000);
+    pollingIntervalsRef.current.set(key, timeout);
   };
 
   useEffect(() => {
     return () => {
-      for (const interval of pollingIntervalsRef.current.values()) {
-        clearInterval(interval);
+      for (const timeout of pollingIntervalsRef.current.values()) {
+        clearTimeout(timeout);
       }
       pollingIntervalsRef.current.clear();
     };
@@ -671,8 +693,8 @@ export function FlowProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    // GENERATION_IMAGE (edição): 1 prompt + até 14 imagens, sem vídeos
-    if (targetType === NodeTypeEnum.GENERATION_IMAGE) {
+    // GENERATION_IMAGE_EDIT (edição): 1 prompt + até 14 imagens, sem vídeos
+    if (targetType === NodeTypeEnum.GENERATION_IMAGE_EDIT) {
       if (isSourceVideo) {
         toast.error("Este node não aceita vídeos.");
         return;

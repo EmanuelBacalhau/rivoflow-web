@@ -21,7 +21,7 @@ const nodeTypes = {
   PROMPT: PromptNode,
   IMAGE: UploadImageNode,
   VIDEO: UploadVideoNode,
-  GENERATION_IMAGE: AIGeneratorNode,
+  GENERATION_IMAGE_EDIT: AIGeneratorNode,
   GENERATION_TEXT_TO_IMAGE: TextToImageNode,
   GENERATION_UPSCALE: UpscaleNode,
   GENERATION_REMOVE_BG: RemoveBgNode,

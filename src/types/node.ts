@@ -7,7 +7,7 @@ export enum NodeTypeEnum {
   PROMPT = "PROMPT",
   IMAGE = "IMAGE",
   VIDEO = "VIDEO",
-  GENERATION_IMAGE = "GENERATION_IMAGE",
+  GENERATION_IMAGE_EDIT = "GENERATION_IMAGE_EDIT",
   GENERATION_TEXT_TO_IMAGE = "GENERATION_TEXT_TO_IMAGE",
   GENERATION_UPSCALE = "GENERATION_UPSCALE",
   GENERATION_REMOVE_BG = "GENERATION_REMOVE_BG",
@@ -18,7 +18,7 @@ export enum NodeTypeEnum {
 }
 
 export const GENERATION_NODE_TYPES: NodeTypeEnum[] = [
-  NodeTypeEnum.GENERATION_IMAGE,
+  NodeTypeEnum.GENERATION_IMAGE_EDIT,
   NodeTypeEnum.GENERATION_TEXT_TO_IMAGE,
   NodeTypeEnum.GENERATION_UPSCALE,
   NodeTypeEnum.GENERATION_REMOVE_BG,
@@ -82,8 +82,6 @@ export type NodeDataTextToImage = NodeDataGenerationBase & {
 
 export type NodeDataUpscale = NodeDataGenerationBase & {
   scale: number;
-  face: boolean;
-  upscaleModel: UpscaleModel;
 };
 
 export type NodeDataRemoveBg = NodeDataGenerationBase;
@@ -97,6 +95,7 @@ export type NodeDataImageToVideo = NodeDataGenerationBase & {
 };
 
 export type NodeDataMotionControl = NodeDataGenerationBase & {
+  characterOrientation: "video";
   keepOriginalSound: boolean;
 };
 
@@ -167,11 +166,6 @@ export type AspectRatio =
   | "21:9";
 
 export type ImageQuality = "0.5K" | "1K" | "2K" | "4K";
-
-export type UpscaleModel =
-  | "RealESRGAN_x4plus"
-  | "RealESRGAN_x2plus"
-  | "RealESRGAN_x4plus_anime_6B";
 
 export type VideoTier = "standard" | "premium";
 export type VideoResolution = "1080p" | "1440p" | "2160p";

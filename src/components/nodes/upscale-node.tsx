@@ -12,7 +12,7 @@ import {
 import { useMemo } from "react";
 import { useFlow } from "@/contexts/flow-context";
 import { useAccount } from "@/hooks/queries/useAccount";
-import { GenerationStatusEnum, type UpscaleModel } from "@/types";
+import { GenerationStatusEnum } from "@/types";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import {
@@ -20,24 +20,11 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "../ui/hover-card";
-import { Label } from "../ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
 import { Slider } from "../ui/slider";
-import { Switch } from "../ui/switch";
 
 type UpscaleNodeData = {
   status: GenerationStatusEnum;
   scale: number;
-  face: boolean;
-  upscaleModel: string;
   isExecuted?: boolean;
   creditsRequired?: number;
   isCalculatingCredits?: boolean;
@@ -78,37 +65,10 @@ export function UpscaleNode({ id, data, selected }: NodeProps) {
     }
   };
 
-  const handleFaceChange = async (checked: boolean) => {
-    updateNodeData(id, { face: checked });
-    await updateUpscaleNode({
-      flowId,
-      nodeId: id,
-      data: { face: checked },
-    });
-  };
-
-  const handleModelChange = async (value: string) => {
-    try {
-      updateNodeData(id, {
-        upscaleModel: value,
-        isCalculatingCredits: true,
-      });
-      await updateUpscaleNode({
-        flowId,
-        nodeId: id,
-        data: { upscaleModel: value as UpscaleModel },
-      });
-      await calculateCreditsForNode(id);
-    } catch {
-      updateNodeData(id, { isCalculatingCredits: false });
-    }
-  };
-
   const handleGenerateImage = async () => {
     await generateImageNode({
       flowId,
       nodeGeneratorId: id,
-      inputs: connectedData.nodesSynced,
     });
   };
 
@@ -202,57 +162,10 @@ export function UpscaleNode({ id, data, selected }: NodeProps) {
           <Slider
             value={[nodeData.scale]}
             min={1}
-            max={8}
+            max={10}
             step={1}
             onValueChange={handleScaleChange}
             onValueCommit={handleScaleCommit}
-            disabled={isProcessing || isCompleted}
-            className="nodrag nopan"
-          />
-        </div>
-
-        {/* MODEL */}
-        <div className="space-y-1">
-          <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">
-            Modelo
-          </span>
-          <Select
-            value={nodeData.upscaleModel}
-            onValueChange={handleModelChange}
-            disabled={isCalculating || isProcessing || isCompleted}
-          >
-            <SelectTrigger className="w-full nodrag nopan h-8 text-xs">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel className="text-[10px]">Modelo</SelectLabel>
-                <SelectItem value="RealESRGAN_x4plus">
-                  <span className="text-xs">RealESRGAN x4+</span>
-                </SelectItem>
-                <SelectItem value="RealESRGAN_x2plus">
-                  <span className="text-xs">RealESRGAN x2+</span>
-                </SelectItem>
-                <SelectItem value="RealESRGAN_x4plus_anime_6B">
-                  <span className="text-xs">RealESRGAN Anime</span>
-                </SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* FACE */}
-        <div className="flex items-center justify-between">
-          <Label
-            htmlFor={`face-${id}`}
-            className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide cursor-pointer"
-          >
-            Otimizar rostos
-          </Label>
-          <Switch
-            id={`face-${id}`}
-            checked={nodeData.face}
-            onCheckedChange={handleFaceChange}
             disabled={isProcessing || isCompleted}
             className="nodrag nopan"
           />

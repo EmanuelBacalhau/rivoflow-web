@@ -6,7 +6,7 @@ export const NODE_COLORS: Record<string, string> = {
   PROMPT: "#f59e0b", // amber-400
   IMAGE: "#3b82f6", // blue-500
   VIDEO: "#8b5cf6", // violet-500
-  GENERATION_IMAGE: "#a855f7", // purple-500
+  GENERATION_IMAGE_EDIT: "#a855f7", // purple-500
   GENERATION_TEXT_TO_IMAGE: "#6366f1", // indigo-500
   GENERATION_UPSCALE: "#14b8a6", // teal-500
   GENERATION_REMOVE_BG: "#f43f5e", // rose-500
