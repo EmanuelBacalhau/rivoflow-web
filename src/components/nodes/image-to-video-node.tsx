@@ -274,7 +274,10 @@ export function ImageToVideoNode({ id, data, selected }: NodeProps) {
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel className="text-[10px]">Segundos</SelectLabel>
-                  {["3", "4", "5", "6", "7", "8", "9", "10"].map((s) => (
+                  {(nodeData.tier === "premium"
+                    ? ["3", "4", "5", "6", "7", "8", "9", "10"]
+                    : ["6", "8", "10"]
+                  ).map((s) => (
                     <SelectItem key={s} value={s}>
                       <span className="text-xs">{s}s</span>
                     </SelectItem>
