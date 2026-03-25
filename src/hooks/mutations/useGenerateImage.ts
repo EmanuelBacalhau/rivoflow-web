@@ -2,67 +2,76 @@ import { useMutation } from "@tanstack/react-query";
 import type { Node } from "@xyflow/react";
 import type { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
-import { queryClient } from "@/providers/main-provider";
-import { GenerationImageNodeService } from "@/services/node/generation-image-node-service";
-import { GenerationStatusEnum, NodeTypeEnum } from "@/types";
+import { TriggerGenerationService } from "@/services/node/trigger-generation-service";
+import { GENERATION_NODE_TYPES, GenerationStatusEnum } from "@/types";
 
 type GenerateImageControllerParams = {
   flowId: string;
   updateNodes: Dispatch<SetStateAction<Node[]>>;
+  onGenerateSuccess?: (nodeId: string) => void;
 };
 
 export function useGenerateImageController({
-  flowId,
   updateNodes,
+  onGenerateSuccess,
 }: GenerateImageControllerParams) {
   const { mutateAsync } = useMutation({
     mutationKey: ["generateImageNode"],
     mutationFn: async (
-      paramsNode: GenerationImageNodeService.GenerateImageParams,
+      paramsNode: TriggerGenerationService.GenerateImageParams,
     ) => {
-      await GenerationImageNodeService.generate(paramsNode);
+      await TriggerGenerationService.generate(paramsNode);
+      return paramsNode.nodeGeneratorId;
     },
     onMutate: async (
-      paramsNode: GenerationImageNodeService.GenerateImageParams,
+      paramsNode: TriggerGenerationService.GenerateImageParams,
     ) => {
       const { nodeGeneratorId } = paramsNode;
       updateNodes((nds) =>
-        nds.map((n) =>
-          n.id === nodeGeneratorId && n.type === NodeTypeEnum.GENERATION_IMAGE
-            ? {
-                ...n,
-                data: {
-                  ...n.data,
-                  isExecuted: true,
-                  status: GenerationStatusEnum.PROCESSING,
-                },
-              }
-            : n,
-        ),
+        nds.map((n) => {
+          const isGenerationNode = GENERATION_NODE_TYPES.includes(
+            n.type as (typeof GENERATION_NODE_TYPES)[number],
+          );
+          if (n.id === nodeGeneratorId && isGenerationNode) {
+            return {
+              ...n,
+              data: {
+                ...n.data,
+                isExecuted: true,
+                status: GenerationStatusEnum.PROCESSING,
+              },
+            };
+          }
+          return n;
+        }),
       );
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["flow", flowId] });
+    onSuccess: (nodeId) => {
+      onGenerateSuccess?.(nodeId);
     },
     onError: (
       _error,
-      paramsNode: GenerationImageNodeService.GenerateImageParams,
+      paramsNode: TriggerGenerationService.GenerateImageParams,
     ) => {
       const { nodeGeneratorId } = paramsNode;
       updateNodes((nds) =>
-        nds.map((n) =>
-          n.id === nodeGeneratorId && n.type === NodeTypeEnum.GENERATION_IMAGE
-            ? {
-                ...n,
-                data: {
-                  ...n.data,
-                  isExecuted: false,
-                },
-              }
-            : n,
-        ),
+        nds.map((n) => {
+          const isGenerationNode = GENERATION_NODE_TYPES.includes(
+            n.type as (typeof GENERATION_NODE_TYPES)[number],
+          );
+          if (n.id === nodeGeneratorId && isGenerationNode) {
+            return {
+              ...n,
+              data: {
+                ...n.data,
+                isExecuted: false,
+              },
+            };
+          }
+          return n;
+        }),
       );
-      toast.error("Erro ao gerar imagem. Tente novamente.");
+      toast.error("Erro ao gerar. Tente novamente.");
     },
   });
 

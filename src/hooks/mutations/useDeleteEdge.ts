@@ -2,12 +2,18 @@ import { useMutation } from "@tanstack/react-query";
 import type { Node } from "@xyflow/react";
 import type { Dispatch, SetStateAction } from "react";
 import { EdgeService } from "@/services/edge-service";
-import { GenerationImageNodeService } from "@/services/node/generation-image-node-service";
-import { NodeTypeEnum } from "@/types";
+import { TriggerGenerationService } from "@/services/node/trigger-generation-service";
+import { GENERATION_NODE_TYPES } from "@/types";
 
 type DeleteEdgeParams = {
   updateNodes: Dispatch<SetStateAction<Node[]>>;
 };
+
+function isGenerationNode(node: Node): boolean {
+  return GENERATION_NODE_TYPES.includes(
+    node.type as (typeof GENERATION_NODE_TYPES)[number],
+  );
+}
 
 export function useDeleteEdgeController({ updateNodes }: DeleteEdgeParams) {
   const { mutateAsync } = useMutation({
@@ -18,7 +24,7 @@ export function useDeleteEdgeController({ updateNodes }: DeleteEdgeParams) {
       await EdgeService.delete(paramsEdge);
     },
     onMutate: async (paramsEdge) => {
-      if (paramsEdge.node.data.type === NodeTypeEnum.GENERATION_IMAGE) {
+      if (isGenerationNode(paramsEdge.node)) {
         const nodeId = paramsEdge.node.id;
         updateNodes((nds) =>
           nds.map((n) =>
@@ -30,10 +36,10 @@ export function useDeleteEdgeController({ updateNodes }: DeleteEdgeParams) {
       }
     },
     onSuccess: async (_, paramsEdge) => {
-      if (paramsEdge.node.data.type === NodeTypeEnum.GENERATION_IMAGE) {
+      if (isGenerationNode(paramsEdge.node)) {
         const nodeId = paramsEdge.node.id;
         try {
-          const result = await GenerationImageNodeService.calculateCredits({
+          const result = await TriggerGenerationService.calculateCredits({
             flowId: paramsEdge.flowId,
             nodeId,
           });
@@ -63,7 +69,7 @@ export function useDeleteEdgeController({ updateNodes }: DeleteEdgeParams) {
       }
     },
     onError: (_, paramsEdge) => {
-      if (paramsEdge.node.data.type === NodeTypeEnum.GENERATION_IMAGE) {
+      if (isGenerationNode(paramsEdge.node)) {
         const nodeId = paramsEdge.node.id;
         updateNodes((nds) =>
           nds.map((n) =>

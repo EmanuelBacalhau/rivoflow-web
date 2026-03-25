@@ -46,11 +46,11 @@ export function CreateFlowDialog({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-sm">
-        <DialogTitle>Novo Flow</DialogTitle>
+        <DialogTitle>Novo flow</DialogTitle>
         <DialogDescription>
           Dê um nome ao seu flow para organizá-lo.
         </DialogDescription>
-        <div className="space-y-4 pt-2">
+        <div className="space-y-4 pt-1">
           <Input
             placeholder={`Ex: Campanha Verão ${new Date().getFullYear()}`}
             value={name}
@@ -71,9 +71,9 @@ export function CreateFlowDialog({
             <Button
               size="sm"
               onClick={() => handleCreateFlow(name)}
-              disabled={isCreatingFlow}
+              disabled={isCreatingFlow || !name.trim()}
             >
-              {isCreatingFlow ? "Criando..." : "Criar Flow"}
+              {isCreatingFlow ? "Criando..." : "Criar flow"}
             </Button>
           </div>
         </div>

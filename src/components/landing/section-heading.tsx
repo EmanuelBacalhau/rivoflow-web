@@ -11,11 +11,17 @@ export function SectionHeading({
 }: SectionHeadingProps) {
   return (
     <div className="text-center mb-16">
-      <p className="text-xs text-primary font-semibold uppercase tracking-widest mb-3">
+      <p className="text-xs text-primary font-semibold uppercase tracking-widest mb-4">
         {label}
       </p>
-      <h2 className="text-3xl md:text-5xl font-bold mb-4">{title}</h2>
-      <p className="text-muted-foreground max-w-lg mx-auto">{subtitle}</p>
+      <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-5">
+        {title}
+      </h2>
+      {subtitle && (
+        <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto leading-relaxed">
+          {subtitle}
+        </p>
+      )}
     </div>
   );
 }

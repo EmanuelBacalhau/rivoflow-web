@@ -64,9 +64,9 @@ export function PromptNode({ id: nodeId, data, selected }: NodeProps) {
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-sm text-card-foreground leading-tight">
-            Prompt
+            Texto
           </h3>
-          <p className="text-[10px] text-amber-500">Descreva o estilo</p>
+          <p className="text-[10px] text-amber-500">Descreva sua ideia</p>
         </div>
         {nodeData.isExecuted && (
           <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center shrink-0">

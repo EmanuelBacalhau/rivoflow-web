@@ -31,11 +31,14 @@ export function CardFlow({ flow }: CardFlowProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   return (
-    <Card key={flow.id} className="p-0 overflow-hidden">
+    <Card
+      key={flow.id}
+      className="p-0 overflow-hidden hover:border-primary/30 transition-colors group"
+    >
       <CardContent className="p-0">
         <Link href={`/dashboard/flow/${flow.id}`}>
-          <div className="p-6 bg-primary/25 grid place-items-center">
-            <LayersIcon className="size-12 text-muted-foreground" />
+          <div className="p-6 bg-muted/30 grid place-items-center">
+            <LayersIcon className="size-12 text-muted-foreground/30" />
           </div>
         </Link>
 
@@ -43,55 +46,46 @@ export function CardFlow({ flow }: CardFlowProps) {
           <div className="min-w-0">
             <Link
               href={`/dashboard/flow/${flow.id}`}
-              className="hover:underline"
+              className="hover:underline underline-offset-2"
             >
-              <h3 className="text-lg font-bold truncate">{flow.title}</h3>
+              <h3 className="text-sm font-semibold truncate">{flow.title}</h3>
             </Link>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs text-muted-foreground mt-1">
               Atualizado em{" "}
               {format(new Date(flow.updatedAt), "dd/MM/yyyy 'às' HH:mm")}
             </p>
           </div>
 
-          <div className="flex items-center gap-2 z-10">
+          <div className="flex items-center gap-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
             <Dialog
               onOpenChange={setIsUpdateDialogOpen}
               open={isUpdateDialogOpen}
             >
               <DialogTrigger asChild>
                 <Button
-                  size="icon"
+                  size="icon-sm"
                   variant="ghost"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  <PencilIcon className="size-4" />
+                  <PencilIcon className="size-3.5" />
                 </Button>
               </DialogTrigger>
-
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Atualizar flow</DialogTitle>
+                  <DialogTitle>Renomear flow</DialogTitle>
                   <DialogDescription>
-                    Tem certeza que deseja atualizar o título do flow{" "}
-                    <strong>{flow.title}</strong>? Esta ação não pode ser
-                    desfeita.
+                    Altere o título do flow <strong>{flow.title}</strong>.
                   </DialogDescription>
                 </DialogHeader>
-
                 <Input
                   defaultValue={flow.title}
                   onChange={(e) => setTitle(e.target.value)}
                 />
-
                 <DialogFooter>
                   <DialogClose asChild>
                     <Button variant="outline">Cancelar</Button>
                   </DialogClose>
-
                   <Button
-                    type="submit"
                     disabled={
                       title.trim() === "" ||
                       title === flow.title ||
@@ -102,7 +96,7 @@ export function CardFlow({ flow }: CardFlowProps) {
                       setIsUpdateDialogOpen(false);
                     }}
                   >
-                    {isFlowUpdating ? "Atualizando..." : "Atualizar"}
+                    {isFlowUpdating ? "Salvando..." : "Salvar"}
                   </Button>
                 </DialogFooter>
               </DialogContent>
@@ -114,31 +108,27 @@ export function CardFlow({ flow }: CardFlowProps) {
             >
               <DialogTrigger asChild>
                 <Button
-                  size="icon"
+                  size="icon-sm"
                   variant="ghost"
-                  className="hover:bg-destructive!"
+                  className="hover:text-destructive"
                 >
-                  <TrashIcon className="size-4" />
+                  <TrashIcon className="size-3.5" />
                 </Button>
               </DialogTrigger>
-
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Excluir fluxo</DialogTitle>
+                  <DialogTitle>Excluir flow</DialogTitle>
                   <DialogDescription>
-                    Tem certeza que deseja excluir o fluxo{" "}
-                    <strong>{flow.title}</strong>? Esta ação não pode ser
-                    desfeita.
+                    Tem certeza que deseja excluir <strong>{flow.title}</strong>
+                    ? Esta ação não pode ser desfeita.
                   </DialogDescription>
                 </DialogHeader>
-
                 <DialogFooter>
                   <DialogClose asChild>
                     <Button variant="outline">Cancelar</Button>
                   </DialogClose>
-
                   <Button
-                    type="submit"
+                    variant="destructive"
                     disabled={isFlowDeleting}
                     onClick={async () => {
                       await deleteFlow(flow.id);

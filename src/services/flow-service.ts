@@ -1,7 +1,15 @@
 import type { EdgeService } from "./edge-service";
-import type { GenerationImageNodeService } from "./node/generation-image-node-service";
-import type { ImageNodeService } from "./node/image-node-service";
+import type { FileNodeService } from "./node/file-node-service";
+import type { ImageToVideoNodeService } from "./node/image-to-video-node-service";
+import type { MotionControlNodeService } from "./node/motion-control-node-service";
 import type { PromptNodeService } from "./node/prompt-node-service";
+import type { RemoveBgNodeService } from "./node/remove-bg-node-service";
+import type { ResultImageNodeService } from "./node/result-image-node-service";
+import type { ResultVideoNodeService } from "./node/result-video-node-service";
+import type { TextToImageNodeService } from "./node/text-to-image-node-service";
+import type { TriggerGenerationService } from "./node/trigger-generation-service";
+import type { UpscaleNodeService } from "./node/upscale-node-service";
+import type { VideoNodeService } from "./node/video-node-service";
 import { Service } from "./service";
 
 export class FlowService extends Service {
@@ -47,8 +55,16 @@ export namespace FlowService {
     flow: Flow;
     nodes: Array<
       | PromptNodeService.Node
-      | ImageNodeService.Node
-      | (GenerationImageNodeService.Node & { creditsRequired: number })
+      | FileNodeService.Node
+      | VideoNodeService.Node
+      | TriggerGenerationService.Node
+      | TextToImageNodeService.Node
+      | UpscaleNodeService.Node
+      | RemoveBgNodeService.Node
+      | ImageToVideoNodeService.Node
+      | MotionControlNodeService.Node
+      | ResultImageNodeService.Node
+      | ResultVideoNodeService.Node
     >;
     edges: Array<EdgeService.Edge>;
   };

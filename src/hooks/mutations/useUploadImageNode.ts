@@ -3,12 +3,12 @@ import type { Node } from "@xyflow/react";
 import { isAxiosError } from "axios";
 import type { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
-import { ImageNodeService } from "@/services/node/image-node-service";
+import { FileNodeService } from "@/services/node/file-node-service";
 
 interface UploadImageNodeParams {
   updateNodes: Dispatch<SetStateAction<Node[]>>;
   isDeleted?: (nodeId: string) => boolean;
-  onUploadComplete?: (nodeId: string) => void;
+  onUploadComplete?: (nodeId: string, isVideo: boolean) => void;
 }
 
 export function useUploadImageNodeController({
@@ -18,21 +18,19 @@ export function useUploadImageNodeController({
 }: UploadImageNodeParams) {
   const { mutateAsync } = useMutation({
     mutationKey: ["uploadImageNode"],
-    mutationFn: async (params: ImageNodeService.UploadImageParams) => {
-      const response = await ImageNodeService.upload(params);
-      await ImageNodeService.confirmUpload({
-        nodeId: params.nodeId,
-        flowId: params.flowId,
-      });
+    mutationFn: async (params: FileNodeService.UploadParams) => {
+      const response = await FileNodeService.upload(params);
       return {
         key: response.key,
         nodeId: params.nodeId,
         flowId: params.flowId,
-        imageUrl: response.imageUrl,
+        fileUrl: response.fileUrl,
+        isVideo: params.file.type.startsWith("video/"),
       };
     },
     onMutate: async (params) => {
       const { nodeId, file } = params;
+      const isVideo = file.type.startsWith("video/");
 
       const previewUrl = URL.createObjectURL(file);
 
@@ -43,17 +41,19 @@ export function useUploadImageNodeController({
                 ...n,
                 data: {
                   ...n.data,
-                  imageUrl: previewUrl,
+                  ...(isVideo
+                    ? { videoUrl: previewUrl }
+                    : { imageUrl: previewUrl }),
                 },
               }
             : n,
         ),
       );
 
-      return { nodeId, previewUrl };
+      return { nodeId, previewUrl, isVideo };
     },
     onSuccess: (response, _, context) => {
-      const { nodeId, key, imageUrl } = response;
+      const { nodeId, key, fileUrl, isVideo } = response;
 
       if (context?.previewUrl) {
         URL.revokeObjectURL(context.previewUrl);
@@ -69,14 +69,14 @@ export function useUploadImageNodeController({
                 data: {
                   ...n.data,
                   key,
-                  imageUrl,
+                  ...(isVideo ? { videoUrl: fileUrl } : { imageUrl: fileUrl }),
                 },
               }
             : n,
         );
       });
 
-      onUploadComplete?.(nodeId);
+      onUploadComplete?.(nodeId, isVideo);
     },
     onError: (error, _, context) => {
       if (context?.previewUrl) {
@@ -93,7 +93,7 @@ export function useUploadImageNodeController({
                   ...n,
                   data: {
                     ...n.data,
-                    imageUrl: "",
+                    ...(context.isVideo ? { videoUrl: "" } : { imageUrl: "" }),
                   },
                 }
               : n,
@@ -101,7 +101,7 @@ export function useUploadImageNodeController({
         );
       }
 
-      toast.error("Erro ao fazer upload da imagem. Tente novamente.");
+      toast.error("Erro ao fazer upload. Tente novamente.");
     },
   });
 

@@ -24,10 +24,8 @@ export default function PaymentSuccessPage() {
     enabled: !isInitializing,
     refetchInterval: (query) => {
       if (isInitializing || prePaymentCredits === null) return false;
-
       const currentCredits = query.state.data?.balance?.credits ?? 0;
       if (currentCredits > prePaymentCredits) return false;
-
       return 2500;
     },
   });
@@ -60,30 +58,32 @@ export default function PaymentSuccessPage() {
   }, [isInitializing, me?.balance?.credits, prePaymentCredits, router]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center relative">
       <Background />
-      <div className="mb-6 relative">
-        <div className="absolute inset-0 bg-green-500/20 blur-xl rounded-full animate-pulse" />
-        <CheckCircle2Icon className="size-24 text-green-500 relative z-10 animate-[bounce_1s_ease-in-out_infinite]" />
-      </div>
 
-      <h1 className="text-3xl font-bold bg-linear-to-r from-green-400 to-emerald-600 bg-clip-text text-transparent mb-4">
-        Pagamento Aprovado!
-      </h1>
-
-      <p className="text-muted-foreground max-w-md mb-8">
-        Seus créditos foram adicionados com sucesso à sua conta. Estamos
-        sincronizando suas informações...
-      </p>
-
-      {isRedirecting ? (
-        <div className="flex items-center gap-2 text-sm text-muted-foreground animate-pulse">
-          <Loader2Icon className="size-4 animate-spin" />
-          <span>Redirecionando para o Dashboard...</span>
+      <div className="relative z-10 animate-scale-in">
+        <div className="mb-6">
+          <CheckCircle2Icon className="size-16 text-green-500 mx-auto" />
         </div>
-      ) : (
-        <div className="h-6" />
-      )}
+
+        <h1 className="text-2xl font-bold mb-2">Pagamento aprovado</h1>
+
+        <p className="text-sm text-muted-foreground max-w-sm mb-8">
+          Seus créditos foram adicionados com sucesso. Sincronizando
+          informações...
+        </p>
+
+        {isRedirecting ? (
+          <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+            <Loader2Icon className="size-3.5 animate-spin" />
+            <span>Redirecionando...</span>
+          </div>
+        ) : (
+          <div className="flex justify-center">
+            <Loader2Icon className="size-4 animate-spin text-muted-foreground" />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

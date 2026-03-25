@@ -10,9 +10,8 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
-import { toast } from "sonner";
 import { useFlow } from "@/contexts/flow-context";
-import type { ImageNodeService } from "@/services/node/image-node-service";
+import type { FileNodeService } from "@/services/node/file-node-service";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import {
@@ -22,7 +21,7 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 
-type UploadImageNodeData = ImageNodeService.Node["data"] & {
+type UploadImageNodeData = FileNodeService.Node["data"] & {
   isExecuted?: boolean;
 };
 
@@ -42,11 +41,11 @@ export function UploadImageNode({ id, data, selected }: NodeProps) {
     const selectedFile = event.target.files?.[0];
     if (!selectedFile) return;
 
-    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-    if (selectedFile.size > MAX_FILE_SIZE) {
-      toast.error("Arquivo muito grande. Máximo 10MB.");
-      return;
-    }
+    // const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    // if (selectedFile.size > MAX_FILE_SIZE) {
+    //   toast.error("Arquivo muito grande. Máximo 10MB.");
+    //   return;
+    // }
 
     markConnectedGeneratorsAsCalculating(id);
     uploadImageNode({

@@ -2,13 +2,19 @@ import { useMutation } from "@tanstack/react-query";
 import type { Edge, Node } from "@xyflow/react";
 import type { Dispatch, SetStateAction } from "react";
 import { EdgeService } from "@/services/edge-service";
-import { GenerationImageNodeService } from "@/services/node/generation-image-node-service";
-import { NodeTypeEnum } from "@/types";
+import { TriggerGenerationService } from "@/services/node/trigger-generation-service";
+import { GENERATION_NODE_TYPES } from "@/types";
 
 type CreateEdgeParams = {
   updateEdges: Dispatch<SetStateAction<Edge[]>>;
   updateNodes: Dispatch<SetStateAction<Node[]>>;
 };
+
+function isGenerationNode(node: Node): boolean {
+  return GENERATION_NODE_TYPES.includes(
+    node.type as (typeof GENERATION_NODE_TYPES)[number],
+  );
+}
 
 export function useCreateEdgeController({
   updateEdges,
@@ -25,7 +31,7 @@ export function useCreateEdgeController({
       return response.edge;
     },
     onMutate: async (params) => {
-      if (params.node.data.type === NodeTypeEnum.GENERATION_IMAGE) {
+      if (isGenerationNode(params.node)) {
         const nodeId = params.node.id;
         updateNodes((nds) =>
           nds.map((n) =>
@@ -52,11 +58,10 @@ export function useCreateEdgeController({
         );
       });
 
-      if (params.node.data.type === NodeTypeEnum.GENERATION_IMAGE) {
+      if (isGenerationNode(params.node)) {
         const nodeId = params.node.id;
-        // isCalculatingCredits is already true from onMutate
         try {
-          const result = await GenerationImageNodeService.calculateCredits({
+          const result = await TriggerGenerationService.calculateCredits({
             flowId: params.flowId,
             nodeId,
           });
@@ -86,7 +91,7 @@ export function useCreateEdgeController({
       }
     },
     onError: (_error, params) => {
-      if (params.node.data.type === NodeTypeEnum.GENERATION_IMAGE) {
+      if (isGenerationNode(params.node)) {
         const nodeId = params.node.id;
         updateNodes((nds) =>
           nds.map((n) =>

@@ -2,8 +2,8 @@ import { useMutation } from "@tanstack/react-query";
 import type { Node } from "@xyflow/react";
 import type { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
-import { GenerationImageNodeService } from "@/services/node/generation-image-node-service";
 import { NodeService } from "@/services/node/node-service";
+import { TriggerGenerationService } from "@/services/node/trigger-generation-service";
 import { GenerationStatusEnum, NodeTypeEnum } from "@/types";
 
 interface CreateNodeGenerationImageParams {
@@ -19,8 +19,8 @@ export function useCreateNodeGenerationImageController({
 }: CreateNodeGenerationImageParams) {
   const { mutateAsync } = useMutation({
     mutationKey: ["createGenerationImageNode"],
-    mutationFn: async (paramsNode: GenerationImageNodeService.CreateParams) => {
-      const response = await GenerationImageNodeService.create(paramsNode);
+    mutationFn: async (paramsNode: TriggerGenerationService.CreateParams) => {
+      const response = await TriggerGenerationService.create(paramsNode);
       return response.node;
     },
     onMutate: async (paramsNode) => {
@@ -32,12 +32,13 @@ export function useCreateNodeGenerationImageController({
           type: NodeTypeEnum.GENERATION_IMAGE,
           position: paramsNode.position,
           data: {
-            type: NodeTypeEnum.GENERATION_IMAGE,
-            parameters: {
-              aspectRatio: "1:1",
-              quality: "1K",
-            },
+            aspectRatio: "1:1",
+            quality: "1K",
             status: GenerationStatusEnum.PENDING,
+            attempts: 0,
+            outputNodeId: null,
+            consumedCredits: 0,
+            creditsRequired: 0,
             isExecuted: false,
           },
         }),
@@ -60,12 +61,11 @@ export function useCreateNodeGenerationImageController({
             currentPosition = n.position;
             return {
               id: node.id,
-              type: node.data.type,
+              type: node.nodeType,
               position: n.position,
               data: {
                 ...node.data,
                 ...n.data,
-                type: node.data.type,
                 isExecuted: node.isExecuted,
               },
             };

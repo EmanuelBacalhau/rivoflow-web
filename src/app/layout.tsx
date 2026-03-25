@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Roboto } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import "@xyflow/react/dist/style.css";
 import Script from "next/script";
 import { MainProvider } from "@/providers/main-provider";
 
-const roboto = Roboto({
-  variable: "--font-roboto",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
@@ -101,7 +101,7 @@ export default function RootLayout({
           {JSON.stringify(jsonLd)}
         </Script>
       </head>
-      <body className={`${roboto.variable} antialiased min-h-screen dark`}>
+      <body className={`${inter.variable} antialiased min-h-screen dark`}>
         <MainProvider>{children}</MainProvider>
       </body>
     </html>

@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import type { Node } from "@xyflow/react";
 import type { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
-import { ImageNodeService } from "@/services/node/image-node-service";
+import { FileNodeService } from "@/services/node/file-node-service";
 import { NodeService } from "@/services/node/node-service";
 import { NodeTypeEnum } from "@/types";
 
@@ -19,8 +19,8 @@ export function useCreateNodeImageController({
 }: CreateNodeImageNodeParams) {
   const { mutateAsync } = useMutation({
     mutationKey: ["createImageNode"],
-    mutationFn: async (paramsNode: ImageNodeService.CreateParams) => {
-      const response = await ImageNodeService.create(paramsNode);
+    mutationFn: async (paramsNode: FileNodeService.CreateParams) => {
+      const response = await FileNodeService.create(paramsNode);
       return response.node;
     },
     onMutate: async (paramsNode) => {
@@ -32,9 +32,7 @@ export function useCreateNodeImageController({
           type: NodeTypeEnum.IMAGE,
           position: paramsNode.position,
           data: {
-            type: NodeTypeEnum.IMAGE,
-            key: "",
-            imageUrl: "",
+            key: null,
             isExecuted: false,
           },
         }),
@@ -57,12 +55,11 @@ export function useCreateNodeImageController({
             currentPosition = n.position;
             return {
               id: node.id,
-              type: node.data.type,
+              type: node.nodeType,
               position: n.position,
               data: {
                 ...node.data,
                 ...n.data,
-                type: node.data.type,
                 isExecuted: node.isExecuted,
               },
             };

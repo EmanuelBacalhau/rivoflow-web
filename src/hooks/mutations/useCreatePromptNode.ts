@@ -32,7 +32,6 @@ export function useCreateNodePromptController({
           type: NodeTypeEnum.PROMPT,
           position: paramsNode.position,
           data: {
-            type: NodeTypeEnum.PROMPT,
             prompt: "",
             isExecuted: false,
           },
@@ -56,12 +55,11 @@ export function useCreateNodePromptController({
             currentPosition = n.position;
             return {
               id: node.id,
-              type: node.data.type,
+              type: node.nodeType,
               position: n.position,
               data: {
                 ...node.data,
                 ...n.data,
-                type: node.data.type,
                 isExecuted: node.isExecuted,
               },
             };

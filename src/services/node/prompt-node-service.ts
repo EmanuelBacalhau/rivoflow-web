@@ -12,7 +12,7 @@ export class PromptNodeService extends Service {
   ): Promise<PromptNodeService.CreatePromptNodeResponse> {
     const response =
       await PromptNodeService.client.post<PromptNodeService.CreatePromptNodeResponse>(
-        `/flows/${params.flowId}/nodes`,
+        `/flows/${params.flowId}/nodes/prompt`,
         {
           nodeType: NodeTypeEnum.PROMPT,
           position: params.position,
@@ -24,10 +24,8 @@ export class PromptNodeService extends Service {
 
   static async update(params: PromptNodeService.UpdateParams): Promise<void> {
     await PromptNodeService.client.put<PromptNodeService.UpdateResponse>(
-      `/flows/${params.flowId}/nodes/${params.nodeId}`,
-      {
-        data: params.data,
-      },
+      `/flows/${params.flowId}/nodes/${params.nodeId}/prompt`,
+      params.data,
     );
   }
 }

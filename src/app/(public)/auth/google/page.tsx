@@ -11,8 +11,8 @@ function GoogleIcon() {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
-      width="20"
-      height="20"
+      width="18"
+      height="18"
       aria-hidden="true"
     >
       <path
@@ -56,62 +56,57 @@ export default function GoogleLoginPage() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-background px-4">
       <Background />
 
-      <div className="w-full max-w-sm flex-1 flex items-center justify-center">
-        <div className="rounded-2xl border border-border/60 bg-card/60 backdrop-blur-sm p-8 shadow-xl flex flex-col items-center gap-6 w-full">
-          <Link href="/" className="flex flex-col items-center gap-2.5">
-            <Image
-              src="/logo.png"
-              alt="RIVOFLOW"
-              width={52}
-              height={52}
-              className="rounded-lg"
-            />
-            <span className="text-xl font-semibold tracking-tight">
-              RIVOFLOW
-            </span>
-          </Link>
+      <div className="w-full max-w-sm flex-1 flex items-center justify-center relative z-10">
+        <div className="rounded-xl border border-border bg-card p-8 shadow-lg w-full animate-scale-in">
+          <div className="flex flex-col items-center gap-6">
+            <Link href="/" className="flex flex-col items-center gap-2">
+              <Image
+                src="/logo.png"
+                alt="RIVOFLOW"
+                width={40}
+                height={40}
+                className="rounded-lg"
+              />
+              <span className="text-base font-semibold tracking-tight">
+                RIVOFLOW
+              </span>
+            </Link>
 
-          <div className="w-full h-px bg-border/50" />
+            <div className="w-full h-px bg-border" />
 
-          <div className="text-center space-y-1.5">
-            <h1 className="text-xl font-semibold">Bem-vindo(a)</h1>
-            <p className="text-sm text-muted-foreground">
-              Entre com sua conta Google para continuar
+            <div className="text-center space-y-1">
+              <h1 className="text-lg font-semibold">Bem-vindo(a)</h1>
+              <p className="text-[13px] text-muted-foreground">
+                Entre com sua conta Google para continuar
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleGoogleSignIn}
+              className="w-full flex items-center justify-center gap-2.5 rounded-lg border border-border bg-white text-neutral-800 px-4 py-2.5 text-sm font-medium hover:bg-neutral-50 active:bg-neutral-100 transition-colors cursor-pointer"
+            >
+              <GoogleIcon />
+              Continuar com o Google
+            </button>
+
+            <p className="text-center text-[11px] text-muted-foreground leading-relaxed">
+              Ao continuar, você concorda com nossos{" "}
+              <Link
+                href="/terms"
+                className="underline underline-offset-2 hover:text-foreground transition-colors"
+              >
+                Termos
+              </Link>{" "}
+              e{" "}
+              <Link
+                href="/privacy"
+                className="underline underline-offset-2 hover:text-foreground transition-colors"
+              >
+                Privacidade
+              </Link>
             </p>
           </div>
-
-          <button
-            type="button"
-            onClick={handleGoogleSignIn}
-            className="w-full flex items-center justify-center gap-3 rounded-lg border border-border/80 bg-white text-neutral-800 px-4 py-2.5 text-sm font-medium shadow-sm hover:bg-neutral-50 active:bg-neutral-100 transition-colors cursor-pointer"
-          >
-            <GoogleIcon />
-            Continuar com o Google
-          </button>
-
-          <p className="text-center text-[11px] text-muted-foreground leading-relaxed">
-            Ao continuar, você concorda com nossos{" "}
-            <Link
-              href="/terms"
-              className="hover:text-foreground transition-colors underline"
-            >
-              Termos de Uso
-            </Link>{" "}
-            e{" "}
-            <Link
-              href="/privacy"
-              className="hover:text-foreground transition-colors underline"
-            >
-              Política de Privacidade
-            </Link>
-          </p>
-
-          <Link
-            href="/"
-            className="hover:text-foreground transition-colors text-xs hover:underline text-muted-foreground"
-          >
-            Voltar ao início
-          </Link>
         </div>
       </div>
     </div>

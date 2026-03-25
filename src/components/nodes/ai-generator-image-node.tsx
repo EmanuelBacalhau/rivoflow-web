@@ -16,8 +16,7 @@ import { useAccount } from "@/hooks/queries/useAccount";
 import {
   type AspectRatio,
   GenerationStatusEnum,
-  type ImageSize,
-  type NodeDataGenerationImage,
+  type ImageQuality,
 } from "@/types";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader } from "../ui/card";
@@ -36,7 +35,10 @@ import {
   SelectValue,
 } from "../ui/select";
 
-type AIGeneratorNodeData = NodeDataGenerationImage & {
+type AIGeneratorNodeData = {
+  status: GenerationStatusEnum;
+  aspectRatio: string;
+  quality: string;
   isExecuted?: boolean;
   creditsRequired?: number;
   isCalculatingCredits?: boolean;
@@ -62,7 +64,7 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
   const handleFormatChange = async (value: string) => {
     try {
       updateNodeData(id, {
-        format: value as AspectRatio,
+        aspectRatio: value as AspectRatio,
         isCalculatingCredits: true,
       });
       await updateGenerationImageNode({
@@ -70,10 +72,8 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
         nodeId: id,
         data: {
           ...nodeData,
-          parameters: {
-            quality: nodeData.parameters.quality ?? "1K",
-            aspectRatio: value as AspectRatio,
-          },
+          quality: (nodeData.quality ?? "1K") as ImageQuality,
+          aspectRatio: value as AspectRatio,
         },
       });
       await calculateCreditsForNode(id);
@@ -85,7 +85,7 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
   const handleQualityChange = async (value: string) => {
     try {
       updateNodeData(id, {
-        quality: value as ImageSize,
+        quality: value as ImageQuality,
         isCalculatingCredits: true,
       });
       await updateGenerationImageNode({
@@ -93,10 +93,8 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
         nodeId: id,
         data: {
           ...nodeData,
-          parameters: {
-            aspectRatio: nodeData.parameters.aspectRatio ?? "1:1",
-            quality: value as ImageSize,
-          },
+          aspectRatio: (nodeData.aspectRatio ?? "1:1") as AspectRatio,
+          quality: value as ImageQuality,
         },
       });
       await calculateCreditsForNode(id);
@@ -132,6 +130,7 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
 
   const isButtonDisabled =
     !hasPrompts ||
+    !hasImages ||
     nodeData.isExecuted ||
     isProcessing ||
     isCompleted ||
@@ -162,9 +161,9 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-sm text-card-foreground leading-tight">
-            Gerador AI
+            Editar Imagem
           </h3>
-          <p className="text-[10px] text-purple-500">Gere imagens com IA</p>
+          <p className="text-[10px] text-purple-500">Prompt + imagem</p>
         </div>
         {hasAnyInput && (
           <div className="flex gap-1">
@@ -209,7 +208,7 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
               Formato
             </span>
             <Select
-              value={nodeData.parameters.aspectRatio}
+              value={nodeData.aspectRatio}
               onValueChange={handleFormatChange}
               disabled={isCalculating || isProcessing || isCompleted}
             >
@@ -259,7 +258,7 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
               Qualidade
             </span>
             <Select
-              value={nodeData.parameters.quality}
+              value={nodeData.quality}
               onValueChange={handleQualityChange}
               disabled={isCalculating || isProcessing || isCompleted}
             >
@@ -269,6 +268,12 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel className="text-[10px]">Resolução</SelectLabel>
+                  <SelectItem value="0.5K">
+                    <div className="flex items-center gap-1.5">
+                      <ZapIcon className="size-3 text-gray-300" />
+                      <span className="text-xs">0.5K Rascunho</span>
+                    </div>
+                  </SelectItem>
                   <SelectItem value="1K">
                     <div className="flex items-center gap-1.5">
                       <ZapIcon className="size-3 text-gray-400" />

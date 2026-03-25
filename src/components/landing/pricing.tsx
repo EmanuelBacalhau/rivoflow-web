@@ -20,26 +20,26 @@ interface LandingPricingProps {
 
 export function LandingPricing({ plans }: LandingPricingProps) {
   return (
-    <section id="pricing" className="py-24 bg-muted/30">
+    <section id="pricing" className="py-24 bg-card">
       <div className="max-w-6xl mx-auto px-6">
         <SectionHeading
           label="Preços"
           title="Pague apenas pelo uso"
-          subtitle="Abandone assinaturas. Faça um depósito e use seus créditos no seu ritmo."
+          subtitle="Sem assinaturas. Deposite créditos e use no seu ritmo."
         />
 
         <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
           {plans.map((plan) => (
             <div
               key={plan.name}
-              className={`p-8 rounded-2xl border ${
+              className={`relative p-8 rounded-2xl ${
                 plan.highlight
-                  ? "border-indigo-500 bg-card shadow-2xl shadow-indigo-500/10 relative"
-                  : "border-border/50 bg-card/50"
-              } ${plan.disabled ? "opacity-60 pointer-events-none" : ""}`}
+                  ? "bg-background border-2 border-primary shadow-lg"
+                  : "bg-background border border-border"
+              } ${plan.disabled ? "opacity-50 pointer-events-none" : ""}`}
             >
               {plan.highlight && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-indigo-600 text-white text-[11px] font-semibold rounded-full">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-primary text-primary-foreground text-xs font-semibold rounded-full">
                   Mais popular
                 </div>
               )}
@@ -59,29 +59,18 @@ export function LandingPricing({ plans }: LandingPricingProps) {
 
               <ul className="space-y-3 mb-8">
                 {plan.features.map((feature) => (
-                  <li
-                    key={feature}
-                    className="flex items-center gap-2.5 text-sm"
-                  >
-                    <div
-                      className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${plan.highlight ? "bg-indigo-500/20" : plan.disabled ? "bg-muted-foreground/20" : "bg-green-500/20"}`}
-                    >
-                      <CheckIcon
-                        className={`w-2.5 h-2.5 ${plan.highlight ? "text-primary" : plan.disabled ? "text-muted-foreground" : "text-green-600"}`}
-                      />
-                    </div>
-                    {feature}
+                  <li key={feature} className="flex items-start gap-3 text-sm">
+                    <CheckIcon
+                      className={`w-4 h-4 shrink-0 mt-0.5 ${plan.highlight ? "text-primary" : "text-muted-foreground"}`}
+                    />
+                    <span className="leading-relaxed">{feature}</span>
                   </li>
                 ))}
               </ul>
 
               <Link href="/auth/google" className="block">
                 <Button
-                  className={`w-full ${
-                    plan.highlight
-                      ? "bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/25"
-                      : ""
-                  }`}
+                  className="w-full h-11"
                   variant={plan.highlight ? "default" : "outline"}
                 >
                   {plan.cta}

@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRightIcon, MenuIcon, XIcon } from "lucide-react";
+import { ArrowRightIcon, MenuIcon, XIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -19,25 +19,27 @@ export function LandingNavbar({ navLinks }: LandingNavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-3">
+    <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl">
+      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2.5">
           <Image
             src="/logo.png"
             alt="RIVOFLOW"
-            width={36}
-            height={36}
-            className="rounded-xl"
+            width={32}
+            height={32}
+            className="rounded-lg"
           />
-          <span className="font-bold text-lg hidden sm:block">RivoFlow</span>
+          <span className="font-semibold text-lg tracking-tight hidden sm:block">
+            RivoFlow
+          </span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden md:flex items-center gap-1">
           {navLinks.map((link) => (
             <Link
               key={link.label}
               href={link.href}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground rounded-md transition-colors"
             >
               {link.label}
             </Link>
@@ -45,13 +47,16 @@ export function LandingNavbar({ navLinks }: LandingNavbarProps) {
         </nav>
 
         <div className="hidden md:flex items-center gap-4">
+          <Link
+            href="/auth/google"
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Entrar
+          </Link>
           <Link href="/auth/google">
-            <Button
-              size="sm"
-              className="bg-primary hover:bg-primary/90 text-white rounded-lg"
-            >
-              Começar agora
-              <ChevronRightIcon className="w-3.5 h-3.5 ml-0.5" />
+            <Button className="rounded-lg">
+              Começar grátis
+              <ArrowRightIcon className="w-4 h-4 ml-1" />
             </Button>
           </Link>
         </div>
@@ -71,25 +76,22 @@ export function LandingNavbar({ navLinks }: LandingNavbarProps) {
       </div>
 
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-border/50 bg-background px-6 py-4 space-y-3 text-center">
+        <div className="md:hidden border-t border-border bg-background px-6 py-4 space-y-1">
           {navLinks.map((link) => (
             <Link
               key={link.label}
               href={link.href}
-              className="block text-sm text-muted-foreground py-1 hover:bg-muted rounded-md"
+              className="block text-sm text-muted-foreground py-2.5 px-3 hover:text-foreground hover:bg-accent rounded-md transition-colors"
               onClick={() => setMobileMenuOpen(false)}
             >
               {link.label}
             </Link>
           ))}
-          <Link href="/auth/google">
-            <Button
-              size="sm"
-              className="w-full mt-2 bg-primary hover:bg-primary/90 text-white"
-            >
-              Começar agora
-            </Button>
-          </Link>
+          <div className="pt-3">
+            <Link href="/auth/google" className="block">
+              <Button className="w-full">Começar grátis</Button>
+            </Link>
+          </div>
         </div>
       )}
     </header>

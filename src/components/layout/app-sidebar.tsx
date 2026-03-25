@@ -5,6 +5,7 @@ import {
   LayersIcon,
   LayoutDashboardIcon,
   LogOut,
+  PlusIcon,
   SearchIcon,
 } from "lucide-react";
 import Image from "next/image";
@@ -68,47 +69,52 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader className="flex items-center justify-center p-4">
-        <Link href="/dashboard">
+        <Link href="/dashboard" className="flex items-center gap-2">
           <Image
             src="/logo.png"
             alt="RivoFlow"
-            width={42}
-            height={42}
-            className="rounded-lg"
+            width={28}
+            height={28}
+            className="rounded-md"
           />
+          <span className="text-sm font-semibold tracking-tight">RIVOFLOW</span>
         </Link>
-
-        <span className="text-xl font-semibold tracking-tight">RIVOFLOW</span>
       </SidebarHeader>
 
       <SidebarContent className="overflow-hidden">
-        {/* CREATE FLOW DIALOG */}
+        {/* CREATE FLOW */}
         <SidebarGroup>
           <CreateFlowDialog
             open={isCreateOpen}
             onOpenChange={setIsCreateOpen}
           />
-          <Button onClick={() => setIsCreateOpen(true)}>
-            <LayersIcon className="mr-1 size-5" />
-            Criar Flow
+          <Button
+            size="sm"
+            className="h-8 text-[13px]"
+            onClick={() => setIsCreateOpen(true)}
+          >
+            <PlusIcon className="mr-1 size-3.5" />
+            Novo flow
           </Button>
           {showSearch && (
-            <div className="flex items-center gap-2 rounded-md border border-border bg-secondary px-3 py-2 text-sm text-muted-foreground transition-colors focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/20 mt-2">
+            <div className="flex items-center gap-2 rounded-md border border-border bg-card px-2.5 py-1.5 text-sm text-muted-foreground transition-colors focus-within:border-primary/50 mt-2">
               <SearchIcon className="size-3 text-muted-foreground" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Buscar flows..."
-                className="w-full bg-transparent text-sidebar-foreground placeholder:text-muted-foreground outline-none"
+                className="w-full bg-transparent text-sidebar-foreground placeholder:text-muted-foreground outline-none text-[13px]"
               />
             </div>
           )}
         </SidebarGroup>
 
-        {/* MAIN MENU SECTION */}
+        {/* MAIN MENU */}
         <SidebarGroup>
-          <SidebarGroupLabel>Menu</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground">
+            Menu
+          </SidebarGroupLabel>
           <SidebarMenu>
             {pages.map((page) => {
               const isCurrentPage = pathname === page.href;
@@ -118,10 +124,12 @@ export function AppSidebar() {
                   <SidebarMenuButton asChild>
                     <Link
                       href={page.href}
-                      className={isCurrentPage ? "bg-muted" : ""}
+                      className={
+                        isCurrentPage ? "bg-accent text-foreground" : ""
+                      }
                     >
-                      <page.icon className="mr-2 h-5 w-5" />
-                      {page.name}
+                      <page.icon className="mr-2 h-4 w-4" />
+                      <span className="text-[13px]">{page.name}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -130,9 +138,11 @@ export function AppSidebar() {
           </SidebarMenu>
         </SidebarGroup>
 
-        {/* FLOWS SECTION */}
+        {/* FLOWS */}
         <SidebarGroup className="flex flex-col flex-1 min-h-0 overflow-hidden">
-          <SidebarGroupLabel>Flows</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground">
+            Flows
+          </SidebarGroupLabel>
 
           <div className="flex-1 min-h-0 overflow-y-auto">
             <SidebarMenu>
@@ -142,7 +152,7 @@ export function AppSidebar() {
                     <div className="flex items-center gap-2 rounded-md p-2 h-8">
                       <Skeleton className="size-4 shrink-0 rounded-sm" />
                       <Skeleton
-                        className="h-3.5 rounded"
+                        className="h-3 rounded"
                         style={{ width: `${w}%` }}
                       />
                     </div>
@@ -159,11 +169,12 @@ export function AppSidebar() {
                       <SidebarMenuButton asChild>
                         <Link
                           href={`/dashboard/flow/${flow.id}`}
-                          className={`flex items-center gap-2 ${isCurrentPage ? "bg-muted" : ""}`}
+                          className={`flex items-center gap-2 ${isCurrentPage ? "bg-accent text-foreground" : ""}`}
                         >
-                          <LayersIcon className="mr-2 size-5" />
-
-                          <span className="truncate">{flow.title}</span>
+                          <LayersIcon className="mr-2 size-3.5" />
+                          <span className="truncate text-[13px]">
+                            {flow.title}
+                          </span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -171,10 +182,10 @@ export function AppSidebar() {
                 })}
 
               {!isLoading && filteredFlows.length === 0 && (
-                <div className="flex flex-col items-center justify-center gap-2 py-10">
-                  <LayersIcon className="size-6 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground text-center">
-                    Nenhum flow encontrado. Crie um novo flow para começar.
+                <div className="flex flex-col items-center justify-center gap-2 py-8">
+                  <LayersIcon className="size-5 text-muted-foreground/40" />
+                  <p className="text-[12px] text-muted-foreground text-center">
+                    Nenhum flow encontrado.
                   </p>
                 </div>
               )}
@@ -182,17 +193,16 @@ export function AppSidebar() {
           </div>
         </SidebarGroup>
 
-        {/* LOADING PLACEHOLDER */}
+        {/* USER FOOTER */}
         <SidebarFooter>
           <SidebarMenu>
             {!me && (
               <SidebarMenuItem className="cursor-not-allowed">
                 <div className="flex items-center gap-2 rounded-md p-2">
-                  <Skeleton className="size-8 shrink-0 rounded-sm" />
-
+                  <Skeleton className="size-8 shrink-0 rounded-lg" />
                   <div className="flex-1 space-y-1">
-                    <Skeleton className="h-3.5 rounded w-full" />
-                    <Skeleton className="h-3.5 rounded w-full" />
+                    <Skeleton className="h-3 rounded w-full" />
+                    <Skeleton className="h-3 rounded w-3/4" />
                   </div>
                 </div>
               </SidebarMenuItem>
@@ -201,31 +211,30 @@ export function AppSidebar() {
             {me && (
               <SidebarMenuItem>
                 <DropdownMenu>
-                  {/* TRIGGER FOR USER MENU */}
                   <DropdownMenuTrigger asChild>
                     <SidebarMenuButton className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground h-fit">
                       <div className="space-y-2">
                         <div className="flex gap-3 items-center">
-                          <Avatar className="size-8 rounded-lg">
+                          <Avatar className="size-7 rounded-md">
                             <AvatarImage
                               src={me?.account.picture}
                               alt={me?.account.firstName}
                             />
-                            <AvatarFallback className="rounded-lg">
+                            <AvatarFallback className="rounded-md text-[10px] font-medium">
                               {me?.account.firstName?.[0] || "CN"}
                             </AvatarFallback>
                           </Avatar>
 
-                          <div className="grid flex-1 text-left text-sm leading-tight">
-                            <span className="truncate font-medium">
+                          <div className="grid flex-1 text-left leading-tight">
+                            <span className="truncate font-medium text-[13px]">
                               {`${me?.account.firstName} ${me?.account.lastName}`}
                             </span>
-                            <span className="truncate text-xs">
+                            <span className="truncate text-[11px] text-muted-foreground">
                               {me?.account.email}
                             </span>
                           </div>
 
-                          <ChevronsUpDown className="ml-auto size-4" />
+                          <ChevronsUpDown className="ml-auto size-3.5 text-muted-foreground" />
                         </div>
 
                         <CreditBalance balance={me.balance} />
@@ -233,7 +242,6 @@ export function AppSidebar() {
                     </SidebarMenuButton>
                   </DropdownMenuTrigger>
 
-                  {/* DROPDOWN MENU CONTENT */}
                   <DropdownMenuContent
                     className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
                     side={isMobile ? "bottom" : "right"}
@@ -242,20 +250,19 @@ export function AppSidebar() {
                   >
                     <DropdownMenuLabel className="p-0 font-normal">
                       <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                        <Avatar className="h-8 w-8 rounded-lg">
+                        <Avatar className="h-7 w-7 rounded-md">
                           <AvatarImage
                             src={me?.account.picture}
                             alt={me?.account.firstName}
                           />
-                          <AvatarFallback className="rounded-lg">
+                          <AvatarFallback className="rounded-md text-[10px]">
                             {me?.account.firstName?.[0] || "CN"}
                           </AvatarFallback>
                         </Avatar>
 
-                        <div className="grid flex-1 text-left text-sm leading-tight">
-                          <span className="truncate font-medium">{`${me?.account.firstName} ${me?.account.lastName}`}</span>
-
-                          <span className="truncate text-xs">
+                        <div className="grid flex-1 text-left leading-tight">
+                          <span className="truncate font-medium text-[13px]">{`${me?.account.firstName} ${me?.account.lastName}`}</span>
+                          <span className="truncate text-[11px] text-muted-foreground">
                             {me?.account.email}
                           </span>
                         </div>

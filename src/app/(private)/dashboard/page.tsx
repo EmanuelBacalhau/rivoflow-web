@@ -1,6 +1,13 @@
 "use client";
 
-import { CircleDollarSignIcon, LayersIcon, SearchIcon } from "lucide-react";
+import {
+  CircleDollarSignIcon,
+  LayersIcon,
+  PlusIcon,
+  SearchIcon,
+  SparklesIcon,
+  ZapIcon,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { NumericFormat } from "react-number-format";
 import { toast } from "sonner";
@@ -69,47 +76,47 @@ export default function DashboardPage() {
     }
   };
 
+  const firstName = me?.account.firstName || "";
+
   return (
-    <div className="p-8 flex flex-col flex-1">
-      <div
-        className={`flex gap-3 flex-col sticky top-0 z-20 bg-background py-4 space-y-4`}
-      >
-        <div
-          className={`flex gap-3 ${isMobile ? "flex-col" : "flex-row justify-end"}`}
-        >
-          {isMobile && <SidebarTrigger size="icon-lg" />}
+    <div className="flex flex-col flex-1 min-h-0">
+      {/* Top bar */}
+      <div className="sticky top-0 z-20 bg-background border-b border-border px-8 py-4 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          {isMobile && <SidebarTrigger size="icon" />}
+          <h1 className="text-base font-semibold">Dashboard</h1>
+        </div>
 
-          <Button onClick={() => setIsCreateOpen(true)}>
-            <LayersIcon className="mr-1 size-5" />
-            Criar Flow
-          </Button>
-
+        <div className="flex items-center gap-3">
           <Dialog>
             <DialogTrigger asChild>
-              <Button>
-                <CircleDollarSignIcon className="mr-1 size-5" />
-                Comprar Créditos
+              <Button variant="outline" size="sm">
+                <CircleDollarSignIcon className="size-4 mr-1.5" />
+                Créditos
               </Button>
             </DialogTrigger>
 
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Créditos</DialogTitle>
+                <DialogTitle>Comprar créditos</DialogTitle>
               </DialogHeader>
               <DialogDescription>
-                Você tem {me?.balance.credits} créditos.
+                Saldo atual:{" "}
+                <span className="font-semibold text-foreground">
+                  {me?.balance.credits ?? 0} créditos
+                </span>
               </DialogDescription>
 
-              <div className="grid items-center grid-cols-2 lg:grid-cols-4">
+              <div className="grid grid-cols-4 gap-2">
                 {fastCredits.map((c) => (
                   <Button
                     key={c}
                     variant={credits === c ? "default" : "outline"}
+                    size="sm"
                     onClick={() => {
                       setCredits(c);
-                      setDebouncedCredits(c); // Immediate update for shortcut buttons
+                      setDebouncedCredits(c);
                     }}
-                    className="mr-2 mb-2 transition-all"
                   >
                     {c.toLocaleString("pt-BR", {
                       style: "currency",
@@ -128,35 +135,31 @@ export default function DashboardPage() {
                   decimalScale={2}
                   min={MIN_CREDITS_IN_REALS}
                   fixedDecimalScale={true}
-                  onValueChange={(values) => {
-                    setCredits(values.floatValue || 0);
-                  }}
+                  onValueChange={(values) => setCredits(values.floatValue || 0)}
                   placeholder="R$ 0,00"
-                  className="placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
+                  className="placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
                 />
 
                 {credits < MIN_CREDITS_IN_REALS ? (
-                  <p className="text-xs text-destructive text-right mt-1">
-                    O valor mínimo para compra é de{" "}
+                  <p className="text-xs text-destructive text-right mt-1.5">
+                    Valor mínimo:{" "}
                     {MIN_CREDITS_IN_REALS.toLocaleString("pt-BR", {
                       style: "currency",
                       currency: "BRL",
                     })}
-                    .
                   </p>
                 ) : (
-                  <div className="flex justify-end mt-1 min-h-[20px]">
+                  <div className="flex justify-end mt-1.5 min-h-5">
                     {isSimulating ? (
                       <p className="text-xs text-muted-foreground animate-pulse">
-                        Calculando créditos...
+                        Calculando...
                       </p>
                     ) : simulatedCredits !== undefined ? (
                       <p className="text-xs text-muted-foreground">
                         Você receberá{" "}
-                        <span className="font-semibold text-primary">
-                          {simulatedCredits}
-                        </span>{" "}
-                        créditos
+                        <span className="font-medium text-foreground">
+                          {simulatedCredits} créditos
+                        </span>
                       </p>
                     ) : null}
                   </div>
@@ -169,36 +172,93 @@ export default function DashboardPage() {
                 }
                 onClick={handleCreateLinkCharge}
               >
-                {isCreatingLinkCharge ? "Criando link..." : "Comprar créditos"}
+                {isCreatingLinkCharge
+                  ? "Redirecionando..."
+                  : "Comprar créditos"}
               </Button>
             </DialogContent>
           </Dialog>
+
+          <Button size="sm" onClick={() => setIsCreateOpen(true)}>
+            <PlusIcon className="size-4 mr-1.5" />
+            Novo flow
+          </Button>
+        </div>
+      </div>
+
+      {/* Main */}
+      <div className="flex-1 overflow-y-auto px-8 py-8">
+        {/* Welcome */}
+        <div className="mb-10">
+          <h2 className="text-2xl font-bold mb-1">
+            {firstName ? `Olá, ${firstName}` : "Bem-vindo"}
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Gerencie seus fluxos e crie novos criativos com IA.
+          </p>
         </div>
 
-        <div className="flex justify-between items-center gap-3">
-          <h1 className="text-xl flex items-center gap-2 font-semibold">
-            <span>FLOWS</span>
-            <span className="text-md text-muted-foreground">
-              ({flows.length})
-            </span>
-          </h1>
+        {/* Stats */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+          <div className="p-5 rounded-xl border border-border bg-card">
+            <div className="flex items-center gap-2.5 mb-3">
+              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                <LayersIcon className="w-4 h-4 text-primary" />
+              </div>
+              <span className="text-sm text-muted-foreground font-medium">
+                Flows
+              </span>
+            </div>
+            <p className="text-3xl font-bold tabular-nums">{flows.length}</p>
+          </div>
 
-          <div className="flex  items-center gap-2 rounded-md border border-border bg-secondary px-3 py-2 text-sm text-muted-foreground transition-colors focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/20">
-            <SearchIcon className="size-3 text-muted-foreground" />
+          <div className="p-5 rounded-xl border border-border bg-card">
+            <div className="flex items-center gap-2.5 mb-3">
+              <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                <ZapIcon className="w-4 h-4 text-amber-500" />
+              </div>
+              <span className="text-sm text-muted-foreground font-medium">
+                Créditos
+              </span>
+            </div>
+            <p className="text-3xl font-bold tabular-nums">
+              {me?.balance.credits ?? 0}
+            </p>
+          </div>
+
+          <div className="p-5 rounded-xl border border-border bg-card">
+            <div className="flex items-center gap-2.5 mb-3">
+              <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center">
+                <SparklesIcon className="w-4 h-4 text-green-500" />
+              </div>
+              <span className="text-sm text-muted-foreground font-medium">
+                Gerados
+              </span>
+            </div>
+            <p className="text-3xl font-bold tabular-nums">
+              {me?.balance.lifetimeSpent ?? 0}
+            </p>
+          </div>
+        </div>
+
+        {/* Flows */}
+        <div className="flex items-center justify-between gap-4 mb-5">
+          <h3 className="text-base font-semibold">Seus flows</h3>
+          <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm w-full max-w-64 focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/20 transition-all">
+            <SearchIcon className="size-4 text-muted-foreground shrink-0" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar flows..."
-              className="w-full bg-transparent text-sidebar-foreground placeholder:text-muted-foreground outline-none"
+              className="w-full bg-transparent text-foreground placeholder:text-muted-foreground outline-none text-sm"
             />
           </div>
         </div>
+
+        <CreateFlowDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} />
+        <ListFlows flows={filteredFlows} loading={isLoading} />
       </div>
-
-      <CreateFlowDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} />
-
-      <ListFlows flows={filteredFlows} loading={isLoading} />
     </div>
   );
 }

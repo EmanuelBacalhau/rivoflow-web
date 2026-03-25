@@ -3,7 +3,7 @@ import type { Node } from "@xyflow/react";
 import { isAxiosError } from "axios";
 import type { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
-import { GenerationImageNodeService } from "@/services/node/generation-image-node-service";
+import { TriggerGenerationService } from "@/services/node/trigger-generation-service";
 
 interface UpdateDataGenerationImageNodeParams {
   updateNodes: Dispatch<SetStateAction<Node[]>>;
@@ -14,8 +14,8 @@ export function useUpdateDataGenerationImageNodeController({
 }: UpdateDataGenerationImageNodeParams) {
   const { mutateAsync } = useMutation({
     mutationKey: ["updateGenerationImageNode"],
-    mutationFn: async (params: GenerationImageNodeService.UpdateParams) => {
-      await GenerationImageNodeService.update(params);
+    mutationFn: async (params: TriggerGenerationService.UpdateParams) => {
+      await TriggerGenerationService.update(params);
     },
     onMutate: async (params) => {
       updateNodes((prevNodes) =>

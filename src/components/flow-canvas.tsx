@@ -4,19 +4,31 @@ import { Background, BackgroundVariant, ReactFlow } from "@xyflow/react";
 import { useEffect } from "react";
 import { useFlow } from "@/contexts/flow-context";
 import { FlowLoading } from "./flow-loading";
-import { KeyboardShortcuts } from "./layout/keyboard-shortcuts";
 import { Toolbar } from "./layout/toolbar";
 import { AIGeneratorNode } from "./nodes/ai-generator-image-node";
+import { ImageToVideoNode } from "./nodes/image-to-video-node";
+import { MotionControlNode } from "./nodes/motion-control-node";
 import { PromptNode } from "./nodes/prompt-node";
+import { RemoveBgNode } from "./nodes/remove-bg-node";
 import { ResultImageNode } from "./nodes/result-image-node";
+import { ResultVideoNode } from "./nodes/result-video-node";
+import { TextToImageNode } from "./nodes/text-to-image-node";
 import { UploadImageNode } from "./nodes/upload-image-node";
-import { useSidebar } from "./ui/sidebar";
+import { UploadVideoNode } from "./nodes/upload-video-node";
+import { UpscaleNode } from "./nodes/upscale-node";
 
 const nodeTypes = {
   PROMPT: PromptNode,
   IMAGE: UploadImageNode,
+  VIDEO: UploadVideoNode,
   GENERATION_IMAGE: AIGeneratorNode,
+  GENERATION_TEXT_TO_IMAGE: TextToImageNode,
+  GENERATION_UPSCALE: UpscaleNode,
+  GENERATION_REMOVE_BG: RemoveBgNode,
+  GENERATION_IMAGE_TO_VIDEO: ImageToVideoNode,
+  GENERATION_MOTION_CONTROL: MotionControlNode,
   RESULT_IMAGE: ResultImageNode,
+  RESULT_VIDEO: ResultVideoNode,
 };
 
 const PRO_OPTIONS = { hideAttribution: true };
@@ -32,22 +44,44 @@ export function FlowCanvas() {
     addPromptNode,
     addImageNode,
     addGenerationImageNode,
+    addTextToImageNode,
+    addUpscaleNode,
+    addRemoveBgNode,
+    addVideoNode,
+    addImageToVideoNode,
+    addMotionControlNode,
   } = useFlow();
-  const { isMobile } = useSidebar();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const tag = (e.target as HTMLElement).tagName;
       if (tag === "INPUT" || tag === "TEXTAREA") return;
 
-      if (e.key.toLocaleLowerCase() === "p") addPromptNode();
-      if (e.key.toLocaleLowerCase() === "i") addImageNode();
-      if (e.key.toLocaleLowerCase() === "g") addGenerationImageNode();
+      const key = e.key.toLocaleLowerCase();
+      if (key === "p") addPromptNode();
+      if (key === "i") addImageNode();
+      if (key === "o") addVideoNode();
+      if (key === "g") addGenerationImageNode();
+      if (key === "t") addTextToImageNode();
+      if (key === "u") addUpscaleNode();
+      if (key === "r") addRemoveBgNode();
+      if (key === "v") addImageToVideoNode();
+      if (key === "m") addMotionControlNode();
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [addPromptNode, addImageNode, addGenerationImageNode]);
+  }, [
+    addPromptNode,
+    addImageNode,
+    addVideoNode,
+    addGenerationImageNode,
+    addTextToImageNode,
+    addUpscaleNode,
+    addRemoveBgNode,
+    addImageToVideoNode,
+    addMotionControlNode,
+  ]);
 
   if (isLoading) {
     return <FlowLoading />;
@@ -59,6 +93,12 @@ export function FlowCanvas() {
         onAddPromptNode={addPromptNode}
         onAddImageNode={addImageNode}
         onAddGenerationImageNode={addGenerationImageNode}
+        onAddTextToImageNode={addTextToImageNode}
+        onAddUpscaleNode={addUpscaleNode}
+        onAddRemoveBgNode={addRemoveBgNode}
+        onAddVideoNode={addVideoNode}
+        onAddImageToVideoNode={addImageToVideoNode}
+        onAddMotionControlNode={addMotionControlNode}
       />
 
       <ReactFlow
@@ -74,12 +114,10 @@ export function FlowCanvas() {
         <Background
           variant={BackgroundVariant.Dots}
           gap={20}
-          size={2}
+          size={1}
           className="bg-background!"
         />
       </ReactFlow>
-
-      {!isMobile && <KeyboardShortcuts />}
     </div>
   );
 }

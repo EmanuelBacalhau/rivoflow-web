@@ -17,6 +17,7 @@ import { useParams, useRouter } from "next/navigation";
 import {
   createContext,
   type ReactNode,
+  useCallback,
   useContext,
   useEffect,
   useRef,
@@ -26,25 +27,47 @@ import { toast } from "sonner";
 import { useCreateEdgeController } from "@/hooks/mutations/useCreateEdge";
 import { useCreateNodeGenerationImageController } from "@/hooks/mutations/useCreateGenerationImageNode";
 import { useCreateNodeImageController } from "@/hooks/mutations/useCreateImageNode";
+import { useCreateImageToVideoNodeController } from "@/hooks/mutations/useCreateImageToVideoNode";
+import { useCreateMotionControlNodeController } from "@/hooks/mutations/useCreateMotionControlNode";
 import { useCreateNodePromptController } from "@/hooks/mutations/useCreatePromptNode";
+import { useCreateRemoveBgNodeController } from "@/hooks/mutations/useCreateRemoveBgNode";
+import { useCreateTextToImageNodeController } from "@/hooks/mutations/useCreateTextToImageNode";
+import { useCreateUpscaleNodeController } from "@/hooks/mutations/useCreateUpscaleNode";
+import { useCreateVideoNodeController } from "@/hooks/mutations/useCreateVideoNode";
 import { useDeleteEdgeController } from "@/hooks/mutations/useDeleteEdge";
 import { useDeleteNodeController } from "@/hooks/mutations/useDeleteNode";
 import { useGenerateImageController } from "@/hooks/mutations/useGenerateImage";
 import { useUpdateDataGenerationImageNodeController } from "@/hooks/mutations/useUpdateGenerationImageNode";
+import { useUpdateImageToVideoNodeController } from "@/hooks/mutations/useUpdateImageToVideoNode";
+import { useUpdateMotionControlNodeController } from "@/hooks/mutations/useUpdateMotionControlNode";
 import { useUpdateNodePositionController } from "@/hooks/mutations/useUpdateNodePosition";
 import { useUpdateDataPromptNodeController } from "@/hooks/mutations/useUpdatePromptNode";
+import { useUpdateTextToImageNodeController } from "@/hooks/mutations/useUpdateTextToImageNode";
+import { useUpdateUpscaleNodeController } from "@/hooks/mutations/useUpdateUpscaleNode";
 import { useUploadImageNodeController } from "@/hooks/mutations/useUploadImageNode";
 import { useFlowNodes } from "@/hooks/queries/useFlowNodes";
 import { NODE_COLORS } from "@/lib/node-colors";
-import { GenerationImageNodeService } from "@/services/node/generation-image-node-service";
-import type { ImageNodeService } from "@/services/node/image-node-service";
+import { queryClient } from "@/providers/main-provider";
+import type { FileNodeService } from "@/services/node/file-node-service";
+import type { ImageToVideoNodeService } from "@/services/node/image-to-video-node-service";
+import type { MotionControlNodeService } from "@/services/node/motion-control-node-service";
+import { NodeService } from "@/services/node/node-service";
 import type { PromptNodeService } from "@/services/node/prompt-node-service";
-import { NodeTypeEnum } from "@/types";
+import type { TextToImageNodeService } from "@/services/node/text-to-image-node-service";
+import { TriggerGenerationService } from "@/services/node/trigger-generation-service";
+import type { UpscaleNodeService } from "@/services/node/upscale-node-service";
+import {
+  GENERATION_NODE_TYPES,
+  GenerationStatusEnum,
+  NodeTypeEnum,
+} from "@/types";
 import { debounce } from "@/utils/debounce";
 
 interface ConnectedData {
   prompts: string[];
   images: string[];
+  videos: string[];
+  videoDurations: (number | null)[];
   nodesSynced: string[];
 }
 
@@ -58,16 +81,32 @@ interface FlowContextType {
   addPromptNode: () => void;
   addImageNode: () => void;
   addGenerationImageNode: () => void;
+  addTextToImageNode: () => void;
+  addUpscaleNode: () => void;
+  addRemoveBgNode: () => void;
+  addVideoNode: () => void;
+  addImageToVideoNode: () => void;
+  addMotionControlNode: () => void;
   uploadImageNode: (
-    params: ImageNodeService.UploadImageParams,
-  ) => Promise<ImageNodeService.UploadImageResponse>;
+    params: FileNodeService.UploadParams,
+  ) => Promise<FileNodeService.UploadResponse>;
   updatePromptNode: (params: PromptNodeService.UpdateParams) => Promise<void>;
   updateGenerationImageNode: (
-    params: GenerationImageNodeService.UpdateParams,
+    params: TriggerGenerationService.UpdateParams,
+  ) => Promise<void>;
+  updateTextToImageNode: (
+    params: TextToImageNodeService.UpdateParams,
+  ) => Promise<void>;
+  updateUpscaleNode: (params: UpscaleNodeService.UpdateParams) => Promise<void>;
+  updateImageToVideoNode: (
+    params: ImageToVideoNodeService.UpdateParams,
+  ) => Promise<void>;
+  updateMotionControlNode: (
+    params: MotionControlNodeService.UpdateParams,
   ) => Promise<void>;
   generateImageNode: (
-    params: GenerationImageNodeService.GenerateImageParams,
-  ) => Promise<void>;
+    params: TriggerGenerationService.GenerateImageParams,
+  ) => Promise<string>;
   calculateCreditsForNode: (nodeId: string) => Promise<void>;
   markConnectedGeneratorsAsCalculating: (sourceNodeId: string) => void;
   isLoading: boolean;
@@ -77,6 +116,10 @@ interface FlowContextType {
 }
 
 const FlowContext = createContext<FlowContextType | null>(null);
+
+function isGenerationNodeType(type: string | undefined): boolean {
+  return GENERATION_NODE_TYPES.includes(type as NodeTypeEnum);
+}
 
 export function FlowProvider({ children }: { children: ReactNode }) {
   const [nodes, setNodes] = useState<Node[]>([]);
@@ -98,6 +141,123 @@ export function FlowProvider({ children }: { children: ReactNode }) {
 
   const deletedNodeIdsRef = useRef<Set<string>>(new Set());
   const pendingDeleteRef = useRef<Set<string>>(new Set());
+  const pollingIntervalsRef = useRef<
+    Map<string, ReturnType<typeof setInterval>>
+  >(new Map());
+
+  const startStatusPolling = useCallback(
+    (nodeId: string) => {
+      if (pollingIntervalsRef.current.has(nodeId)) return;
+
+      const interval = setInterval(async () => {
+        try {
+          const { status, result } = await TriggerGenerationService.getStatus({
+            flowId,
+            nodeId,
+          });
+
+          setNodes((nds) =>
+            nds.map((n) =>
+              n.id === nodeId ? { ...n, data: { ...n.data, status } } : n,
+            ),
+          );
+
+          if (status === GenerationStatusEnum.COMPLETED && result) {
+            clearInterval(interval);
+            pollingIntervalsRef.current.delete(nodeId);
+
+            // Add result node directly to canvas
+            const resultNodeExists = nodesRef.current.some(
+              (n) => n.id === result.id,
+            );
+            if (!resultNodeExists) {
+              setNodes((nds) => [
+                ...nds,
+                {
+                  id: result.id,
+                  type: result.nodeType,
+                  position: result.position,
+                  data: {
+                    ...result.data,
+                    isExecuted: result.isExecuted,
+                  },
+                },
+              ]);
+
+              // Add edge from generation node to result node
+              const strokeColor =
+                NODE_COLORS[
+                  nodesRef.current.find((n) => n.id === nodeId)?.type || ""
+                ] || "#6b7280";
+              setEdges((eds) => [
+                ...eds,
+                {
+                  id: `${nodeId}-${result.id}`,
+                  source: nodeId,
+                  target: result.id,
+                  animated: true,
+                  style: { stroke: strokeColor, strokeWidth: 2 },
+                },
+              ]);
+            }
+
+            queryClient.invalidateQueries({ queryKey: ["account"] });
+          }
+
+          if (status === GenerationStatusEnum.FAILED) {
+            clearInterval(interval);
+            pollingIntervalsRef.current.delete(nodeId);
+          }
+        } catch {
+          // silently ignore polling errors
+        }
+      }, 3000);
+
+      pollingIntervalsRef.current.set(nodeId, interval);
+    },
+    [flowId],
+  );
+
+  const startMetadataPollingRef = useRef<(nodeId: string) => void>(() => {});
+  startMetadataPollingRef.current = (nodeId: string) => {
+    const key = `metadata-${nodeId}`;
+    if (pollingIntervalsRef.current.has(key)) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const { ready, duration } = await NodeService.getMetadata({
+          flowId,
+          nodeId,
+        });
+
+        if (ready && duration != null) {
+          clearInterval(interval);
+          pollingIntervalsRef.current.delete(key);
+
+          setNodes((nds) =>
+            nds.map((n) =>
+              n.id === nodeId ? { ...n, data: { ...n.data, duration } } : n,
+            ),
+          );
+
+          getConnectedGeneratorNodeIds(nodeId).forEach(calculateCreditsForNode);
+        }
+      } catch {
+        // silently ignore
+      }
+    }, 1500);
+
+    pollingIntervalsRef.current.set(key, interval);
+  };
+
+  useEffect(() => {
+    return () => {
+      for (const interval of pollingIntervalsRef.current.values()) {
+        clearInterval(interval);
+      }
+      pollingIntervalsRef.current.clear();
+    };
+  }, []);
 
   const { data, isLoading, isError } = useFlowNodes({ flowId });
 
@@ -116,7 +276,7 @@ export function FlowProvider({ children }: { children: ReactNode }) {
             ...node.data,
             isExecuted: node.isExecuted,
           },
-          type: node.data.type,
+          type: node.nodeType,
         };
       });
       const mappedEdges = data.edges.map((edge) => {
@@ -134,8 +294,30 @@ export function FlowProvider({ children }: { children: ReactNode }) {
 
       setNodes(mappedNodes);
       setEdges(mappedEdges);
+
+      for (const node of data.nodes) {
+        if (GENERATION_NODE_TYPES.includes(node.nodeType)) {
+          const nodeData = node.data as { status?: string };
+          if (
+            nodeData.status === GenerationStatusEnum.QUEUED ||
+            nodeData.status === GenerationStatusEnum.PROCESSING
+          ) {
+            startStatusPolling(node.id);
+          }
+        }
+
+        if (node.nodeType === NodeTypeEnum.VIDEO) {
+          const nodeData = node.data as {
+            videoUrl?: string;
+            duration?: number;
+          };
+          if (nodeData.videoUrl && !nodeData.duration) {
+            startMetadataPollingRef.current(node.id);
+          }
+        }
+      }
     }
-  }, [data]);
+  }, [data, startStatusPolling]);
 
   const { deleteNode } = useDeleteNodeController();
 
@@ -158,7 +340,7 @@ export function FlowProvider({ children }: { children: ReactNode }) {
     );
 
     try {
-      const result = await GenerationImageNodeService.calculateCredits({
+      const result = await TriggerGenerationService.calculateCredits({
         nodeId,
         flowId,
       });
@@ -192,7 +374,7 @@ export function FlowProvider({ children }: { children: ReactNode }) {
     return edgesRef.current
       .filter((e) => e.source === sourceNodeId)
       .map((e) => nodesRef.current.find((n) => n.id === e.target))
-      .filter((n): n is Node => n?.type === NodeTypeEnum.GENERATION_IMAGE)
+      .filter((n): n is Node => isGenerationNodeType(n?.type))
       .map((n) => n.id);
   };
 
@@ -209,6 +391,7 @@ export function FlowProvider({ children }: { children: ReactNode }) {
     );
   };
 
+  // --- Prompt ---
   const { createPromptNode } = useCreateNodePromptController({
     updateNodes: setNodes,
     isPendingDelete,
@@ -228,11 +411,14 @@ export function FlowProvider({ children }: { children: ReactNode }) {
     );
   };
 
+  // --- Image (file upload) ---
   const { createImageNode } = useCreateNodeImageController({
     updateNodes: setNodes,
     isPendingDelete,
     onPendingDelete,
   });
+
+  // --- Generation Image (image-to-image) ---
   const { createGenerationImageNode } = useCreateNodeGenerationImageController({
     updateNodes: setNodes,
     isPendingDelete,
@@ -242,9 +428,66 @@ export function FlowProvider({ children }: { children: ReactNode }) {
     useUpdateDataGenerationImageNodeController({
       updateNodes: setNodes,
     });
+
+  // --- Text to Image ---
+  const { createTextToImageNode } = useCreateTextToImageNodeController({
+    updateNodes: setNodes,
+    isPendingDelete,
+    onPendingDelete,
+  });
+  const { updateTextToImageNode } = useUpdateTextToImageNodeController({
+    updateNodes: setNodes,
+  });
+
+  // --- Upscale ---
+  const { createUpscaleNode } = useCreateUpscaleNodeController({
+    updateNodes: setNodes,
+    isPendingDelete,
+    onPendingDelete,
+  });
+  const { updateUpscaleNode } = useUpdateUpscaleNodeController({
+    updateNodes: setNodes,
+  });
+
+  // --- Remove BG ---
+  const { createRemoveBgNode } = useCreateRemoveBgNodeController({
+    updateNodes: setNodes,
+    isPendingDelete,
+    onPendingDelete,
+  });
+
+  // --- Video (upload) ---
+  const { createVideoNode } = useCreateVideoNodeController({
+    updateNodes: setNodes,
+    isPendingDelete,
+    onPendingDelete,
+  });
+
+  // --- Image to Video ---
+  const { createImageToVideoNode } = useCreateImageToVideoNodeController({
+    updateNodes: setNodes,
+    isPendingDelete,
+    onPendingDelete,
+  });
+  const { updateImageToVideoNode } = useUpdateImageToVideoNodeController({
+    updateNodes: setNodes,
+  });
+
+  // --- Motion Control ---
+  const { createMotionControlNode } = useCreateMotionControlNodeController({
+    updateNodes: setNodes,
+    isPendingDelete,
+    onPendingDelete,
+  });
+  const { updateMotionControlNode } = useUpdateMotionControlNodeController({
+    updateNodes: setNodes,
+  });
+
+  // --- Generate (shared for all generation types) ---
   const { generateImageNode } = useGenerateImageController({
     flowId,
     updateNodes: setNodes,
+    onGenerateSuccess: startStatusPolling,
   });
 
   const { updatePositionNode } = useUpdateNodePositionController();
@@ -252,14 +495,18 @@ export function FlowProvider({ children }: { children: ReactNode }) {
   const { uploadImageNode: _uploadImageNode } = useUploadImageNodeController({
     updateNodes: setNodes,
     isDeleted,
-    onUploadComplete: (nodeId) => {
-      getConnectedGeneratorNodeIds(nodeId).forEach(calculateCreditsForNode);
+    onUploadComplete: (nodeId, isVideo) => {
+      if (isVideo) {
+        startMetadataPollingRef.current(nodeId);
+      } else {
+        getConnectedGeneratorNodeIds(nodeId).forEach(calculateCreditsForNode);
+      }
     },
   });
 
   const uploadImageNode = (
-    params: ImageNodeService.UploadImageParams,
-  ): Promise<ImageNodeService.UploadImageResponse> => {
+    params: FileNodeService.UploadParams,
+  ): Promise<FileNodeService.UploadResponse> => {
     return _uploadImageNode(params);
   };
 
@@ -274,9 +521,15 @@ export function FlowProvider({ children }: { children: ReactNode }) {
   const { deleteEdge } = useDeleteEdgeController({ updateNodes: setNodes });
 
   const onNodesChange = (changes: NodeChange[]) => {
+    for (const change of changes) {
+      if (change.type === "remove") {
+        deletedNodeIdsRef.current.add(change.id);
+      }
+    }
+
     setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot));
 
-    changes.forEach((change) => {
+    for (const change of changes) {
       if (change.type === "position" && change.position) {
         const nodeId = change.id;
         const node = nodesRef.current.find((n) => n.id === nodeId);
@@ -294,14 +547,12 @@ export function FlowProvider({ children }: { children: ReactNode }) {
       if (change.type === "remove") {
         const nodeId = change.id;
         const node = nodesRef.current.find((n) => n.id === nodeId);
-        if (!node) return;
+        if (!node) continue;
 
         if (nodeId.startsWith("temp-")) {
           pendingDeleteRef.current.add(nodeId);
-          return;
+          continue;
         }
-
-        deletedNodeIdsRef.current.add(nodeId);
 
         deleteNode({
           nodeId,
@@ -310,7 +561,7 @@ export function FlowProvider({ children }: { children: ReactNode }) {
           toast.error("Erro ao deletar nó. Tente novamente.");
         });
       }
-    });
+    }
   };
 
   const onEdgesChange = (changes: EdgeChange[]) => {
@@ -325,6 +576,11 @@ export function FlowProvider({ children }: { children: ReactNode }) {
     edgesForDelete.forEach(({ edgeId, flowId }) => {
       const edge = edgesRef.current.find((e) => e.id === edgeId);
       if (!edge) return;
+
+      const isSourceDeleted = deletedNodeIdsRef.current.has(edge.source);
+      const isTargetDeleted = deletedNodeIdsRef.current.has(edge.target);
+      if (isSourceDeleted || isTargetDeleted) return;
+
       const targetNode = nodesRef.current.find((n) => n.id === edge.target);
       if (!targetNode) return;
 
@@ -351,55 +607,144 @@ export function FlowProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    if (
-      sourceNode.type === NodeTypeEnum.GENERATION_IMAGE &&
-      targetNode.type === NodeTypeEnum.GENERATION_IMAGE
-    ) {
+    // --- Classify source node ---
+    const isSourcePrompt = sourceNode.type === NodeTypeEnum.PROMPT;
+    const isSourceImage =
+      sourceNode.type === NodeTypeEnum.IMAGE ||
+      sourceNode.type === NodeTypeEnum.RESULT_IMAGE;
+    const isSourceVideo =
+      sourceNode.type === NodeTypeEnum.VIDEO ||
+      sourceNode.type === NodeTypeEnum.RESULT_VIDEO;
+    const isSourceGeneration = isGenerationNodeType(sourceNode.type);
+    const isTargetGeneration = isGenerationNodeType(targetNode.type);
+
+    // Block: only generation nodes can be targets
+    if (!isTargetGeneration) {
+      toast.error("Só é possível conectar a um node de geração.");
+      return;
+    }
+
+    // Block: generation → generation
+    if (isSourceGeneration) {
+      toast.error("Não é permitido conectar dois nodes de geração entre si.");
+      return;
+    }
+
+    // Block: already executed
+    if (targetNode.data.isExecuted) {
       toast.error(
-        "Não é permitido conectar um node de geração de imagem a outro node de geração de imagem.",
+        "Não é permitido conectar a um node de geração já executado.",
       );
       return;
     }
 
-    if (
-      targetNode.type === NodeTypeEnum.GENERATION_IMAGE &&
-      targetNode.data.isExecuted
-    ) {
-      toast.error(
-        "Não é permitido conectar um node a um node de geração de imagem já executado.",
-      );
-      return;
+    // --- Count existing connections ---
+    const incomingEdges = edges.filter((e) => e.target === params.target);
+    let imageCount = 0;
+    let promptCount = 0;
+    let videoCount = 0;
+
+    for (const edge of incomingEdges) {
+      const n = nodes.find((nd) => nd.id === edge.source);
+      if (!n) continue;
+      if (n.type === NodeTypeEnum.IMAGE || n.type === NodeTypeEnum.RESULT_IMAGE)
+        imageCount++;
+      else if (n.type === NodeTypeEnum.PROMPT) promptCount++;
+      else if (
+        n.type === NodeTypeEnum.VIDEO ||
+        n.type === NodeTypeEnum.RESULT_VIDEO
+      )
+        videoCount++;
     }
 
-    if (targetNode.type === NodeTypeEnum.GENERATION_IMAGE) {
-      const incomingEdges = edges.filter((e) => e.target === params.target);
+    const targetType = targetNode.type;
 
-      let imageCount = 0;
-      let promptCount = 0;
-
-      for (const edge of incomingEdges) {
-        const existingNode = nodes.find((n) => n.id === edge.source);
-        if (
-          existingNode?.type === NodeTypeEnum.IMAGE ||
-          existingNode?.type === NodeTypeEnum.RESULT_IMAGE
-        ) {
-          imageCount++;
-        } else if (existingNode?.type === NodeTypeEnum.PROMPT) {
-          promptCount++;
-        }
-      }
-
-      const isSourceImage =
-        sourceNode.type === NodeTypeEnum.IMAGE ||
-        sourceNode.type === NodeTypeEnum.RESULT_IMAGE;
-
-      if (isSourceImage && imageCount >= 14) {
-        toast.error("O node pode receber no máximo 14 imagens.");
+    // TEXT_TO_IMAGE: 1 prompt, sem imagens, sem vídeos
+    if (targetType === NodeTypeEnum.GENERATION_TEXT_TO_IMAGE) {
+      if (isSourceImage || isSourceVideo) {
+        toast.error("Este node aceita apenas Texto.");
         return;
       }
+      if (isSourcePrompt && promptCount >= 1) {
+        toast.error("Este node aceita apenas 1 texto.");
+        return;
+      }
+    }
 
-      if (sourceNode.type === NodeTypeEnum.PROMPT && promptCount >= 1) {
-        toast.error("O node pode receber apenas 1 prompt.");
+    // GENERATION_IMAGE (edição): 1 prompt + até 14 imagens, sem vídeos
+    if (targetType === NodeTypeEnum.GENERATION_IMAGE) {
+      if (isSourceVideo) {
+        toast.error("Este node não aceita vídeos.");
+        return;
+      }
+      if (isSourceImage && imageCount >= 14) {
+        toast.error("Este node aceita no máximo 14 imagens.");
+        return;
+      }
+      if (isSourcePrompt && promptCount >= 1) {
+        toast.error("Este node aceita apenas 1 texto.");
+        return;
+      }
+    }
+
+    // UPSCALE: 1 imagem, sem prompts, sem vídeos
+    if (targetType === NodeTypeEnum.GENERATION_UPSCALE) {
+      if (isSourcePrompt || isSourceVideo) {
+        toast.error("Este node aceita apenas Imagem.");
+        return;
+      }
+      if (isSourceImage && imageCount >= 1) {
+        toast.error("Este node aceita apenas 1 imagem.");
+        return;
+      }
+    }
+
+    // REMOVE_BG: 1 imagem, sem prompts, sem vídeos
+    if (targetType === NodeTypeEnum.GENERATION_REMOVE_BG) {
+      if (isSourcePrompt || isSourceVideo) {
+        toast.error("Este node aceita apenas Imagem.");
+        return;
+      }
+      if (isSourceImage && imageCount >= 1) {
+        toast.error("Este node aceita apenas 1 imagem.");
+        return;
+      }
+    }
+
+    // IMAGE_TO_VIDEO: 1-2 imagens (premium=2), 1 prompt opcional, sem vídeos
+    if (targetType === NodeTypeEnum.GENERATION_IMAGE_TO_VIDEO) {
+      if (isSourceVideo) {
+        toast.error("Este node não aceita vídeos.");
+        return;
+      }
+      const isPremium = targetNode.data.tier === "premium";
+      const maxImages = isPremium ? 2 : 1;
+      if (isSourceImage && imageCount >= maxImages) {
+        toast.error(
+          isPremium
+            ? "Este node aceita no máximo 2 imagens (start e end frame)."
+            : "No modo Padrão, apenas 1 imagem. Use Premium para 2.",
+        );
+        return;
+      }
+      if (isSourcePrompt && promptCount >= 1) {
+        toast.error("Este node aceita apenas 1 texto.");
+        return;
+      }
+    }
+
+    // MOTION_CONTROL: 1 imagem + 1 vídeo + 1 prompt opcional
+    if (targetType === NodeTypeEnum.GENERATION_MOTION_CONTROL) {
+      if (isSourceVideo && videoCount >= 1) {
+        toast.error("Este node aceita apenas 1 vídeo.");
+        return;
+      }
+      if (isSourceImage && imageCount >= 1) {
+        toast.error("Este node aceita apenas 1 imagem.");
+        return;
+      }
+      if (isSourcePrompt && promptCount >= 1) {
+        toast.error("Este node aceita apenas 1 texto.");
         return;
       }
     }
@@ -437,8 +782,50 @@ export function FlowProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const addVideoNode = () => {
+    createVideoNode({
+      position: getViewportCenter(),
+      flowId,
+    });
+  };
+
   const addGenerationImageNode = () => {
     createGenerationImageNode({
+      position: getViewportCenter(),
+      flowId,
+    });
+  };
+
+  const addTextToImageNode = () => {
+    createTextToImageNode({
+      position: getViewportCenter(),
+      flowId,
+    });
+  };
+
+  const addUpscaleNode = () => {
+    createUpscaleNode({
+      position: getViewportCenter(),
+      flowId,
+    });
+  };
+
+  const addRemoveBgNode = () => {
+    createRemoveBgNode({
+      position: getViewportCenter(),
+      flowId,
+    });
+  };
+
+  const addImageToVideoNode = () => {
+    createImageToVideoNode({
+      position: getViewportCenter(),
+      flowId,
+    });
+  };
+
+  const addMotionControlNode = () => {
+    createMotionControlNode({
       position: getViewportCenter(),
       flowId,
     });
@@ -462,6 +849,8 @@ export function FlowProvider({ children }: { children: ReactNode }) {
     const nodesSynced: string[] = [];
     const prompts: string[] = [];
     const images: string[] = [];
+    const videos: string[] = [];
+    const videoDurations: (number | null)[] = [];
 
     const incomingEdges = edges.filter((edge) => edge.target === nodeId);
 
@@ -475,9 +864,14 @@ export function FlowProvider({ children }: { children: ReactNode }) {
         sourceNode.type === NodeTypeEnum.PROMPT && sourceNode.data?.prompt;
       const isImageNode =
         sourceNode.type === NodeTypeEnum.IMAGE && sourceNode.data?.imageUrl;
-      const isResultNode =
+      const isVideoUploadNode =
+        sourceNode.type === NodeTypeEnum.VIDEO && sourceNode.data?.videoUrl;
+      const isResultImageNode =
         sourceNode.type === NodeTypeEnum.RESULT_IMAGE &&
         sourceNode.data?.imageUrl;
+      const isResultVideoNode =
+        sourceNode.type === NodeTypeEnum.RESULT_VIDEO &&
+        sourceNode.data?.videoUrl;
 
       if (isPromptNode) {
         prompts.push(sourceNode.data.prompt as string);
@@ -487,12 +881,22 @@ export function FlowProvider({ children }: { children: ReactNode }) {
         images.push(sourceNode.data.imageUrl as string);
       }
 
-      if (isResultNode) {
+      if (isVideoUploadNode) {
+        videos.push(sourceNode.data.videoUrl as string);
+        videoDurations.push((sourceNode.data.duration as number) ?? null);
+      }
+
+      if (isResultImageNode) {
         images.push(sourceNode.data.imageUrl as string);
+      }
+
+      if (isResultVideoNode) {
+        videos.push(sourceNode.data.videoUrl as string);
+        videoDurations.push((sourceNode.data.duration as number) ?? null);
       }
     }
 
-    return { prompts, images, nodesSynced };
+    return { prompts, images, videos, videoDurations, nodesSynced };
   };
 
   return (
@@ -508,8 +912,18 @@ export function FlowProvider({ children }: { children: ReactNode }) {
         addPromptNode,
         addImageNode,
         addGenerationImageNode,
+        addTextToImageNode,
+        addUpscaleNode,
+        addRemoveBgNode,
+        addVideoNode,
+        addImageToVideoNode,
+        addMotionControlNode,
         updatePromptNode,
         updateGenerationImageNode,
+        updateTextToImageNode,
+        updateUpscaleNode,
+        updateImageToVideoNode,
+        updateMotionControlNode,
         generateImageNode,
         calculateCreditsForNode,
         markConnectedGeneratorsAsCalculating,

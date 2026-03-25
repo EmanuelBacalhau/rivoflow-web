@@ -1,13 +1,13 @@
 export function Background() {
   return (
-    <div>
-      <div className="absolute inset-0 bg-linear-to-b from-primary/8 via-transparent to-transparent" />
+    <div className="pointer-events-none">
+      <div className="absolute inset-0 bg-linear-to-b from-primary/3 via-transparent to-transparent" />
       <div
-        className="absolute inset-0 opacity-[0.025]"
+        className="absolute inset-0 opacity-[0.015]"
         style={{
           backgroundImage:
-            "linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
+            "radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)",
+          backgroundSize: "32px 32px",
         }}
       />
     </div>

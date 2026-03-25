@@ -11,11 +11,11 @@ interface ListFlowsProps {
 export function ListFlows({ flows, loading }: ListFlowsProps) {
   return (
     <>
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3 mt-6">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {loading &&
           Array.from({ length: 6 }).map((_, index) => (
             <Skeleton
-              className="flex items-center gap-2 rounded-md p-2 h-44 w-full"
+              className="rounded-xl h-44 w-full"
               key={index.toString()}
             />
           ))}
@@ -26,11 +26,18 @@ export function ListFlows({ flows, loading }: ListFlowsProps) {
       </div>
 
       {flows.length === 0 && !loading && (
-        <div className="flex flex-col items-center justify-center gap-4 flex-1">
-          <LayersIcon className="size-12 text-muted-foreground" />
-          <p className="text-sm text-muted-foreground text-center">
-            Nenhum flow encontrado. <br /> Crie um novo flow para começar.
-          </p>
+        <div className="flex flex-col items-center justify-center gap-4 py-20">
+          <div className="w-14 h-14 rounded-xl bg-muted flex items-center justify-center">
+            <LayersIcon className="size-7 text-muted-foreground/40" />
+          </div>
+          <div className="text-center">
+            <p className="text-sm font-medium text-muted-foreground">
+              Nenhum flow encontrado
+            </p>
+            <p className="text-xs text-muted-foreground/60 mt-1">
+              Crie um novo flow para começar.
+            </p>
+          </div>
         </div>
       )}
     </>

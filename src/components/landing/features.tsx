@@ -22,23 +22,21 @@ export function LandingFeatures({ features }: LandingFeaturesProps) {
           label="Produto"
           title={
             <>
-              Acelere toda sua{" "}
-              <span className="bg-linear-to-r from-indigo-500 to-blue-500 bg-clip-text text-transparent">
-                produção visual
-              </span>
+              Tudo que você precisa para{" "}
+              <span className="text-primary">produção visual</span>
             </>
           }
-          subtitle="Tudo que você precisa em uma única interface inteligente. Crie melhor, em menos tempo e pague apenas pelo que usar."
+          subtitle="Uma única interface para criar, configurar e exportar seus criativos com inteligência artificial."
         />
 
         <div className="grid md:grid-cols-3 gap-4">
           {features.map((feat) => (
             <div
               key={feat.id}
-              className={`${feat.wide ? "md:col-span-2" : "md:col-span-1"} p-7 rounded-2xl border border-border/50 bg-card/50 hover:border-primary/30 hover:bg-card/80 transition-all group`}
+              className={`${feat.wide ? "md:col-span-2" : "md:col-span-1"} p-7 rounded-2xl border border-border bg-card hover:border-primary/30 transition-colors`}
             >
               <div
-                className={`w-11 h-11 rounded-xl ${feat.bg} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform`}
+                className={`w-11 h-11 rounded-xl ${feat.bg} flex items-center justify-center mb-5`}
               >
                 <feat.icon className={`w-5 h-5 ${feat.color}`} />
               </div>
