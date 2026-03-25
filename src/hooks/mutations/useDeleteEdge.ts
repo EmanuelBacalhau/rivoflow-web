@@ -7,6 +7,7 @@ import { GENERATION_NODE_TYPES } from "@/types";
 
 type DeleteEdgeParams = {
   updateNodes: Dispatch<SetStateAction<Node[]>>;
+  isNodeDeleted?: (nodeId: string) => boolean;
 };
 
 function isGenerationNode(node: Node): boolean {
@@ -15,7 +16,10 @@ function isGenerationNode(node: Node): boolean {
   );
 }
 
-export function useDeleteEdgeController({ updateNodes }: DeleteEdgeParams) {
+export function useDeleteEdgeController({
+  updateNodes,
+  isNodeDeleted,
+}: DeleteEdgeParams) {
   const { mutateAsync } = useMutation({
     mutationKey: ["deleteEdge"],
     mutationFn: async (
@@ -24,7 +28,10 @@ export function useDeleteEdgeController({ updateNodes }: DeleteEdgeParams) {
       await EdgeService.delete(paramsEdge);
     },
     onMutate: async (paramsEdge) => {
-      if (isGenerationNode(paramsEdge.node)) {
+      if (
+        isGenerationNode(paramsEdge.node) &&
+        !isNodeDeleted?.(paramsEdge.node.id)
+      ) {
         const nodeId = paramsEdge.node.id;
         updateNodes((nds) =>
           nds.map((n) =>
@@ -36,7 +43,10 @@ export function useDeleteEdgeController({ updateNodes }: DeleteEdgeParams) {
       }
     },
     onSuccess: async (_, paramsEdge) => {
-      if (isGenerationNode(paramsEdge.node)) {
+      if (
+        isGenerationNode(paramsEdge.node) &&
+        !isNodeDeleted?.(paramsEdge.node.id)
+      ) {
         const nodeId = paramsEdge.node.id;
         try {
           const result = await TriggerGenerationService.calculateCredits({
@@ -69,7 +79,10 @@ export function useDeleteEdgeController({ updateNodes }: DeleteEdgeParams) {
       }
     },
     onError: (_, paramsEdge) => {
-      if (isGenerationNode(paramsEdge.node)) {
+      if (
+        isGenerationNode(paramsEdge.node) &&
+        !isNodeDeleted?.(paramsEdge.node.id)
+      ) {
         const nodeId = paramsEdge.node.id;
         updateNodes((nds) =>
           nds.map((n) =>

@@ -33,7 +33,7 @@ export function useCreateImageToVideoNodeController({
           position: paramsNode.position,
           data: {
             tier: paramsNode.tier ?? "standard",
-            duration: "5",
+            duration: paramsNode.tier === "premium" ? "5" : "6",
             resolution: "1080p",
             aspectRatio: "16:9",
             generateAudio: true,

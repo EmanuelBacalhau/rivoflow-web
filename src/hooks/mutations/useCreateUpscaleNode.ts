@@ -33,12 +33,11 @@ export function useCreateUpscaleNodeController({
           position: paramsNode.position,
           data: {
             scale: 2,
-            face: false,
-            upscaleModel: "RealESRGAN_x4plus",
             status: GenerationStatusEnum.PENDING,
             attempts: 0,
             outputNodeId: null,
             consumedCredits: 0,
+            creditsRequired: 0,
             isExecuted: false,
           },
         }),

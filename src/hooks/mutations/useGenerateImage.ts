@@ -65,6 +65,7 @@ export function useGenerateImageController({
               data: {
                 ...n.data,
                 isExecuted: false,
+                status: GenerationStatusEnum.PENDING,
               },
             };
           }

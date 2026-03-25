@@ -18,22 +18,31 @@ export function useUpdateImageToVideoNodeController({
       await ImageToVideoNodeService.update(params);
     },
     onMutate: async (params) => {
+      let previousData: Record<string, unknown> = {};
+
       updateNodes((prevNodes) =>
-        prevNodes.map((n) =>
-          n.id === params.nodeId
-            ? {
-                ...n,
-                data: {
-                  ...n.data,
-                  ...params.data,
-                },
-              }
-            : n,
-        ),
+        prevNodes.map((n) => {
+          if (n.id === params.nodeId) {
+            previousData = n.data as Record<string, unknown>;
+            return { ...n, data: { ...n.data, ...params.data } };
+          }
+          return n;
+        }),
       );
+
+      return { nodeId: params.nodeId, previousData };
     },
-    onError: (error) => {
+    onError: (error, _, context) => {
       if (isAxiosError(error) && error.response?.status === 404) return;
+
+      if (context?.previousData) {
+        updateNodes((nds) =>
+          nds.map((n) =>
+            n.id === context.nodeId ? { ...n, data: context.previousData } : n,
+          ),
+        );
+      }
+
       toast.error("Erro ao atualizar configurações do vídeo.");
     },
   });

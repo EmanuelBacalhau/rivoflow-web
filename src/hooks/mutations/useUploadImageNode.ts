@@ -93,7 +93,9 @@ export function useUploadImageNodeController({
                   ...n,
                   data: {
                     ...n.data,
-                    ...(context.isVideo ? { videoUrl: "" } : { imageUrl: "" }),
+                    ...(context.isVideo
+                      ? { videoUrl: undefined }
+                      : { imageUrl: undefined }),
                   },
                 }
               : n,

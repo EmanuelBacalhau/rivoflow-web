@@ -206,6 +206,24 @@ export function FlowProvider({ children }: { children: ReactNode }) {
 
           if (status === GenerationStatusEnum.FAILED) {
             pollingIntervalsRef.current.delete(nodeId);
+
+            // Reset node so user can retry
+            setNodes((nds) =>
+              nds.map((n) =>
+                n.id === nodeId
+                  ? {
+                      ...n,
+                      data: {
+                        ...n.data,
+                        status: GenerationStatusEnum.PENDING,
+                        isExecuted: false,
+                      },
+                    }
+                  : n,
+              ),
+            );
+
+            toast.error("Erro interno na geração. Tente novamente.");
             return;
           }
         } catch {
@@ -353,6 +371,9 @@ export function FlowProvider({ children }: { children: ReactNode }) {
   const isDeleted = (nodeId: string) => deletedNodeIdsRef.current.has(nodeId);
 
   const calculateCreditsForNode = async (nodeId: string) => {
+    if (deletedNodeIdsRef.current.has(nodeId)) return;
+    if (!nodesRef.current.some((n) => n.id === nodeId)) return;
+
     setNodes((nds) =>
       nds.map((n) =>
         n.id === nodeId
@@ -540,7 +561,10 @@ export function FlowProvider({ children }: { children: ReactNode }) {
     updateEdges: setEdges,
     updateNodes: setNodes,
   });
-  const { deleteEdge } = useDeleteEdgeController({ updateNodes: setNodes });
+  const { deleteEdge } = useDeleteEdgeController({
+    updateNodes: setNodes,
+    isNodeDeleted: isDeleted,
+  });
 
   const onNodesChange = (changes: NodeChange[]) => {
     for (const change of changes) {
@@ -549,7 +573,11 @@ export function FlowProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot));
+    setNodes((nodesSnapshot) => {
+      const updated = applyNodeChanges(changes, nodesSnapshot);
+      nodesRef.current = updated;
+      return updated;
+    });
 
     for (const change of changes) {
       if (change.type === "position" && change.position) {
@@ -603,8 +631,10 @@ export function FlowProvider({ children }: { children: ReactNode }) {
       const isTargetDeleted = deletedNodeIdsRef.current.has(edge.target);
       if (isSourceDeleted || isTargetDeleted) return;
 
+      const sourceNode = nodesRef.current.find((n) => n.id === edge.source);
       const targetNode = nodesRef.current.find((n) => n.id === edge.target);
-      if (!targetNode) return;
+
+      if (!sourceNode || !targetNode) return;
 
       deleteEdge({ edgeId, flowId, node: targetNode }).catch(() => {
         toast.error("Erro ao deletar conexão. Tente novamente.");

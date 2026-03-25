@@ -69,16 +69,26 @@ export function ImageToVideoNode({ id, data, selected }: NodeProps) {
     return getConnectedData(id);
   }, [id, getConnectedData]);
 
+  const STANDARD_DURATIONS = ["6", "8", "10"];
+
   const updateAndRecalculate = async (
     field: string,
     value: string | boolean,
   ) => {
     try {
-      updateNodeData(id, { [field]: value, isCalculatingCredits: true });
+      const updates: Record<string, string | boolean> = { [field]: value };
+
+      if (field === "tier" && value === "standard") {
+        if (!STANDARD_DURATIONS.includes(nodeData.duration)) {
+          updates.duration = "6";
+        }
+      }
+
+      updateNodeData(id, { ...updates, isCalculatingCredits: true });
       await updateImageToVideoNode({
         flowId,
         nodeId: id,
-        data: { [field]: value },
+        data: updates,
       });
       await calculateCreditsForNode(id);
     } catch {

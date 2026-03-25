@@ -32,6 +32,7 @@ export function useCreateMotionControlNodeController({
           type: NodeTypeEnum.GENERATION_MOTION_CONTROL,
           position: paramsNode.position,
           data: {
+            characterOrientation: "video",
             keepOriginalSound: true,
             status: GenerationStatusEnum.PENDING,
             attempts: 0,
