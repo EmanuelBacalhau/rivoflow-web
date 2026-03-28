@@ -22,7 +22,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { useCreateLinkCharge } from "@/hooks/mutations/useCreateLinkCharge";
 import { useAccount } from "@/hooks/queries/useAccount";
 import { useFlows } from "@/hooks/queries/useFlows";
@@ -32,7 +31,6 @@ const MIN_CREDITS_IN_REALS = 20;
 
 export default function DashboardPage() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const { isMobile } = useSidebar();
   const { flows, isLoading } = useFlows();
   const [search, setSearch] = useState("");
   const { me } = useAccount();
@@ -79,15 +77,19 @@ export default function DashboardPage() {
   const firstName = me?.account.firstName || "";
 
   return (
-    <div className="flex flex-col flex-1 min-h-0">
-      {/* Top bar */}
-      <div className="sticky top-0 z-20 bg-background/80 backdrop-blur-xl border-b border-border px-8 py-4 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          {isMobile && <SidebarTrigger size="icon" />}
-          <h1 className="text-base font-semibold font-display">Dashboard</h1>
+    <div className="flex flex-col flex-1 min-h-0 px-8 py-8">
+      {/* Actions bar */}
+      <div className="flex items-center justify-between gap-4 mb-10">
+        <div>
+          <h2 className="text-2xl font-bold font-display mb-1">
+            {firstName ? `Olá, ${firstName}` : "Bem-vindo"}
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Gerencie seus fluxos e crie novos criativos com IA.
+          </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 shrink-0">
           <Dialog>
             <DialogTrigger asChild>
               <Button
@@ -196,81 +198,68 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Main */}
-      <div className="flex-1 overflow-y-auto px-8 py-8">
-        {/* Welcome */}
-        <div className="mb-10">
-          <h2 className="text-2xl font-bold font-display mb-1">
-            {firstName ? `Olá, ${firstName}` : "Bem-vindo"}
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            Gerencie seus fluxos e crie novos criativos com IA.
+      {/* Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+        <div className="p-5 rounded-xl border border-white/8 bg-white/3 backdrop-blur-sm">
+          <div className="flex items-center gap-2.5 mb-3">
+            <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
+              <LayersIcon className="w-4 h-4 text-purple-400" />
+            </div>
+            <span className="text-sm text-muted-foreground font-medium">
+              Flows
+            </span>
+          </div>
+          <p className="text-3xl font-bold font-display tabular-nums">
+            {flows.length}
           </p>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-          <div className="p-5 rounded-xl border border-white/8 bg-white/3 backdrop-blur-sm">
-            <div className="flex items-center gap-2.5 mb-3">
-              <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
-                <LayersIcon className="w-4 h-4 text-purple-400" />
-              </div>
-              <span className="text-sm text-muted-foreground font-medium">
-                Flows
-              </span>
+        <div className="p-5 rounded-xl border border-white/8 bg-white/3 backdrop-blur-sm">
+          <div className="flex items-center gap-2.5 mb-3">
+            <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+              <ZapIcon className="w-4 h-4 text-amber-400" />
             </div>
-            <p className="text-3xl font-bold font-display tabular-nums">
-              {flows.length}
-            </p>
+            <span className="text-sm text-muted-foreground font-medium">
+              Créditos
+            </span>
           </div>
-
-          <div className="p-5 rounded-xl border border-white/8 bg-white/3 backdrop-blur-sm">
-            <div className="flex items-center gap-2.5 mb-3">
-              <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
-                <ZapIcon className="w-4 h-4 text-amber-400" />
-              </div>
-              <span className="text-sm text-muted-foreground font-medium">
-                Créditos
-              </span>
-            </div>
-            <p className="text-3xl font-bold font-display tabular-nums">
-              {me?.balance.credits ?? 0}
-            </p>
-          </div>
-
-          <div className="p-5 rounded-xl border border-white/8 bg-white/3 backdrop-blur-sm">
-            <div className="flex items-center gap-2.5 mb-3">
-              <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center">
-                <SparklesIcon className="w-4 h-4 text-green-400" />
-              </div>
-              <span className="text-sm text-muted-foreground font-medium">
-                Gerados
-              </span>
-            </div>
-            <p className="text-3xl font-bold font-display tabular-nums">
-              {me?.balance.lifetimeSpent ?? 0}
-            </p>
-          </div>
+          <p className="text-3xl font-bold font-display tabular-nums">
+            {me?.balance.credits ?? 0}
+          </p>
         </div>
 
-        {/* Flows */}
-        <div className="flex items-center justify-between gap-4 mb-5">
-          <h3 className="text-base font-semibold font-display">Seus flows</h3>
-          <div className="flex items-center gap-2 rounded-lg border border-white/8 bg-white/3 backdrop-blur-sm px-3 py-2 text-sm w-full max-w-64 focus-within:border-purple-500/30 focus-within:ring-1 focus-within:ring-purple-500/15 transition-all">
-            <SearchIcon className="size-4 text-muted-foreground shrink-0" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar flows..."
-              className="w-full bg-transparent text-foreground placeholder:text-muted-foreground outline-none text-sm"
-            />
+        <div className="p-5 rounded-xl border border-white/8 bg-white/3 backdrop-blur-sm">
+          <div className="flex items-center gap-2.5 mb-3">
+            <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center">
+              <SparklesIcon className="w-4 h-4 text-green-400" />
+            </div>
+            <span className="text-sm text-muted-foreground font-medium">
+              Gerados
+            </span>
           </div>
+          <p className="text-3xl font-bold font-display tabular-nums">
+            {me?.balance.lifetimeSpent ?? 0}
+          </p>
         </div>
-
-        <CreateFlowDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} />
-        <ListFlows flows={filteredFlows} loading={isLoading} />
       </div>
+
+      {/* Flows */}
+      <div className="flex items-center justify-between gap-4 mb-5">
+        <h3 className="text-base font-semibold font-display">Seus flows</h3>
+        <div className="flex items-center gap-2 rounded-lg border border-white/8 bg-white/3 backdrop-blur-sm px-3 py-2 text-sm w-full max-w-64 focus-within:border-purple-500/30 focus-within:ring-1 focus-within:ring-purple-500/15 transition-all">
+          <SearchIcon className="size-4 text-muted-foreground shrink-0" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar flows..."
+            className="w-full bg-transparent text-foreground placeholder:text-muted-foreground outline-none text-sm"
+          />
+        </div>
+      </div>
+
+      <CreateFlowDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} />
+      <ListFlows flows={filteredFlows} loading={isLoading} />
     </div>
   );
 }

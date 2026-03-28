@@ -140,6 +140,7 @@ export function FlowProvider({ children }: { children: ReactNode }) {
   edgesRef.current = edges;
 
   const deletedNodeIdsRef = useRef<Set<string>>(new Set());
+  const isDeletingNodeRef = useRef(false);
   const pendingDeleteRef = useRef<Set<string>>(new Set());
   const pollingIntervalsRef = useRef<
     Map<string, ReturnType<typeof setInterval>>
@@ -617,9 +618,11 @@ export function FlowProvider({ children }: { children: ReactNode }) {
   };
 
   const onEdgesChange = (changes: EdgeChange[]) => {
-    // Collect edges to delete BEFORE applying changes (edges still exist in state)
-    const edgesToDelete: { edgeId: string; source: string; target: string }[] =
-      [];
+    const edgesToDelete: {
+      edgeId: string;
+      source: string;
+      target: string;
+    }[] = [];
     for (const change of changes) {
       if (change.type === "remove") {
         const edge = edgesRef.current.find((e) => e.id === change.id);
@@ -635,19 +638,20 @@ export function FlowProvider({ children }: { children: ReactNode }) {
 
     setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot));
 
-    // Only call deleteEdge API if the edge was explicitly removed (not as a side-effect of node deletion)
-    for (const { edgeId, source, target } of edgesToDelete) {
-      const isSourceDeleted = deletedNodeIdsRef.current.has(source);
-      const isTargetDeleted = deletedNodeIdsRef.current.has(target);
-      if (isSourceDeleted || isTargetDeleted) continue;
+    if (edgesToDelete.length === 0) return;
+    queueMicrotask(() => {
+      for (const { edgeId, source, target } of edgesToDelete) {
+        if (deletedNodeIdsRef.current.has(source)) continue;
+        if (deletedNodeIdsRef.current.has(target)) continue;
 
-      const targetNode = nodesRef.current.find((n) => n.id === target);
-      if (!targetNode) continue;
+        const targetNode = nodesRef.current.find((n) => n.id === target);
+        if (!targetNode) continue;
 
-      deleteEdge({ edgeId, flowId, node: targetNode }).catch(() => {
-        toast.error("Erro ao deletar conexão. Tente novamente.");
-      });
-    }
+        deleteEdge({ edgeId, flowId, node: targetNode }).catch(() => {
+          toast.error("Erro ao deletar conexão. Tente novamente.");
+        });
+      }
+    });
   };
 
   const onConnect = (params: Connection) => {
@@ -667,7 +671,6 @@ export function FlowProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    // --- Classify source node ---
     const isSourcePrompt = sourceNode.type === NodeTypeEnum.PROMPT;
     const isSourceImage =
       sourceNode.type === NodeTypeEnum.IMAGE ||
@@ -678,19 +681,16 @@ export function FlowProvider({ children }: { children: ReactNode }) {
     const isSourceGeneration = isGenerationNodeType(sourceNode.type);
     const isTargetGeneration = isGenerationNodeType(targetNode.type);
 
-    // Block: only generation nodes can be targets
     if (!isTargetGeneration) {
       toast.error("Só é possível conectar a um node de geração.");
       return;
     }
 
-    // Block: generation → generation
     if (isSourceGeneration) {
       toast.error("Não é permitido conectar dois nodes de geração entre si.");
       return;
     }
 
-    // Block: already executed
     if (targetNode.data.isExecuted) {
       toast.error(
         "Não é permitido conectar a um node de geração já executado.",
@@ -698,7 +698,6 @@ export function FlowProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    // --- Count existing connections ---
     const incomingEdges = edges.filter((e) => e.target === params.target);
     let imageCount = 0;
     let promptCount = 0;
@@ -719,7 +718,6 @@ export function FlowProvider({ children }: { children: ReactNode }) {
 
     const targetType = targetNode.type;
 
-    // TEXT_TO_IMAGE: 1 prompt, sem imagens, sem vídeos
     if (targetType === NodeTypeEnum.GENERATION_TEXT_TO_IMAGE) {
       if (isSourceImage || isSourceVideo) {
         toast.error("Este node aceita apenas Texto.");
@@ -731,7 +729,6 @@ export function FlowProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    // GENERATION_IMAGE_EDIT (edição): 1 prompt + até 14 imagens, sem vídeos
     if (targetType === NodeTypeEnum.GENERATION_IMAGE_EDIT) {
       if (isSourceVideo) {
         toast.error("Este node não aceita vídeos.");
@@ -747,7 +744,6 @@ export function FlowProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    // UPSCALE: 1 imagem, sem prompts, sem vídeos
     if (targetType === NodeTypeEnum.GENERATION_UPSCALE) {
       if (isSourcePrompt || isSourceVideo) {
         toast.error("Este node aceita apenas Imagem.");
@@ -759,7 +755,6 @@ export function FlowProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    // REMOVE_BG: 1 imagem, sem prompts, sem vídeos
     if (targetType === NodeTypeEnum.GENERATION_REMOVE_BG) {
       if (isSourcePrompt || isSourceVideo) {
         toast.error("Este node aceita apenas Imagem.");
@@ -771,7 +766,6 @@ export function FlowProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    // IMAGE_TO_VIDEO: 1-2 imagens (premium=2), 1 prompt opcional, sem vídeos
     if (targetType === NodeTypeEnum.GENERATION_IMAGE_TO_VIDEO) {
       if (isSourceVideo) {
         toast.error("Este node não aceita vídeos.");
@@ -793,7 +787,6 @@ export function FlowProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    // MOTION_CONTROL: 1 imagem + 1 vídeo + 1 prompt opcional
     if (targetType === NodeTypeEnum.GENERATION_MOTION_CONTROL) {
       if (isSourceVideo && videoCount >= 1) {
         toast.error("Este node aceita apenas 1 vídeo.");
@@ -902,7 +895,10 @@ export function FlowProvider({ children }: { children: ReactNode }) {
   };
 
   const removeNode = (nodeId: string) => {
+    deletedNodeIdsRef.current.add(nodeId);
+    isDeletingNodeRef.current = true;
     onNodesChange([{ type: "remove", id: nodeId }]);
+    isDeletingNodeRef.current = false;
   };
 
   const getConnectedData = (nodeId: string): ConnectedData => {

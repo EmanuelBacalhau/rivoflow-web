@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { useFlow } from "@/contexts/flow-context";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import {
@@ -14,7 +15,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { useSidebar } from "../ui/sidebar";
 
 interface ResultNodeData {
   imageUrl?: string;
@@ -25,7 +25,7 @@ export function ResultImageNode({ id, data, selected }: NodeProps) {
   const nodeData = data as ResultNodeData;
   const [downloading, setDownloading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { isMobile } = useSidebar();
+  const isMobile = useIsMobile();
 
   const handleDownload = useCallback(async () => {
     if (!nodeData.imageUrl) return;

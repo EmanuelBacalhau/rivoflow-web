@@ -1,10 +1,8 @@
 "use client";
 
 import {
-  ChevronsUpDown,
   LayersIcon,
   LayoutDashboardIcon,
-  LogOut,
   PlusIcon,
   SearchIcon,
 } from "lucide-react";
@@ -15,19 +13,7 @@ import { useState } from "react";
 import { CreateFlowDialog } from "@/components/create-flow-dialog";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useAuth } from "@/contexts/auth-context";
-import { useAccount } from "@/hooks/queries/useAccount";
 import { useFlows } from "@/hooks/queries/useFlows";
-import { CreditBalance } from "../credit-balance";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
 import {
   Sidebar,
   SidebarContent,
@@ -38,7 +24,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from "../ui/sidebar";
 
 const pages = [
@@ -52,14 +37,11 @@ const pages = [
 const SEARCH_THRESHOLD = 5;
 
 export function AppSidebar() {
-  const { isMobile } = useSidebar();
   const pathname = usePathname();
   const [search, setSearch] = useState("");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const { signOut } = useAuth();
 
   const { flows, isLoading } = useFlows();
-  const { me } = useAccount();
 
   const showSearch = flows.length > SEARCH_THRESHOLD;
   const filteredFlows = search.trim()
@@ -195,94 +177,7 @@ export function AppSidebar() {
           </div>
         </SidebarGroup>
 
-        {/* USER FOOTER */}
-        <SidebarFooter>
-          <SidebarMenu>
-            {!me && (
-              <SidebarMenuItem className="cursor-not-allowed">
-                <div className="flex items-center gap-2 rounded-md p-2">
-                  <Skeleton className="size-8 shrink-0 rounded-lg" />
-                  <div className="flex-1 space-y-1">
-                    <Skeleton className="h-3 rounded w-full" />
-                    <Skeleton className="h-3 rounded w-3/4" />
-                  </div>
-                </div>
-              </SidebarMenuItem>
-            )}
-
-            {me && (
-              <SidebarMenuItem>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <SidebarMenuButton className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground h-fit">
-                      <div className="space-y-2">
-                        <div className="flex gap-3 items-center">
-                          <Avatar className="size-7 rounded-md">
-                            <AvatarImage
-                              src={me?.account.picture}
-                              alt={me?.account.firstName}
-                            />
-                            <AvatarFallback className="rounded-md text-[10px] font-medium">
-                              {me?.account.firstName?.[0] || "CN"}
-                            </AvatarFallback>
-                          </Avatar>
-
-                          <div className="grid flex-1 text-left leading-tight">
-                            <span className="truncate font-medium text-[13px]">
-                              {`${me?.account.firstName} ${me?.account.lastName}`}
-                            </span>
-                            <span className="truncate text-[11px] text-muted-foreground">
-                              {me?.account.email}
-                            </span>
-                          </div>
-
-                          <ChevronsUpDown className="ml-auto size-3.5 text-muted-foreground" />
-                        </div>
-
-                        <CreditBalance balance={me.balance} />
-                      </div>
-                    </SidebarMenuButton>
-                  </DropdownMenuTrigger>
-
-                  <DropdownMenuContent
-                    className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-                    side={isMobile ? "bottom" : "right"}
-                    align="end"
-                    sideOffset={4}
-                  >
-                    <DropdownMenuLabel className="p-0 font-normal">
-                      <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                        <Avatar className="h-7 w-7 rounded-md">
-                          <AvatarImage
-                            src={me?.account.picture}
-                            alt={me?.account.firstName}
-                          />
-                          <AvatarFallback className="rounded-md text-[10px]">
-                            {me?.account.firstName?.[0] || "CN"}
-                          </AvatarFallback>
-                        </Avatar>
-
-                        <div className="grid flex-1 text-left leading-tight">
-                          <span className="truncate font-medium text-[13px]">{`${me?.account.firstName} ${me?.account.lastName}`}</span>
-                          <span className="truncate text-[11px] text-muted-foreground">
-                            {me?.account.email}
-                          </span>
-                        </div>
-                      </div>
-                    </DropdownMenuLabel>
-
-                    <DropdownMenuSeparator />
-
-                    <DropdownMenuItem onClick={() => signOut(true)}>
-                      <LogOut />
-                      Log out
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </SidebarMenuItem>
-            )}
-          </SidebarMenu>
-        </SidebarFooter>
+        <SidebarFooter />
       </SidebarContent>
     </Sidebar>
   );

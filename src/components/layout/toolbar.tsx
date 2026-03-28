@@ -14,8 +14,8 @@ import {
   WandSparklesIcon,
 } from "lucide-react";
 import { useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { SidebarTrigger, useSidebar } from "../ui/sidebar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 interface ToolbarProps {
@@ -126,7 +126,7 @@ export function Toolbar({
   onAddImageToVideoNode,
   onAddMotionControlNode,
 }: ToolbarProps) {
-  const { isMobile } = useSidebar();
+  const isMobile = useIsMobile();
   const [aiOpen, setAiOpen] = useState(false);
 
   const handleAITool = (fn: () => void) => {
@@ -139,8 +139,6 @@ export function Toolbar({
       className={`absolute top-3 ${isMobile ? "left-3 right-3" : "left-1/2 -translate-x-1/2"} z-10`}
     >
       <div className="inline-flex items-center gap-0.5 bg-background/80 backdrop-blur-xl border border-white/8 rounded-xl shadow-lg shadow-black/20 px-1.5 py-1">
-        {isMobile && <SidebarTrigger className="size-9" />}
-
         {/* Input nodes */}
         <ToolButton
           icon={<MessageCircleMoreIcon className="size-4" strokeWidth={1.8} />}
