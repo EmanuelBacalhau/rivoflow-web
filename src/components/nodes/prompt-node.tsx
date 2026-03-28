@@ -2,7 +2,7 @@
 
 import { Handle, type NodeProps, Position } from "@xyflow/react";
 import { CheckIcon, MessageCircleMoreIcon, Trash2Icon } from "lucide-react";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFlow } from "@/contexts/flow-context";
 import type { PromptNodeService } from "@/services/node/prompt-node-service";
 import { debounce } from "@/utils/debounce";
@@ -21,9 +21,17 @@ export function PromptNode({ id: nodeId, data, selected }: NodeProps) {
     markConnectedGeneratorsAsCalculating,
     removeNode,
   } = useFlow();
+
   const nodeData = data as PromptNodeData;
 
-  const charCount = nodeData.prompt?.length ?? 0;
+  const [prompt, setPrompt] = useState(nodeData.prompt || "");
+  const [isComposing, setIsComposing] = useState(false);
+
+  useEffect(() => {
+    setPrompt(nodeData.prompt || "");
+  }, [nodeData.prompt]);
+
+  const charCount = prompt.length;
 
   const updatePromptNodeRef = useRef(updatePromptNode);
   updatePromptNodeRef.current = updatePromptNode;
@@ -34,10 +42,10 @@ export function PromptNode({ id: nodeId, data, selected }: NodeProps) {
     }, 1000),
   );
 
-  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = event.target.value;
+  const syncPrompt = (value: string) => {
     updateNodeData(nodeId, { prompt: value });
     markConnectedGeneratorsAsCalculating(nodeId);
+
     updatePromptNodeDebouncedRef.current({
       flowId,
       nodeId,
@@ -45,9 +53,22 @@ export function PromptNode({ id: nodeId, data, selected }: NodeProps) {
     });
   };
 
+  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = event.target.value;
+    setPrompt(value);
+
+    if (!isComposing) {
+      syncPrompt(value);
+    }
+  };
+
   return (
     <Card
-      className={`w-72 gap-0 py-0 shadow-md overflow-hidden transition-shadow ${selected ? "border-amber-400 ring-2 ring-amber-300 shadow-amber-400 shadow-lg" : "border-amber-200"}`}
+      className={`w-72 gap-0 py-0 shadow-md overflow-hidden transition-shadow ${
+        selected
+          ? "border-amber-400 ring-2 ring-amber-300 shadow-amber-400 shadow-lg"
+          : "border-amber-200"
+      }`}
     >
       <Handle
         type="source"
@@ -62,17 +83,20 @@ export function PromptNode({ id: nodeId, data, selected }: NodeProps) {
             strokeWidth={2}
           />
         </div>
+
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-sm text-card-foreground leading-tight">
             Texto
           </h3>
           <p className="text-[10px] text-amber-500">Descreva sua ideia</p>
         </div>
+
         {nodeData.isExecuted && (
           <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center shrink-0">
             <CheckIcon className="size-3 text-green-600" />
           </div>
         )}
+
         <button
           onClick={() => removeNode(nodeId)}
           className="text-amber-500/50 hover:text-red-500 transition-colors shrink-0 nodrag cursor-pointer md:hidden"
@@ -87,10 +111,19 @@ export function PromptNode({ id: nodeId, data, selected }: NodeProps) {
         <Textarea
           className="nodrag nopan nowheel resize-none min-h-24 text-xs bg-muted border-amber-500/30 focus-visible:ring-amber-500/30 placeholder:text-muted-foreground"
           placeholder="Ex: produto minimalista, fundo clean, luz natural suave..."
-          value={nodeData.prompt || ""}
+          value={prompt}
           onChange={handleChange}
+          onCompositionStart={() => setIsComposing(true)}
+          onCompositionEnd={(e) => {
+            const value = e.currentTarget.value;
+            setIsComposing(false);
+            syncPrompt(value);
+          }}
+          onKeyDown={(e) => e.stopPropagation()}
+          onKeyUp={(e) => e.stopPropagation()}
           disabled={nodeData.isExecuted}
         />
+
         {charCount > 0 && (
           <div className="flex justify-end">
             <span className="text-[10px] text-muted-foreground">
