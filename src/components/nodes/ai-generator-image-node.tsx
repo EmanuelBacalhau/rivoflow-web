@@ -71,7 +71,6 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
         flowId,
         nodeId: id,
         data: {
-          ...nodeData,
           quality: (nodeData.quality ?? "1K") as ImageQuality,
           aspectRatio: value as AspectRatio,
         },
@@ -92,7 +91,6 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
         flowId,
         nodeId: id,
         data: {
-          ...nodeData,
           aspectRatio: (nodeData.aspectRatio ?? "1:1") as AspectRatio,
           quality: value as ImageQuality,
         },

@@ -298,72 +298,74 @@ export function ImageToVideoNode({ id, data, selected }: NodeProps) {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-2">
-          {/* RESOLUTION */}
-          <div className="space-y-1">
-            <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">
-              Resolução
-            </span>
-            <Select
-              value={nodeData.resolution}
-              onValueChange={(v) =>
-                updateAndRecalculate("resolution", v as VideoResolution)
-              }
-              disabled={isDisabledControl}
-            >
-              <SelectTrigger className="w-full nodrag nopan h-8 text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent position="popper" className="nowheel">
-                <SelectGroup>
-                  <SelectItem value="1080p">
-                    <span className="text-xs">1080p Full HD</span>
-                  </SelectItem>
-                  <SelectItem value="1440p">
-                    <span className="text-xs">1440p 2K</span>
-                  </SelectItem>
-                  <SelectItem value="2160p">
-                    <span className="text-xs">2160p 4K</span>
-                  </SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
+        {nodeData.tier !== "premium" && (
+          <div className="grid grid-cols-2 gap-2">
+            {/* RESOLUTION */}
+            <div className="space-y-1">
+              <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">
+                Resolução
+              </span>
+              <Select
+                value={nodeData.resolution}
+                onValueChange={(v) =>
+                  updateAndRecalculate("resolution", v as VideoResolution)
+                }
+                disabled={isDisabledControl}
+              >
+                <SelectTrigger className="w-full nodrag nopan h-8 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent position="popper" className="nowheel">
+                  <SelectGroup>
+                    <SelectItem value="1080p">
+                      <span className="text-xs">1080p Full HD</span>
+                    </SelectItem>
+                    <SelectItem value="1440p">
+                      <span className="text-xs">1440p 2K</span>
+                    </SelectItem>
+                    <SelectItem value="2160p">
+                      <span className="text-xs">2160p 4K</span>
+                    </SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
 
-          {/* ASPECT RATIO */}
-          <div className="space-y-1">
-            <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">
-              Formato
-            </span>
-            <Select
-              value={nodeData.aspectRatio}
-              onValueChange={(v) =>
-                updateAndRecalculate("aspectRatio", v as VideoAspectRatio)
-              }
-              disabled={isDisabledControl}
-            >
-              <SelectTrigger className="w-full nodrag nopan h-8 text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent position="popper" className="nowheel">
-                <SelectGroup>
-                  <SelectItem value="auto">
-                    <span className="text-xs">Auto</span>
-                  </SelectItem>
-                  <SelectItem value="16:9">
-                    <span className="text-xs">16:9 Paisagem</span>
-                  </SelectItem>
-                  <SelectItem value="9:16">
-                    <span className="text-xs">9:16 Story</span>
-                  </SelectItem>
-                  <SelectItem value="1:1">
-                    <span className="text-xs">1:1 Quadrado</span>
-                  </SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+            {/* ASPECT RATIO */}
+            <div className="space-y-1">
+              <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">
+                Formato
+              </span>
+              <Select
+                value={nodeData.aspectRatio}
+                onValueChange={(v) =>
+                  updateAndRecalculate("aspectRatio", v as VideoAspectRatio)
+                }
+                disabled={isDisabledControl}
+              >
+                <SelectTrigger className="w-full nodrag nopan h-8 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent position="popper" className="nowheel">
+                  <SelectGroup>
+                    <SelectItem value="auto">
+                      <span className="text-xs">Auto</span>
+                    </SelectItem>
+                    <SelectItem value="16:9">
+                      <span className="text-xs">16:9 Paisagem</span>
+                    </SelectItem>
+                    <SelectItem value="9:16">
+                      <span className="text-xs">9:16 Story</span>
+                    </SelectItem>
+                    <SelectItem value="1:1">
+                      <span className="text-xs">1:1 Quadrado</span>
+                    </SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* AUDIO */}
         <div className="flex items-center justify-between">

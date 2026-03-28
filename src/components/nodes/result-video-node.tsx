@@ -23,6 +23,7 @@ import {
 interface ResultVideoNodeData {
   videoUrl?: string;
   duration?: number;
+  fps?: number;
 }
 
 export function ResultVideoNode({ id, data, selected }: NodeProps) {
