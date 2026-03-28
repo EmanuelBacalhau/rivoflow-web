@@ -58,7 +58,9 @@ export function LandingNavbar({ navLinks }: LandingNavbarProps) {
             href="/auth/google"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            Entrar
+            <Button variant="outline" size="sm" className="rounded-full">
+              Entrar
+            </Button>
           </Link>
         </div>
 

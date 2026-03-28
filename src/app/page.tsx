@@ -26,13 +26,6 @@ const navLinks = [
   { label: "Preços", href: "#pricing" },
 ];
 
-const metrics = [
-  { value: "10K+", label: "Criativos gerados" },
-  { value: "500+", label: "Times ativos" },
-  { value: "4.9★", label: "Avaliação média" },
-  { value: "24/7", label: "Geração sob demanda" },
-];
-
 const features = [
   {
     id: "flow",
@@ -205,7 +198,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background">
       <LandingNavbar navLinks={navLinks} />
-      <LandingHero metrics={metrics} />
+      <LandingHero />
       <LandingUseCases />
       <LandingFeatures features={features} />
       <LandingHowItWorks steps={steps} />

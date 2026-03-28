@@ -9,18 +9,8 @@ import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 
-interface Metric {
-  value: string;
-  label: string;
-}
-
-interface LandingHeroProps {
-  metrics: Metric[];
-}
-
-export function LandingHero({ metrics }: LandingHeroProps) {
+export function LandingHero() {
   return (
     <section className="relative overflow-hidden hero-gradient min-h-[90vh] flex flex-col justify-center">
       {/* Grain overlay */}
@@ -98,31 +88,6 @@ export function LandingHero({ metrics }: LandingHeroProps) {
                 Vídeos
               </Badge>
             </div>
-
-            {/* Metrics row */}
-            <div
-              className="flex items-center gap-0 animate-fade-in"
-              style={{ animationDelay: "400ms" }}
-            >
-              {metrics.map((m, i) => (
-                <div key={m.label} className="flex items-center">
-                  <div className="text-center px-4 md:px-6 first:pl-0">
-                    <div className="font-display text-2xl md:text-3xl font-bold tabular-nums text-white">
-                      {m.value}
-                    </div>
-                    <div className="text-[10px] md:text-xs text-muted-foreground mt-1 tracking-wide">
-                      {m.label}
-                    </div>
-                  </div>
-                  {i < metrics.length - 1 && (
-                    <Separator
-                      orientation="vertical"
-                      className="h-8 bg-white/10"
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
           </div>
 
           {/* ─── RIGHT: ORBITAL VISUALIZATION ─── */}
@@ -130,23 +95,25 @@ export function LandingHero({ metrics }: LandingHeroProps) {
             className="relative hidden lg:flex items-center justify-center h-140 animate-fade-in"
             style={{ animationDelay: "500ms" }}
           >
-            {/* Orbital rings */}
-            <div className="orbital-ring w-80 h-80 orbital-ring-animated" />
+            {/* Concentric rings — large to small */}
             <div className="orbital-ring w-120 h-120 orbital-ring-reverse" />
+            <div className="orbital-ring w-96 h-96 orbital-ring-animated" />
             <div
-              className="orbital-ring w-50 h-50"
+              className="orbital-ring w-72 h-72"
+              style={{ borderColor: "oklch(1 0 0 / 6%)" }}
+            />
+            <div
+              className="orbital-ring w-48 h-48"
+              style={{ borderColor: "oklch(1 0 0 / 5%)" }}
+            />
+            <div
+              className="orbital-ring w-28 h-28"
               style={{ borderColor: "oklch(1 0 0 / 4%)" }}
             />
-
-            {/* Central stat */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center z-10">
-              <div className="font-display text-5xl font-extrabold text-white">
-                10K+
-              </div>
-              <div className="text-sm text-purple-300/70 mt-1">
-                Criativos gerados
-              </div>
-            </div>
+            <div
+              className="orbital-ring w-12 h-12"
+              style={{ borderColor: "oklch(1 0 0 / 3%)" }}
+            />
 
             {/* Ring glow */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-purple-600/10 blur-3xl" />

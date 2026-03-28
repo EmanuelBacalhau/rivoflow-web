@@ -401,6 +401,17 @@
     0 0 60px oklch(0.5 0.2 270 / 8%);
 }
 
+/* Animated dashed line for hero flow */
+@keyframes dash-flow {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+.animate-dash {
+  animation: dash-flow 1.5s linear infinite;
+}
+
 /* Section dramatic divider */
 .section-glow-divider {
   height: 1px;
