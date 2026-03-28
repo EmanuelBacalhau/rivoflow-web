@@ -63,10 +63,14 @@ export default function PaymentSuccessPage() {
 
       <div className="relative z-10 animate-scale-in">
         <div className="mb-6">
-          <CheckCircle2Icon className="size-16 text-green-500 mx-auto" />
+          <div className="w-20 h-20 rounded-full bg-green-500/10 flex items-center justify-center mx-auto">
+            <CheckCircle2Icon className="size-10 text-green-400" />
+          </div>
         </div>
 
-        <h1 className="text-2xl font-bold mb-2">Pagamento aprovado</h1>
+        <h1 className="text-2xl font-bold font-display mb-2">
+          Pagamento aprovado
+        </h1>
 
         <p className="text-sm text-muted-foreground max-w-sm mb-8">
           Seus créditos foram adicionados com sucesso. Sincronizando

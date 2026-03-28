@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRightIcon, MenuIcon, XIcon } from "lucide-react";
+import { MenuIcon, XIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -59,12 +59,6 @@ export function LandingNavbar({ navLinks }: LandingNavbarProps) {
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             Entrar
-          </Link>
-          <Link href="/auth/google">
-            <Button className="rounded-lg h-9 px-4 text-sm">
-              Começar grátis
-              <ArrowRightIcon className="w-3.5 h-3.5 ml-1.5" />
-            </Button>
           </Link>
         </div>
 

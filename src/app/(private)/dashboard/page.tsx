@@ -81,16 +81,20 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col flex-1 min-h-0">
       {/* Top bar */}
-      <div className="sticky top-0 z-20 bg-background border-b border-border px-8 py-4 flex items-center justify-between gap-4">
+      <div className="sticky top-0 z-20 bg-background/80 backdrop-blur-xl border-b border-border px-8 py-4 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           {isMobile && <SidebarTrigger size="icon" />}
-          <h1 className="text-base font-semibold">Dashboard</h1>
+          <h1 className="text-base font-semibold font-display">Dashboard</h1>
         </div>
 
         <div className="flex items-center gap-3">
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" size="sm">
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-white/8 bg-white/3 hover:bg-white/6"
+              >
                 <CircleDollarSignIcon className="size-4 mr-1.5" />
                 Créditos
               </Button>
@@ -117,6 +121,7 @@ export default function DashboardPage() {
                       setCredits(c);
                       setDebouncedCredits(c);
                     }}
+                    className={credits !== c ? "border-white/8 bg-white/3" : ""}
                   >
                     {c.toLocaleString("pt-BR", {
                       style: "currency",
@@ -171,6 +176,7 @@ export default function DashboardPage() {
                   credits < MIN_CREDITS_IN_REALS || isCreatingLinkCharge
                 }
                 onClick={handleCreateLinkCharge}
+                className="shadow-lg shadow-primary/20"
               >
                 {isCreatingLinkCharge
                   ? "Redirecionando..."
@@ -179,7 +185,11 @@ export default function DashboardPage() {
             </DialogContent>
           </Dialog>
 
-          <Button size="sm" onClick={() => setIsCreateOpen(true)}>
+          <Button
+            size="sm"
+            onClick={() => setIsCreateOpen(true)}
+            className="shadow-lg shadow-primary/20"
+          >
             <PlusIcon className="size-4 mr-1.5" />
             Novo flow
           </Button>
@@ -190,7 +200,7 @@ export default function DashboardPage() {
       <div className="flex-1 overflow-y-auto px-8 py-8">
         {/* Welcome */}
         <div className="mb-10">
-          <h2 className="text-2xl font-bold mb-1">
+          <h2 className="text-2xl font-bold font-display mb-1">
             {firstName ? `Olá, ${firstName}` : "Bem-vindo"}
           </h2>
           <p className="text-sm text-muted-foreground">
@@ -200,42 +210,44 @@ export default function DashboardPage() {
 
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-          <div className="p-5 rounded-xl border border-border bg-card">
+          <div className="p-5 rounded-xl border border-white/8 bg-white/3 backdrop-blur-sm">
             <div className="flex items-center gap-2.5 mb-3">
-              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                <LayersIcon className="w-4 h-4 text-primary" />
+              <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
+                <LayersIcon className="w-4 h-4 text-purple-400" />
               </div>
               <span className="text-sm text-muted-foreground font-medium">
                 Flows
               </span>
             </div>
-            <p className="text-3xl font-bold tabular-nums">{flows.length}</p>
+            <p className="text-3xl font-bold font-display tabular-nums">
+              {flows.length}
+            </p>
           </div>
 
-          <div className="p-5 rounded-xl border border-border bg-card">
+          <div className="p-5 rounded-xl border border-white/8 bg-white/3 backdrop-blur-sm">
             <div className="flex items-center gap-2.5 mb-3">
               <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
-                <ZapIcon className="w-4 h-4 text-amber-500" />
+                <ZapIcon className="w-4 h-4 text-amber-400" />
               </div>
               <span className="text-sm text-muted-foreground font-medium">
                 Créditos
               </span>
             </div>
-            <p className="text-3xl font-bold tabular-nums">
+            <p className="text-3xl font-bold font-display tabular-nums">
               {me?.balance.credits ?? 0}
             </p>
           </div>
 
-          <div className="p-5 rounded-xl border border-border bg-card">
+          <div className="p-5 rounded-xl border border-white/8 bg-white/3 backdrop-blur-sm">
             <div className="flex items-center gap-2.5 mb-3">
               <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center">
-                <SparklesIcon className="w-4 h-4 text-green-500" />
+                <SparklesIcon className="w-4 h-4 text-green-400" />
               </div>
               <span className="text-sm text-muted-foreground font-medium">
                 Gerados
               </span>
             </div>
-            <p className="text-3xl font-bold tabular-nums">
+            <p className="text-3xl font-bold font-display tabular-nums">
               {me?.balance.lifetimeSpent ?? 0}
             </p>
           </div>
@@ -243,8 +255,8 @@ export default function DashboardPage() {
 
         {/* Flows */}
         <div className="flex items-center justify-between gap-4 mb-5">
-          <h3 className="text-base font-semibold">Seus flows</h3>
-          <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm w-full max-w-64 focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/20 transition-all">
+          <h3 className="text-base font-semibold font-display">Seus flows</h3>
+          <div className="flex items-center gap-2 rounded-lg border border-white/8 bg-white/3 backdrop-blur-sm px-3 py-2 text-sm w-full max-w-64 focus-within:border-purple-500/30 focus-within:ring-1 focus-within:ring-purple-500/15 transition-all">
             <SearchIcon className="size-4 text-muted-foreground shrink-0" />
             <input
               type="text"

@@ -567,18 +567,23 @@ export function FlowProvider({ children }: { children: ReactNode }) {
   });
 
   const onNodesChange = (changes: NodeChange[]) => {
+    // Collect node IDs to delete BEFORE applying changes (nodes still exist in state)
+    const nodesToDelete: string[] = [];
     for (const change of changes) {
       if (change.type === "remove") {
         deletedNodeIdsRef.current.add(change.id);
+        nodesToDelete.push(change.id);
       }
     }
 
+    // Apply changes to local state (this removes the nodes from nodesRef)
     setNodes((nodesSnapshot) => {
       const updated = applyNodeChanges(changes, nodesSnapshot);
       nodesRef.current = updated;
       return updated;
     });
 
+    // Handle position updates
     for (const change of changes) {
       if (change.type === "position" && change.position) {
         const nodeId = change.id;
@@ -593,53 +598,56 @@ export function FlowProvider({ children }: { children: ReactNode }) {
           position: change.position,
         });
       }
+    }
 
-      if (change.type === "remove") {
-        const nodeId = change.id;
-        const node = nodesRef.current.find((n) => n.id === nodeId);
-        if (!node) continue;
-
-        if (nodeId.startsWith("temp-")) {
-          pendingDeleteRef.current.add(nodeId);
-          continue;
-        }
-
-        deleteNode({
-          nodeId,
-          flowId,
-        }).catch(() => {
-          toast.error("Erro ao deletar nó. Tente novamente.");
-        });
+    // Handle deletions (using IDs collected before state update)
+    for (const nodeId of nodesToDelete) {
+      if (nodeId.startsWith("temp-")) {
+        pendingDeleteRef.current.add(nodeId);
+        continue;
       }
+
+      deleteNode({
+        nodeId,
+        flowId,
+      }).catch(() => {
+        toast.error("Erro ao deletar nó. Tente novamente.");
+      });
     }
   };
 
   const onEdgesChange = (changes: EdgeChange[]) => {
+    // Collect edges to delete BEFORE applying changes (edges still exist in state)
+    const edgesToDelete: { edgeId: string; source: string; target: string }[] =
+      [];
+    for (const change of changes) {
+      if (change.type === "remove") {
+        const edge = edgesRef.current.find((e) => e.id === change.id);
+        if (edge) {
+          edgesToDelete.push({
+            edgeId: change.id,
+            source: edge.source,
+            target: edge.target,
+          });
+        }
+      }
+    }
+
     setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot));
-    const edgesForDelete = changes
-      .filter((change) => change.type === "remove")
-      .map((edge) => ({
-        edgeId: edge.id,
-        flowId,
-      }));
 
-    edgesForDelete.forEach(({ edgeId, flowId }) => {
-      const edge = edgesRef.current.find((e) => e.id === edgeId);
-      if (!edge) return;
+    // Only call deleteEdge API if the edge was explicitly removed (not as a side-effect of node deletion)
+    for (const { edgeId, source, target } of edgesToDelete) {
+      const isSourceDeleted = deletedNodeIdsRef.current.has(source);
+      const isTargetDeleted = deletedNodeIdsRef.current.has(target);
+      if (isSourceDeleted || isTargetDeleted) continue;
 
-      const isSourceDeleted = deletedNodeIdsRef.current.has(edge.source);
-      const isTargetDeleted = deletedNodeIdsRef.current.has(edge.target);
-      if (isSourceDeleted || isTargetDeleted) return;
-
-      const sourceNode = nodesRef.current.find((n) => n.id === edge.source);
-      const targetNode = nodesRef.current.find((n) => n.id === edge.target);
-
-      if (!sourceNode || !targetNode) return;
+      const targetNode = nodesRef.current.find((n) => n.id === target);
+      if (!targetNode) continue;
 
       deleteEdge({ edgeId, flowId, node: targetNode }).catch(() => {
         toast.error("Erro ao deletar conexão. Tente novamente.");
       });
-    });
+    }
   };
 
   const onConnect = (params: Connection) => {

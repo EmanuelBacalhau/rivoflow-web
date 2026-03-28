@@ -27,7 +27,7 @@ export function ListFlows({ flows, loading }: ListFlowsProps) {
 
       {flows.length === 0 && !loading && (
         <div className="flex flex-col items-center justify-center gap-4 py-20">
-          <div className="w-14 h-14 rounded-xl bg-muted flex items-center justify-center">
+          <div className="w-14 h-14 rounded-xl bg-white/5 flex items-center justify-center">
             <LayersIcon className="size-7 text-muted-foreground/40" />
           </div>
           <div className="text-center">

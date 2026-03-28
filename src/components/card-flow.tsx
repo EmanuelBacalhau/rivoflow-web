@@ -33,12 +33,12 @@ export function CardFlow({ flow }: CardFlowProps) {
   return (
     <Card
       key={flow.id}
-      className="p-0 overflow-hidden hover:border-primary/30 transition-colors group"
+      className="p-0 overflow-hidden border-white/8 bg-white/3 backdrop-blur-sm hover:border-purple-500/25 transition-all duration-300 group shadow-none"
     >
       <CardContent className="p-0">
         <Link href={`/dashboard/flow/${flow.id}`}>
-          <div className="p-6 bg-muted/30 grid place-items-center">
-            <LayersIcon className="size-12 text-muted-foreground/30" />
+          <div className="p-6 bg-white/2 grid place-items-center">
+            <LayersIcon className="size-12 text-muted-foreground/20" />
           </div>
         </Link>
 

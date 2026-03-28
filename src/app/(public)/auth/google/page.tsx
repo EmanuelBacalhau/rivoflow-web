@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowRightIcon, ShieldCheckIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Background } from "@/components/background";
@@ -11,8 +12,8 @@ function GoogleIcon() {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
-      width="18"
-      height="18"
+      width="20"
+      height="20"
       aria-hidden="true"
     >
       <path
@@ -53,61 +54,92 @@ export default function GoogleLoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background px-4">
+    <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden px-4">
       <Background />
 
-      <div className="w-full max-w-sm flex-1 flex items-center justify-center relative z-10">
-        <div className="rounded-xl border border-border bg-card p-8 shadow-lg w-full animate-scale-in">
-          <div className="flex flex-col items-center gap-6">
-            <Link href="/" className="flex flex-col items-center gap-2">
-              <Image
-                src="/logo.png"
-                alt="RIVOFLOW"
-                width={40}
-                height={40}
-                className="rounded-lg"
-              />
-              <span className="text-base font-semibold tracking-tight">
-                RIVOFLOW
-              </span>
-            </Link>
+      {/* ─── LOGIN CARD ─── */}
+      <div className="relative z-10 w-full max-w-sm animate-scale-in">
+        <div className="rounded-2xl border border-white/8 bg-white/3 backdrop-blur-xl p-8 shadow-2xl shadow-purple-500/5">
+          <div className="flex flex-col items-center gap-7">
+            {/* Logo with glow */}
+            <div className="relative">
+              <div className="absolute -inset-5 bg-purple-500/15 blur-2xl rounded-full animate-glow-pulse" />
+              <Link
+                href="/"
+                className="relative flex flex-col items-center gap-2.5"
+              >
+                <Image
+                  src="/logo.png"
+                  alt="RIVOFLOW"
+                  width={48}
+                  height={48}
+                  className="rounded-xl"
+                />
+                <span className="text-lg font-semibold font-display tracking-tight text-white">
+                  RivoFlow
+                </span>
+              </Link>
+            </div>
 
-            <div className="w-full h-px bg-border" />
-
-            <div className="text-center space-y-1">
-              <h1 className="text-lg font-semibold">Bem-vindo(a)</h1>
-              <p className="text-[13px] text-muted-foreground">
-                Entre com sua conta Google para continuar
+            {/* Header */}
+            <div className="text-center space-y-2">
+              <h2 className="text-2xl font-bold font-display text-white">
+                Bem-vindo(a)
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Entre com sua conta Google para começar a criar
               </p>
             </div>
 
+            {/* Google button */}
             <button
               type="button"
               onClick={handleGoogleSignIn}
-              className="w-full flex items-center justify-center gap-2.5 rounded-lg border border-border bg-white text-neutral-800 px-4 py-2.5 text-sm font-medium hover:bg-neutral-50 active:bg-neutral-100 transition-colors cursor-pointer"
+              className="w-full flex items-center justify-center gap-3 rounded-xl bg-white text-neutral-800 px-5 py-3 text-sm font-semibold hover:bg-neutral-50 active:bg-neutral-100 transition-all duration-200 cursor-pointer shadow-lg shadow-white/5 group"
             >
               <GoogleIcon />
               Continuar com o Google
+              <ArrowRightIcon className="w-4 h-4 text-neutral-400 group-hover:translate-x-0.5 transition-transform" />
             </button>
 
-            <p className="text-center text-[11px] text-muted-foreground leading-relaxed">
-              Ao continuar, você concorda com nossos{" "}
-              <Link
-                href="/terms"
-                className="underline underline-offset-2 hover:text-foreground transition-colors"
-              >
-                Termos
-              </Link>{" "}
-              e{" "}
-              <Link
-                href="/privacy"
-                className="underline underline-offset-2 hover:text-foreground transition-colors"
-              >
-                Privacidade
-              </Link>
-            </p>
+            {/* Divider */}
+            <div className="w-full flex items-center gap-4">
+              <div className="flex-1 h-px bg-white/8" />
+              <span className="text-[10px] text-muted-foreground/40 uppercase tracking-widest">
+                Seguro
+              </span>
+              <div className="flex-1 h-px bg-white/8" />
+            </div>
+
+            {/* Trust signals */}
+            <div className="flex items-center gap-4 text-[11px] text-muted-foreground/50">
+              <div className="flex items-center gap-1.5">
+                <ShieldCheckIcon className="w-3 h-3" />
+                <span>Dados protegidos</span>
+              </div>
+              <span className="w-1 h-1 rounded-full bg-white/10" />
+              <span>Sem cartão</span>
+            </div>
           </div>
         </div>
+
+        {/* Footer links */}
+        <p className="text-center text-[11px] text-muted-foreground/40 mt-6 leading-relaxed">
+          Ao continuar, você concorda com nossos{" "}
+          <Link
+            href="/terms"
+            className="underline underline-offset-2 hover:text-foreground/60 transition-colors"
+          >
+            Termos
+          </Link>{" "}
+          e{" "}
+          <Link
+            href="/privacy"
+            className="underline underline-offset-2 hover:text-foreground/60 transition-colors"
+          >
+            Privacidade
+          </Link>
+        </p>
       </div>
     </div>
   );

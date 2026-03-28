@@ -77,7 +77,9 @@ export function AppSidebar() {
             height={28}
             className="rounded-md"
           />
-          <span className="text-sm font-semibold tracking-tight">RIVOFLOW</span>
+          <span className="text-sm font-semibold font-display tracking-tight">
+            RIVOFLOW
+          </span>
         </Link>
       </SidebarHeader>
 
@@ -97,7 +99,7 @@ export function AppSidebar() {
             Novo flow
           </Button>
           {showSearch && (
-            <div className="flex items-center gap-2 rounded-md border border-border bg-card px-2.5 py-1.5 text-sm text-muted-foreground transition-colors focus-within:border-primary/50 mt-2">
+            <div className="flex items-center gap-2 rounded-md border border-white/8 bg-white/3 px-2.5 py-1.5 text-sm text-muted-foreground transition-colors focus-within:border-purple-500/30 mt-2">
               <SearchIcon className="size-3 text-muted-foreground" />
               <input
                 type="text"

@@ -51,7 +51,7 @@ function ToolButton({
         <button
           type="button"
           onClick={onClick}
-          className={`relative size-9 flex items-center justify-center rounded-lg transition-all duration-150 hover:bg-accent active:scale-95 cursor-pointer ${color}`}
+          className={`relative size-9 flex items-center justify-center rounded-lg transition-all duration-150 hover:bg-white/8 active:scale-95 cursor-pointer ${color}`}
         >
           {icon}
         </button>
@@ -59,7 +59,7 @@ function ToolButton({
       <TooltipContent side="bottom" sideOffset={8}>
         <span>{label}</span>
         {shortcut && (
-          <kbd className="ml-1.5 inline-flex items-center justify-center size-4 rounded bg-background/20 font-mono text-[10px] leading-none">
+          <kbd className="ml-1.5 inline-flex items-center justify-center size-4 rounded bg-white/10 font-mono text-[10px] leading-none">
             {shortcut}
           </kbd>
         )}
@@ -91,7 +91,7 @@ function AIToolItem({
     <button
       type="button"
       onClick={onClick}
-      className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg transition-all duration-150 hover:bg-accent active:scale-[0.98] cursor-pointer text-left group"
+      className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg transition-all duration-150 hover:bg-white/6 active:scale-[0.98] cursor-pointer text-left group"
     >
       <div
         className={`size-8 rounded-lg flex items-center justify-center shrink-0 ${bgColor} ${color} transition-transform duration-150 group-hover:scale-110`}
@@ -103,7 +103,7 @@ function AIToolItem({
           <span className="text-[13px] font-medium text-foreground">
             {label}
           </span>
-          <kbd className="inline-flex items-center justify-center px-1.5 h-4 rounded bg-muted font-mono text-[10px] text-muted-foreground leading-none">
+          <kbd className="inline-flex items-center justify-center px-1.5 h-4 rounded bg-white/8 font-mono text-[10px] text-muted-foreground leading-none">
             {shortcut}
           </kbd>
         </div>
@@ -138,7 +138,7 @@ export function Toolbar({
     <div
       className={`absolute top-3 ${isMobile ? "left-3 right-3" : "left-1/2 -translate-x-1/2"} z-10`}
     >
-      <div className="inline-flex items-center gap-0.5 bg-card/95 backdrop-blur-sm border border-border rounded-xl shadow-lg px-1.5 py-1">
+      <div className="inline-flex items-center gap-0.5 bg-background/80 backdrop-blur-xl border border-white/8 rounded-xl shadow-lg shadow-black/20 px-1.5 py-1">
         {isMobile && <SidebarTrigger className="size-9" />}
 
         {/* Input nodes */}
@@ -146,36 +146,36 @@ export function Toolbar({
           icon={<MessageCircleMoreIcon className="size-4" strokeWidth={1.8} />}
           label="Prompt"
           shortcut="P"
-          color="text-amber-500"
+          color="text-amber-400"
           onClick={onAddPromptNode}
         />
         <ToolButton
           icon={<ImagePlusIcon className="size-4" strokeWidth={1.8} />}
           label="Imagem"
           shortcut="I"
-          color="text-blue-500"
+          color="text-blue-400"
           onClick={onAddImageNode}
         />
         <ToolButton
           icon={<VideotapeIcon className="size-4" strokeWidth={1.8} />}
           label="Vídeo"
           shortcut="O"
-          color="text-violet-500"
+          color="text-violet-400"
           onClick={onAddVideoNode}
         />
 
         {/* Divider */}
-        <div className="w-px h-5 bg-border mx-1" />
+        <div className="w-px h-5 bg-white/8 mx-1" />
 
         {/* AI tools popover */}
         <Popover open={aiOpen} onOpenChange={setAiOpen}>
           <PopoverTrigger asChild>
             <button
               type="button"
-              className="flex items-center gap-1.5 h-9 px-3 rounded-lg bg-linear-to-r from-purple-500/10 to-indigo-500/10 hover:from-purple-500/20 hover:to-indigo-500/20 border border-purple-500/20 transition-all duration-150 active:scale-95 cursor-pointer"
+              className="flex items-center gap-1.5 h-9 px-3 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 transition-all duration-150 active:scale-95 cursor-pointer"
             >
               <WandSparklesIcon
-                className="size-4 text-purple-500"
+                className="size-4 text-purple-400"
                 strokeWidth={1.8}
               />
               <span className="text-[12px] font-semibold text-foreground">
@@ -199,7 +199,7 @@ export function Toolbar({
                 label="Gerar Imagem"
                 description="Texto para imagem"
                 shortcut="T"
-                color="text-indigo-600"
+                color="text-indigo-400"
                 bgColor="bg-indigo-500/15"
                 onClick={() => handleAITool(onAddTextToImageNode)}
               />
@@ -208,19 +208,19 @@ export function Toolbar({
                 label="Editar Imagem"
                 description="Prompt + imagem de referência"
                 shortcut="G"
-                color="text-purple-600"
+                color="text-purple-400"
                 bgColor="bg-purple-500/15"
                 onClick={() => handleAITool(onAddGenerationImageNode)}
               />
 
-              <div className="h-px bg-border mx-2 my-1" />
+              <div className="h-px bg-white/8 mx-2 my-1" />
 
               <AIToolItem
                 icon={<MaximizeIcon className="size-4" strokeWidth={1.8} />}
                 label="Upscale"
                 description="Aumentar resolução"
                 shortcut="U"
-                color="text-teal-600"
+                color="text-teal-400"
                 bgColor="bg-teal-500/15"
                 onClick={() => handleAITool(onAddUpscaleNode)}
               />
@@ -229,19 +229,19 @@ export function Toolbar({
                 label="Remover Fundo"
                 description="Isolar o objeto principal"
                 shortcut="R"
-                color="text-rose-600"
+                color="text-rose-400"
                 bgColor="bg-rose-500/15"
                 onClick={() => handleAITool(onAddRemoveBgNode)}
               />
 
-              <div className="h-px bg-border mx-2 my-1" />
+              <div className="h-px bg-white/8 mx-2 my-1" />
 
               <AIToolItem
                 icon={<VideoIcon className="size-4" strokeWidth={1.8} />}
                 label="Gerar Vídeo"
                 description="Imagem para vídeo"
                 shortcut="V"
-                color="text-orange-600"
+                color="text-orange-400"
                 bgColor="bg-orange-500/15"
                 onClick={() => handleAITool(onAddImageToVideoNode)}
               />
@@ -252,7 +252,7 @@ export function Toolbar({
                 label="Transferir Movimento"
                 description="Aplicar movimento de vídeo em imagem"
                 shortcut="M"
-                color="text-pink-600"
+                color="text-pink-400"
                 bgColor="bg-pink-500/15"
                 onClick={() => handleAITool(onAddMotionControlNode)}
               />

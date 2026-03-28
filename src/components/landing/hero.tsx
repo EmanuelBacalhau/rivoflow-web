@@ -37,17 +37,6 @@ export function LandingHero({ metrics }: LandingHeroProps) {
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           {/* ─── LEFT: TEXT CONTENT ─── */}
           <div className="max-w-xl">
-            {/* Badge */}
-            <div className="animate-fade-in mb-8">
-              <Badge
-                variant="outline"
-                className="px-4 py-1.5 text-sm font-medium border-purple-500/20 bg-purple-500/10 text-purple-300"
-              >
-                <span className="flex h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />
-                Pague apenas pelo que usar
-              </Badge>
-            </div>
-
             {/* Headline */}
             <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.05] mb-7 animate-slide-up">
               Crie criativos
@@ -67,24 +56,22 @@ export function LandingHero({ metrics }: LandingHeroProps) {
             </p>
 
             {/* CTAs */}
-            <div
-              className="flex flex-col sm:flex-row items-start gap-4 mb-10 animate-slide-up"
-              style={{ animationDelay: "200ms" }}
-            >
-              <Link href="/auth/google">
+            <div className="flex flex-col sm:flex-row items-start gap-4 mb-10 animate-slide-up delay-200">
+              <Link href="/auth/google" className="w-full">
                 <Button
                   size="lg"
-                  className="h-13 px-10 text-base rounded-full shadow-lg shadow-primary/25"
+                  className="h-13 px-10 text-base rounded-full shadow-lg shadow-primary/25 w-full"
                 >
                   Começar grátis
                   <ArrowRightIcon className="w-4 h-4 ml-2" />
                 </Button>
               </Link>
-              <Link href="#how-it-works">
+
+              <Link href="#how-it-works" className="w-full">
                 <Button
                   variant="outline"
                   size="lg"
-                  className="h-13 px-10 text-base rounded-full border-white/10 bg-white/5 hover:bg-white/10"
+                  className="h-13 px-10 text-base rounded-full w-full"
                 >
                   Como funciona
                 </Button>
