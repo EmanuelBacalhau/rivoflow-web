@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Sora } from "next/font/google";
 import "./globals.css";
 import "@xyflow/react/dist/style.css";
 import Script from "next/script";
@@ -8,6 +8,12 @@ import { MainProvider } from "@/providers/main-provider";
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+});
+
+const sora = Sora({
+  variable: "--font-sora",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -101,7 +107,9 @@ export default function RootLayout({
           {JSON.stringify(jsonLd)}
         </Script>
       </head>
-      <body className={`${inter.variable} antialiased min-h-screen dark`}>
+      <body
+        className={`${inter.variable} ${sora.variable} antialiased min-h-screen dark`}
+      >
         <MainProvider>{children}</MainProvider>
       </body>
     </html>

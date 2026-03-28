@@ -41,8 +41,8 @@ const features = [
       "Monte pipelines de criação arrastando e conectando nós. Reutilize fluxos completos com um clique.",
     wide: true,
     icon: LayersIcon,
-    color: "text-indigo-500",
-    bg: "bg-primary/10",
+    color: "text-indigo-400",
+    bg: "bg-indigo-500/10",
   },
   {
     id: "speed",
@@ -50,7 +50,7 @@ const features = [
     description: "IA de última geração que entrega seu criativo em instantes.",
     wide: false,
     icon: ZapIcon,
-    color: "text-amber-500",
+    color: "text-amber-400",
     bg: "bg-amber-500/10",
   },
   {
@@ -60,7 +60,7 @@ const features = [
       "Story, feed, banner, thumbnail — em todas as proporções que você precisar.",
     wide: false,
     icon: LayoutGridIcon,
-    color: "text-blue-500",
+    color: "text-blue-400",
     bg: "bg-blue-500/10",
   },
   {
@@ -70,7 +70,7 @@ const features = [
       "Envie imagens de referência para guiar a geração com precisão. O resultado mantém a consistência da sua marca e identidade visual.",
     wide: true,
     icon: ImageIcon,
-    color: "text-green-500",
+    color: "text-green-400",
     bg: "bg-green-500/10",
   },
   {
@@ -80,7 +80,7 @@ const features = [
       "Todas as suas gerações ficam salvas automaticamente. Acesse, baixe ou reutilize seus melhores resultados a qualquer momento no seu painel.",
     wide: true,
     icon: CloudIcon,
-    color: "text-purple-500",
+    color: "text-purple-400",
     bg: "bg-purple-500/10",
   },
   {
@@ -90,7 +90,7 @@ const features = [
       "Arquivos em altíssima resolução, totalmente prontos para publicações.",
     wide: false,
     icon: Settings2Icon,
-    color: "text-pink-500",
+    color: "text-pink-400",
     bg: "bg-pink-500/10",
   },
 ];

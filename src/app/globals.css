@@ -5,6 +5,8 @@
 
 @theme inline {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display:
+    var(--font-sora), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-mono);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -145,7 +147,7 @@
 @keyframes slide-up {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(24px);
   }
   to {
     opacity: 1;
@@ -167,7 +169,7 @@
 @keyframes scale-in {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.92);
   }
   to {
     opacity: 1;
@@ -184,12 +186,47 @@
   }
 }
 
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-8px) rotate(1deg);
+  }
+  66% {
+    transform: translateY(4px) rotate(-1deg);
+  }
+}
+
+@keyframes glow-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 .animate-fade-in {
-  animation: fade-in 0.5s ease-out both;
+  animation: fade-in 0.6s ease-out both;
 }
 
 .animate-slide-up {
-  animation: slide-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: slide-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .animate-slide-down {
@@ -197,12 +234,166 @@
 }
 
 .animate-scale-in {
-  animation: scale-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: scale-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .animate-shimmer {
   background-size: 200% 100%;
   animation: shimmer 2s linear infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 4s ease-in-out infinite;
+}
+
+/* ════════════════════════════════════
+   GRADIENT TEXT
+   ════════════════════════════════════ */
+
+.text-gradient-primary {
+  background: linear-gradient(
+    135deg,
+    oklch(0.75 0.25 280),
+    oklch(0.7 0.22 260),
+    oklch(0.65 0.2 300)
+  );
+  background-size: 200% 200%;
+  animation: gradient-shift 5s ease infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ════════════════════════════════════
+   GLOW & EFFECTS
+   ════════════════════════════════════ */
+
+.glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+}
+
+.card-glow {
+  position: relative;
+}
+
+.card-glow::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    oklch(0.6 0.22 270 / 20%),
+    transparent 50%,
+    oklch(0.6 0.2 220 / 15%)
+  );
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.card-glow:hover::before {
+  opacity: 1;
+}
+
+/* Dot pattern background */
+.dot-pattern {
+  background-image: radial-gradient(
+    circle,
+    oklch(1 0 0 / 5%) 1px,
+    transparent 1px
+  );
+  background-size: 24px 24px;
+}
+
+/* ════════════════════════════════════
+   HERO GRADIENT MESH
+   ════════════════════════════════════ */
+
+.hero-gradient {
+  background:
+    radial-gradient(
+      ellipse 80% 50% at 65% 40%,
+      oklch(0.22 0.18 280 / 50%) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 40% 60% at 85% 20%,
+      oklch(0.2 0.14 300 / 35%) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 50% 40% at 15% 80%,
+      oklch(0.16 0.1 270 / 25%) 0%,
+      transparent 50%
+    ), oklch(0.06 0.01 280);
+}
+
+/* ════════════════════════════════════
+   ORBITAL RINGS
+   ════════════════════════════════════ */
+
+@keyframes orbit-slow {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes orbit-reverse {
+  from {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+}
+
+.orbital-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid oklch(1 0 0 / 6%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.orbital-ring-animated {
+  animation: orbit-slow 60s linear infinite;
+}
+
+.orbital-ring-reverse {
+  animation: orbit-reverse 45s linear infinite;
+}
+
+/* Floating node card in hero */
+.hero-float-card {
+  backdrop-filter: blur(12px);
+  border: 1px solid oklch(1 0 0 / 10%);
+  background: oklch(0.12 0.01 270 / 80%);
+  box-shadow:
+    0 8px 32px oklch(0 0 0 / 40%),
+    0 0 60px oklch(0.5 0.2 270 / 8%);
+}
+
+/* Section dramatic divider */
+.section-glow-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    oklch(0.6 0.22 270 / 30%),
+    transparent
+  );
 }
 
 /* ════════════════════════════════════

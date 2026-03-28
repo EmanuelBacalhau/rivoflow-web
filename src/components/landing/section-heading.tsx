@@ -1,7 +1,9 @@
+import { Badge } from "@/components/ui/badge";
+
 interface SectionHeadingProps {
   label: string;
   title: React.ReactNode;
-  subtitle: string;
+  subtitle?: string;
 }
 
 export function SectionHeading({
@@ -11,10 +13,13 @@ export function SectionHeading({
 }: SectionHeadingProps) {
   return (
     <div className="text-center mb-16">
-      <p className="text-xs text-primary font-semibold uppercase tracking-widest mb-4">
+      <Badge
+        variant="outline"
+        className="mb-5 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-primary border-primary/20 bg-primary/5"
+      >
         {label}
-      </p>
-      <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-5">
+      </Badge>
+      <h2 className="font-display text-3xl md:text-5xl font-bold tracking-tight mb-5">
         {title}
       </h2>
       {subtitle && (

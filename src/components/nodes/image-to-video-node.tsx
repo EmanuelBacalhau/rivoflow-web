@@ -253,7 +253,7 @@ export function ImageToVideoNode({ id, data, selected }: NodeProps) {
               <SelectTrigger className="w-full nodrag nopan h-8 text-xs">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent position="popper" className="nowheel">
                 <SelectGroup>
                   <SelectItem value="standard">
                     <span className="text-xs">Padrão</span>
@@ -281,7 +281,7 @@ export function ImageToVideoNode({ id, data, selected }: NodeProps) {
               <SelectTrigger className="w-full nodrag nopan h-8 text-xs">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent position="popper" className="nowheel">
                 <SelectGroup>
                   <SelectLabel className="text-[10px]">Segundos</SelectLabel>
                   {(nodeData.tier === "premium"
@@ -314,7 +314,7 @@ export function ImageToVideoNode({ id, data, selected }: NodeProps) {
               <SelectTrigger className="w-full nodrag nopan h-8 text-xs">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent position="popper" className="nowheel">
                 <SelectGroup>
                   <SelectItem value="1080p">
                     <span className="text-xs">1080p Full HD</span>
@@ -345,7 +345,7 @@ export function ImageToVideoNode({ id, data, selected }: NodeProps) {
               <SelectTrigger className="w-full nodrag nopan h-8 text-xs">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent position="popper" className="nowheel">
                 <SelectGroup>
                   <SelectItem value="auto">
                     <span className="text-xs">Auto</span>

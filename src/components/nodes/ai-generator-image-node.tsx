@@ -214,7 +214,7 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
               <SelectTrigger className="w-full nodrag nopan h-8 text-xs">
                 <SelectValue placeholder="1:1" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent position="popper" className="nowheel">
                 <SelectGroup>
                   <SelectLabel className="text-[10px]">Proporção</SelectLabel>
                   <SelectItem value="9:16">
@@ -264,7 +264,7 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
               <SelectTrigger className="w-full nodrag nopan h-8 text-xs">
                 <SelectValue placeholder="1K" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent position="popper" className="nowheel">
                 <SelectGroup>
                   <SelectLabel className="text-[10px]">Resolução</SelectLabel>
                   <SelectItem value="0.5K">
