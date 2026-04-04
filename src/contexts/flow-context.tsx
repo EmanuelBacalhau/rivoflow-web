@@ -844,9 +844,7 @@ export function FlowProvider({ children }: { children: ReactNode }) {
       if (isSourceVideo) {
         const videoDuration = sourceNode.data.duration as number | undefined;
         if (videoDuration && videoDuration > 30) {
-          toast.error(
-            "O vídeo deve ter no máximo 30 segundos para o Motion Control.",
-          );
+          toast.error("O vídeo deve ter no máximo 30 segundos.");
           return;
         }
       }
