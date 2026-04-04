@@ -16,18 +16,17 @@ const securityHeaders = [
   },
 ];
 
+const assetsHostname = process.env.NEXT_PUBLIC_ASSETS_URL
+  ? new URL(process.env.NEXT_PUBLIC_ASSETS_URL).hostname
+  : "";
+
 const nextConfig: NextConfig = {
   reactCompiler: true,
   images: {
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "assets-flow.rivocode.com.br",
-      },
-      {
-        protocol: "https",
-        hostname: "assets-dev-flow.rivocode.com.br",
-      },
+      ...(assetsHostname
+        ? [{ protocol: "https" as const, hostname: assetsHostname }]
+        : []),
       {
         protocol: "https",
         hostname: "lh3.googleusercontent.com",

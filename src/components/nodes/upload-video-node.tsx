@@ -36,6 +36,7 @@ export function UploadVideoNode({ id, data, selected }: NodeProps) {
   const nodeData = data as UploadVideoNodeData;
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const inputId = `input-video-${id}`;
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,38 +95,50 @@ export function UploadVideoNode({ id, data, selected }: NodeProps) {
       <CardContent className="p-3">
         {nodeData.videoUrl ? (
           <div className="w-full h-40 overflow-hidden rounded-lg relative group border border-violet-500/20 bg-black">
+            {!isVideoLoaded && (
+              <div className="absolute inset-0 flex items-center justify-center bg-muted animate-pulse">
+                <VideotapeIcon className="size-5 text-muted-foreground/30" />
+              </div>
+            )}
             <video
               src={nodeData.videoUrl}
-              className="w-full h-full object-cover"
+              className={`w-full h-full object-cover transition-opacity duration-300 ${isVideoLoaded ? "opacity-100" : "opacity-0"}`}
               muted
               loop
               autoPlay
               playsInline
+              onLoadedData={() => setIsVideoLoaded(true)}
             />
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button size="icon" className="cursor-pointer nodrag">
-                    <PlayCircleIcon className="size-5" />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-4xl p-0 overflow-hidden border-none outline-none">
-                  <DialogTitle className="sr-only">
-                    Visualização do vídeo
-                  </DialogTitle>
-                  <div className="relative w-full bg-black rounded-lg">
-                    {/* biome-ignore lint/a11y/useMediaCaption: user-uploaded video has no captions */}
-                    <video
-                      src={nodeData.videoUrl}
-                      className="w-full max-h-[80vh]"
-                      controls
-                      autoPlay
-                      playsInline
-                    />
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </div>
+            {isVideoLoaded && (
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button
+                      size="icon"
+                      className="cursor-pointer nodrag"
+                      aria-label="Reproduzir vídeo em tela cheia"
+                    >
+                      <PlayCircleIcon className="size-5" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-4xl p-0 overflow-hidden border-none outline-none">
+                    <DialogTitle className="sr-only">
+                      Visualização do vídeo
+                    </DialogTitle>
+                    <div className="relative w-full bg-black rounded-lg">
+                      {/* biome-ignore lint/a11y/useMediaCaption: user-uploaded video has no captions */}
+                      <video
+                        src={nodeData.videoUrl}
+                        className="w-full max-h-[80vh]"
+                        controls
+                        autoPlay
+                        playsInline
+                      />
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            )}
           </div>
         ) : (
           <label htmlFor={inputId} className="block nodrag nopan">

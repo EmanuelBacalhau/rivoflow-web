@@ -38,6 +38,7 @@ export function UploadImageNode({ id, data, selected }: NodeProps) {
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
   const inputId = `input-file-${id}`;
 
   const handleFileChange = async (
@@ -105,6 +106,11 @@ export function UploadImageNode({ id, data, selected }: NodeProps) {
       <CardContent className="p-3">
         {nodeData.imageUrl ? (
           <div className="w-full h-40 overflow-hidden rounded-lg relative group border border-blue-500/20">
+            {!isImageLoaded && (
+              <div className="absolute inset-0 flex items-center justify-center bg-muted animate-pulse">
+                <ImagePlusIcon className="size-5 text-muted-foreground/30" />
+              </div>
+            )}
             <Image
               src={nodeData.imageUrl}
               alt="Imagem de referência enviada"
@@ -112,36 +118,39 @@ export function UploadImageNode({ id, data, selected }: NodeProps) {
               sizes="256px"
               quality={100}
               priority
-              className="object-cover"
+              className={`object-cover transition-opacity duration-300 ${isImageLoaded ? "opacity-100" : "opacity-0"}`}
+              onLoad={() => setIsImageLoaded(true)}
             />
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button
-                    size="icon"
-                    className="cursor-pointer nodrag"
-                    aria-label="Ampliar imagem"
-                  >
-                    <ZoomInIcon className="size-5" />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-4xl p-0 overflow-hidden">
-                  <DialogTitle className="sr-only">
-                    Visualização da imagem
-                  </DialogTitle>
-                  <div className="relative w-full h-[80vh]">
-                    <Image
-                      src={nodeData.imageUrl}
-                      alt="Visualização da imagem"
-                      fill
-                      sizes="(max-width: 896px) 100vw, 896px"
-                      quality={100}
-                      className="object-contain"
-                    />
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </div>
+            {isImageLoaded && (
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button
+                      size="icon"
+                      className="cursor-pointer nodrag"
+                      aria-label="Ampliar imagem"
+                    >
+                      <ZoomInIcon className="size-5" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-4xl p-0 overflow-hidden">
+                    <DialogTitle className="sr-only">
+                      Visualização da imagem
+                    </DialogTitle>
+                    <div className="relative w-full h-[80vh]">
+                      <Image
+                        src={nodeData.imageUrl}
+                        alt="Visualização da imagem"
+                        fill
+                        sizes="(max-width: 896px) 100vw, 896px"
+                        quality={100}
+                        className="object-contain"
+                      />
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            )}
           </div>
         ) : (
           <label htmlFor={inputId} className="block nodrag nopan">

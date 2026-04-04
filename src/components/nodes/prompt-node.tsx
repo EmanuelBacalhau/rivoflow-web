@@ -109,7 +109,7 @@ export function PromptNode({ id: nodeId, data, selected }: NodeProps) {
 
       <CardContent className="p-3 space-y-2">
         <Textarea
-          className="nodrag nopan nowheel resize-none min-h-24 text-xs bg-muted border-amber-500/30 focus-visible:ring-amber-500/30 placeholder:text-muted-foreground"
+          className="nodrag nopan nowheel resize-none min-h-24 max-h-40 overflow-y-auto text-xs bg-muted border-amber-500/30 focus-visible:ring-amber-500/30 placeholder:text-muted-foreground"
           placeholder="Ex: produto minimalista, fundo clean, luz natural suave..."
           value={prompt}
           onChange={handleChange}
@@ -127,7 +127,7 @@ export function PromptNode({ id: nodeId, data, selected }: NodeProps) {
         {charCount > 0 && (
           <div className="flex justify-end">
             <span className="text-[10px] text-muted-foreground">
-              {charCount} characters
+              {charCount} caracteres
             </span>
           </div>
         )}

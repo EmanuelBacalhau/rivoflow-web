@@ -90,7 +90,7 @@ export function FlowCanvas() {
   }
 
   return (
-    <div className="h-screen relative">
+    <div className="h-full relative">
       <Toolbar
         onAddPromptNode={addPromptNode}
         onAddImageNode={addImageNode}

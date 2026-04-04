@@ -9,11 +9,13 @@ type GenerateImageControllerParams = {
   flowId: string;
   updateNodes: Dispatch<SetStateAction<Node[]>>;
   onGenerateSuccess?: (nodeId: string) => void;
+  onGenerateError?: (nodeGeneratorId: string) => void;
 };
 
 export function useGenerateImageController({
   updateNodes,
   onGenerateSuccess,
+  onGenerateError,
 }: GenerateImageControllerParams) {
   const { mutateAsync } = useMutation({
     mutationKey: ["generateImageNode"],
@@ -72,6 +74,7 @@ export function useGenerateImageController({
           return n;
         }),
       );
+      onGenerateError?.(nodeGeneratorId);
       toast.error("Erro ao gerar. Tente novamente.");
     },
   });

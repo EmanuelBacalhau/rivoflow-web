@@ -208,20 +208,31 @@ export function FlowProvider({ children }: { children: ReactNode }) {
           if (status === GenerationStatusEnum.FAILED) {
             pollingIntervalsRef.current.delete(nodeId);
 
-            // Reset node so user can retry
+            // Reset generator and its source nodes so user can retry
+            const sourceNodeIds = edgesRef.current
+              .filter((e) => e.target === nodeId)
+              .map((e) => e.source);
+
             setNodes((nds) =>
-              nds.map((n) =>
-                n.id === nodeId
-                  ? {
-                      ...n,
-                      data: {
-                        ...n.data,
-                        status: GenerationStatusEnum.PENDING,
-                        isExecuted: false,
-                      },
-                    }
-                  : n,
-              ),
+              nds.map((n) => {
+                if (n.id === nodeId) {
+                  return {
+                    ...n,
+                    data: {
+                      ...n.data,
+                      status: GenerationStatusEnum.PENDING,
+                      isExecuted: false,
+                    },
+                  };
+                }
+                if (sourceNodeIds.includes(n.id)) {
+                  return {
+                    ...n,
+                    data: { ...n.data, isExecuted: false },
+                  };
+                }
+                return n;
+              }),
             );
 
             toast.error("Erro interno na geração. Tente novamente.");
@@ -528,11 +539,49 @@ export function FlowProvider({ children }: { children: ReactNode }) {
   });
 
   // --- Generate (shared for all generation types) ---
-  const { generateImageNode } = useGenerateImageController({
+  const resetSourceNodes = (nodeGeneratorId: string) => {
+    const sourceNodeIds = edgesRef.current
+      .filter((e) => e.target === nodeGeneratorId)
+      .map((e) => e.source);
+
+    if (sourceNodeIds.length > 0) {
+      setNodes((nds) =>
+        nds.map((n) =>
+          sourceNodeIds.includes(n.id)
+            ? { ...n, data: { ...n.data, isExecuted: false } }
+            : n,
+        ),
+      );
+    }
+  };
+
+  const { generateImageNode: _generateImageNode } = useGenerateImageController({
     flowId,
     updateNodes: setNodes,
     onGenerateSuccess: startStatusPolling,
+    onGenerateError: resetSourceNodes,
   });
+
+  const generateImageNode = async (
+    params: TriggerGenerationService.GenerateImageParams,
+  ) => {
+    // Mark all source nodes connected to this generator as executed
+    const sourceNodeIds = edgesRef.current
+      .filter((e) => e.target === params.nodeGeneratorId)
+      .map((e) => e.source);
+
+    if (sourceNodeIds.length > 0) {
+      setNodes((nds) =>
+        nds.map((n) =>
+          sourceNodeIds.includes(n.id)
+            ? { ...n, data: { ...n.data, isExecuted: true } }
+            : n,
+        ),
+      );
+    }
+
+    return _generateImageNode(params);
+  };
 
   const { updatePositionNode } = useUpdateNodePositionController();
 

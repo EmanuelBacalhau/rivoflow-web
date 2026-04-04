@@ -25,6 +25,7 @@ export function ResultImageNode({ id, data, selected }: NodeProps) {
   const nodeData = data as ResultNodeData;
   const [downloading, setDownloading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
   const isMobile = useIsMobile();
 
   const handleDownload = useCallback(async () => {
@@ -107,6 +108,11 @@ export function ResultImageNode({ id, data, selected }: NodeProps) {
         {nodeData.imageUrl ? (
           <div className="space-y-2">
             <div className="w-full h-48 overflow-hidden rounded-lg relative group border border-green-500/20">
+              {!isImageLoaded && (
+                <div className="absolute inset-0 flex items-center justify-center bg-muted animate-pulse">
+                  <EyeIcon className="size-5 text-muted-foreground/30" />
+                </div>
+              )}
               <Image
                 src={nodeData.imageUrl}
                 alt="Imagem gerada"
@@ -114,37 +120,40 @@ export function ResultImageNode({ id, data, selected }: NodeProps) {
                 sizes="288px"
                 quality={100}
                 priority
-                className="object-cover"
+                className={`object-cover transition-opacity duration-300 ${isImageLoaded ? "opacity-100" : "opacity-0"}`}
+                onLoad={() => setIsImageLoaded(true)}
               />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button
-                      size="icon"
-                      variant="secondary"
-                      className="cursor-pointer nodrag"
-                      aria-label="Ampliar imagem"
-                    >
-                      <ZoomInIcon className="size-5" />
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-4xl p-0 overflow-hidden border-none outline-none">
-                    <DialogTitle className="sr-only">
-                      Visualização da imagem gerada
-                    </DialogTitle>
-                    <div className="relative w-full h-[80vh] bg-black/5 rounded-lg border border-border">
-                      <Image
-                        src={nodeData.imageUrl}
-                        alt="Visualização da imagem gerada"
-                        fill
-                        sizes="(max-width: 896px) 100vw, 896px"
-                        quality={100}
-                        className="object-contain"
-                      />
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </div>
+              {isImageLoaded && (
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                  <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        size="icon"
+                        variant="secondary"
+                        className="cursor-pointer nodrag"
+                        aria-label="Ampliar imagem"
+                      >
+                        <ZoomInIcon className="size-5" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-4xl p-0 overflow-hidden border-none outline-none">
+                      <DialogTitle className="sr-only">
+                        Visualização da imagem gerada
+                      </DialogTitle>
+                      <div className="relative w-full h-[80vh] bg-black/5 rounded-lg border border-border">
+                        <Image
+                          src={nodeData.imageUrl}
+                          alt="Visualização da imagem gerada"
+                          fill
+                          sizes="(max-width: 896px) 100vw, 896px"
+                          quality={100}
+                          className="object-contain"
+                        />
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              )}
             </div>
 
             <div className="flex gap-2">
