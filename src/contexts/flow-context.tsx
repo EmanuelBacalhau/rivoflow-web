@@ -841,6 +841,15 @@ export function FlowProvider({ children }: { children: ReactNode }) {
         toast.error("Este node aceita apenas 1 vídeo.");
         return;
       }
+      if (isSourceVideo) {
+        const videoDuration = sourceNode.data.duration as number | undefined;
+        if (videoDuration && videoDuration > 30) {
+          toast.error(
+            "O vídeo deve ter no máximo 30 segundos para o Motion Control.",
+          );
+          return;
+        }
+      }
       if (isSourceImage && imageCount >= 1) {
         toast.error("Este node aceita apenas 1 imagem.");
         return;
