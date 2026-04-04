@@ -4,12 +4,14 @@ import { Handle, type NodeProps, Position } from "@xyflow/react";
 import {
   CheckIcon,
   ImagePlusIcon,
+  Loader2Icon,
   Trash2Icon,
   UploadCloudIcon,
   ZoomInIcon,
 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
+import { toast } from "sonner";
 import { useFlow } from "@/contexts/flow-context";
 import type { FileNodeService } from "@/services/node/file-node-service";
 import { Button } from "../ui/button";
@@ -35,24 +37,34 @@ export function UploadImageNode({ id, data, selected }: NodeProps) {
   const nodeData = data as UploadImageNodeData;
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const inputId = `input-file-${id}`;
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const selectedFile = event.target.files?.[0];
     if (!selectedFile) return;
 
-    // const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-    // if (selectedFile.size > MAX_FILE_SIZE) {
-    //   toast.error("Arquivo muito grande. Máximo 10MB.");
-    //   return;
-    // }
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    if (selectedFile.size > MAX_FILE_SIZE) {
+      toast.error("Arquivo muito grande. Máximo 10MB.");
+      return;
+    }
 
-    markConnectedGeneratorsAsCalculating(id);
-    uploadImageNode({
-      flowId,
-      nodeId: id,
-      file: selectedFile,
-    });
+    setIsUploading(true);
+    try {
+      markConnectedGeneratorsAsCalculating(id);
+      await uploadImageNode({
+        flowId,
+        nodeId: id,
+        file: selectedFile,
+      });
+    } catch {
+      toast.error("Erro ao enviar imagem. Tente novamente.");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -95,7 +107,7 @@ export function UploadImageNode({ id, data, selected }: NodeProps) {
           <div className="w-full h-40 overflow-hidden rounded-lg relative group border border-blue-500/20">
             <Image
               src={nodeData.imageUrl}
-              alt="Uploaded Reference"
+              alt="Imagem de referência enviada"
               fill
               sizes="256px"
               quality={100}
@@ -105,7 +117,11 @@ export function UploadImageNode({ id, data, selected }: NodeProps) {
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button size="icon" className="cursor-pointer nodrag">
+                  <Button
+                    size="icon"
+                    className="cursor-pointer nodrag"
+                    aria-label="Ampliar imagem"
+                  >
                     <ZoomInIcon className="size-5" />
                   </Button>
                 </DialogTrigger>
@@ -135,16 +151,21 @@ export function UploadImageNode({ id, data, selected }: NodeProps) {
               className="hidden"
               onChange={handleFileChange}
               id={inputId}
+              disabled={isUploading}
             />
             <div className="cursor-pointer text-center border-2 border-dashed border-blue-500/30 rounded-lg p-5 hover:border-blue-400 hover:bg-blue-500/10 transition-all group">
               <div className="bg-blue-500/20 rounded-full p-2.5 mx-auto mb-2.5 w-fit group-hover:bg-blue-500/30 transition-colors">
-                <UploadCloudIcon className="size-5 text-blue-500" />
+                {isUploading ? (
+                  <Loader2Icon className="size-5 text-blue-500 animate-spin" />
+                ) : (
+                  <UploadCloudIcon className="size-5 text-blue-500" />
+                )}
               </div>
               <p className="text-xs font-medium text-card-foreground mb-0.5">
-                Clique para carregar
+                {isUploading ? "Enviando..." : "Clique para carregar"}
               </p>
               <p className="text-[10px] text-muted-foreground">
-                JPG, PNG ou WebP
+                JPG, PNG ou WebP (máx. 10MB)
               </p>
             </div>
           </label>

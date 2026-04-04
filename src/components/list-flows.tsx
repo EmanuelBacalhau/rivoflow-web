@@ -10,7 +10,7 @@ interface ListFlowsProps {
 
 export function ListFlows({ flows, loading }: ListFlowsProps) {
   return (
-    <>
+    <section aria-label="Lista de flows">
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {loading &&
           Array.from({ length: 6 }).map((_, index) => (
@@ -27,7 +27,10 @@ export function ListFlows({ flows, loading }: ListFlowsProps) {
 
       {flows.length === 0 && !loading && (
         <div className="flex flex-col items-center justify-center gap-4 py-20">
-          <div className="w-14 h-14 rounded-xl bg-white/5 flex items-center justify-center">
+          <div
+            className="w-14 h-14 rounded-xl bg-white/5 flex items-center justify-center"
+            aria-hidden="true"
+          >
             <LayersIcon className="size-7 text-muted-foreground/40" />
           </div>
           <div className="text-center">
@@ -40,6 +43,6 @@ export function ListFlows({ flows, loading }: ListFlowsProps) {
           </div>
         </div>
       )}
-    </>
+    </section>
   );
 }

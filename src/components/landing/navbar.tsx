@@ -67,19 +67,25 @@ export function LandingNavbar({ navLinks }: LandingNavbarProps) {
         <button
           className="md:hidden p-2 text-muted-foreground rounded-lg hover:bg-accent transition-colors"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label="Menu"
+          aria-label={mobileMenuOpen ? "Fechar menu" : "Abrir menu"}
+          aria-expanded={mobileMenuOpen}
+          aria-controls="mobile-nav"
           type="button"
         >
           {mobileMenuOpen ? (
-            <XIcon className="w-5 h-5" />
+            <XIcon className="w-5 h-5" aria-hidden="true" />
           ) : (
-            <MenuIcon className="w-5 h-5" />
+            <MenuIcon className="w-5 h-5" aria-hidden="true" />
           )}
         </button>
       </div>
 
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-border/50 bg-background/95 backdrop-blur-xl px-6 py-4 space-y-1">
+        <nav
+          id="mobile-nav"
+          aria-label="Menu mobile"
+          className="md:hidden border-t border-border/50 bg-background/95 backdrop-blur-xl px-6 py-4 space-y-1"
+        >
           {navLinks.map((link) => (
             <Link
               key={link.label}
@@ -95,7 +101,7 @@ export function LandingNavbar({ navLinks }: LandingNavbarProps) {
               <Button className="w-full">Começar grátis</Button>
             </Link>
           </div>
-        </div>
+        </nav>
       )}
     </header>
   );

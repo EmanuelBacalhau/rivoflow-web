@@ -36,7 +36,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     async (skipApiCall = false) => {
       queryClient.clear();
       Service.removeRefreshTokenHandler();
-      if (skipApiCall) await AuthService.signOut();
+      if (!skipApiCall) await AuthService.signOut();
       router.push("/");
     },
     [queryClient, router],

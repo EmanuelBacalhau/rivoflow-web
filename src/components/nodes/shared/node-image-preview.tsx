@@ -45,7 +45,11 @@ export function NodeImagePreview({
       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button size="icon" className="cursor-pointer nodrag">
+            <Button
+              size="icon"
+              className="cursor-pointer nodrag"
+              aria-label="Ampliar imagem"
+            >
               <ZoomInIcon className="size-5" />
             </Button>
           </DialogTrigger>

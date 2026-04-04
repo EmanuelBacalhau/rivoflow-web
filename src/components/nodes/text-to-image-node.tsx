@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 import { useMemo } from "react";
+import { toast } from "sonner";
 import { useFlow } from "@/contexts/flow-context";
 import { useAccount } from "@/hooks/queries/useAccount";
 import {
@@ -102,10 +103,14 @@ export function TextToImageNode({ id, data, selected }: NodeProps) {
   };
 
   const handleGenerateImage = async () => {
-    await generateImageNode({
-      flowId,
-      nodeGeneratorId: id,
-    });
+    try {
+      await generateImageNode({
+        flowId,
+        nodeGeneratorId: id,
+      });
+    } catch {
+      toast.error("Erro ao gerar imagem. Tente novamente.");
+    }
   };
 
   const hasPrompts = connectedData.prompts.length > 0;

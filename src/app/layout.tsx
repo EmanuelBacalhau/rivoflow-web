@@ -3,6 +3,7 @@ import { Inter, Sora } from "next/font/google";
 import "./globals.css";
 import "@xyflow/react/dist/style.css";
 import Script from "next/script";
+import { env } from "@/env";
 import { MainProvider } from "@/providers/main-provider";
 
 const inter = Inter({
@@ -43,7 +44,7 @@ export const metadata: Metadata = {
     title: "RivoFlow - Acelere sua Produção Visual com IA",
     description:
       "Crie criativos em alta qualidade em segundos usando nosso editor visual de IA. Sem assinatura, pague pelo uso.",
-    url: process.env.NEXT_PUBLIC_APP_URL,
+    url: env.NEXT_PUBLIC_APP_URL,
     siteName: "RivoFlow",
     images: [
       {

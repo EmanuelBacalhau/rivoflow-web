@@ -81,9 +81,9 @@ export default function DashboardPage() {
       {/* Actions bar */}
       <div className="flex items-center justify-between gap-4 mb-10">
         <div>
-          <h2 className="text-2xl font-bold font-display mb-1">
+          <h1 className="text-2xl font-bold font-display mb-1">
             {firstName ? `Olá, ${firstName}` : "Bem-vindo"}
-          </h2>
+          </h1>
           <p className="text-sm text-muted-foreground">
             Gerencie seus fluxos e crie novos criativos com IA.
           </p>
@@ -175,7 +175,9 @@ export default function DashboardPage() {
 
               <Button
                 disabled={
-                  credits < MIN_CREDITS_IN_REALS || isCreatingLinkCharge
+                  credits < MIN_CREDITS_IN_REALS ||
+                  isCreatingLinkCharge ||
+                  isSimulating
                 }
                 onClick={handleCreateLinkCharge}
                 className="shadow-lg shadow-primary/20"
@@ -199,7 +201,10 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+      <section
+        aria-label="Estatísticas"
+        className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10"
+      >
         <div className="p-5 rounded-xl border border-white/8 bg-white/3 backdrop-blur-sm">
           <div className="flex items-center gap-2.5 mb-3">
             <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
@@ -241,25 +246,39 @@ export default function DashboardPage() {
             {me?.balance.lifetimeSpent ?? 0}
           </p>
         </div>
-      </div>
+      </section>
 
       {/* Flows */}
-      <div className="flex items-center justify-between gap-4 mb-5">
-        <h3 className="text-base font-semibold font-display">Seus flows</h3>
-        <div className="flex items-center gap-2 rounded-lg border border-white/8 bg-white/3 backdrop-blur-sm px-3 py-2 text-sm w-full max-w-64 focus-within:border-purple-500/30 focus-within:ring-1 focus-within:ring-purple-500/15 transition-all">
-          <SearchIcon className="size-4 text-muted-foreground shrink-0" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar flows..."
-            className="w-full bg-transparent text-foreground placeholder:text-muted-foreground outline-none text-sm"
-          />
+      <section aria-labelledby="flows-heading">
+        <div className="flex items-center justify-between gap-4 mb-5">
+          <h2
+            id="flows-heading"
+            className="text-base font-semibold font-display"
+          >
+            Seus flows
+          </h2>
+          <div className="flex items-center gap-2 rounded-lg border border-white/8 bg-white/3 backdrop-blur-sm px-3 py-2 text-sm w-full max-w-64 focus-within:border-purple-500/30 focus-within:ring-1 focus-within:ring-purple-500/15 transition-all">
+            <SearchIcon
+              className="size-4 text-muted-foreground shrink-0"
+              aria-hidden="true"
+            />
+            <label htmlFor="search-flows" className="sr-only">
+              Buscar flows
+            </label>
+            <input
+              id="search-flows"
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Buscar flows..."
+              className="w-full bg-transparent text-foreground placeholder:text-muted-foreground outline-none text-sm"
+            />
+          </div>
         </div>
-      </div>
 
-      <CreateFlowDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} />
-      <ListFlows flows={filteredFlows} loading={isLoading} />
+        <CreateFlowDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} />
+        <ListFlows flows={filteredFlows} loading={isLoading} />
+      </section>
     </div>
   );
 }

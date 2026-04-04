@@ -109,7 +109,7 @@ export function ResultImageNode({ id, data, selected }: NodeProps) {
             <div className="w-full h-48 overflow-hidden rounded-lg relative group border border-green-500/20">
               <Image
                 src={nodeData.imageUrl}
-                alt="Generated Result"
+                alt="Imagem gerada"
                 fill
                 sizes="288px"
                 quality={100}
@@ -123,6 +123,7 @@ export function ResultImageNode({ id, data, selected }: NodeProps) {
                       size="icon"
                       variant="secondary"
                       className="cursor-pointer nodrag"
+                      aria-label="Ampliar imagem"
                     >
                       <ZoomInIcon className="size-5" />
                     </Button>

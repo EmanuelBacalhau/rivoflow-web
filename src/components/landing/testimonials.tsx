@@ -1,7 +1,6 @@
 import { QuoteIcon, StarIcon } from "lucide-react";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Card, CardContent } from "@/components/ui/card";
 import { SectionHeading } from "./section-heading";
 
 interface Testimonial {
@@ -20,9 +19,12 @@ export function LandingTestimonials({
   testimonials,
 }: LandingTestimonialsProps) {
   return (
-    <section className="relative py-28">
-      <div className="section-glow-divider" />
-      <div className="absolute inset-0 dot-pattern opacity-15" />
+    <section className="relative py-28" aria-labelledby="testimonials-heading">
+      <div className="section-glow-divider" aria-hidden="true" />
+      <div
+        className="absolute inset-0 dot-pattern opacity-15"
+        aria-hidden="true"
+      />
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 pt-8">
         <SectionHeading
@@ -32,6 +34,7 @@ export function LandingTestimonials({
               Quem usa, <span className="text-gradient-primary">recomenda</span>
             </>
           }
+          id="testimonials-heading"
         />
 
         <div className="grid md:grid-cols-3 gap-5">
@@ -43,29 +46,37 @@ export function LandingTestimonials({
               .slice(0, 2);
 
             return (
-              <Card
+              <article
                 key={t.name}
-                className="card-glow bg-white/3 backdrop-blur-sm border-white/8 hover:border-purple-500/25 transition-all duration-300 py-0 shadow-none"
+                className="card-glow rounded-xl border bg-white/3 backdrop-blur-sm border-white/8 hover:border-purple-500/25 transition-all duration-300 shadow-none"
               >
-                <CardContent className="p-7 flex flex-col gap-5">
+                <div className="p-7 flex flex-col gap-5">
                   <div className="flex items-center justify-between">
-                    <div className="flex gap-0.5">
+                    <div
+                      className="flex gap-0.5"
+                      role="img"
+                      aria-label={`Avaliação: ${t.stars} de 5 estrelas`}
+                    >
                       {Array.from({ length: t.stars }, (_, i) => (
                         <StarIcon
                           key={`star-${t.name}-${i}`}
                           className="w-3.5 h-3.5 fill-amber-400 text-amber-400"
+                          aria-hidden="true"
                         />
                       ))}
                     </div>
-                    <QuoteIcon className="w-5 h-5 text-purple-500/20" />
+                    <QuoteIcon
+                      className="w-5 h-5 text-purple-500/20"
+                      aria-hidden="true"
+                    />
                   </div>
 
-                  <p className="text-sm text-white/70 leading-relaxed flex-1">
-                    "{t.quote}"
-                  </p>
+                  <blockquote className="text-sm text-white/70 leading-relaxed flex-1">
+                    <p>&ldquo;{t.quote}&rdquo;</p>
+                  </blockquote>
 
-                  <div className="flex items-center gap-3 pt-4 border-t border-white/8">
-                    <Avatar size="sm">
+                  <footer className="flex items-center gap-3 pt-4 border-t border-white/8">
+                    <Avatar size="sm" aria-hidden="true">
                       <AvatarFallback className="text-[10px] font-semibold bg-purple-500/15 text-purple-300">
                         {initials}
                       </AvatarFallback>
@@ -75,12 +86,13 @@ export function LandingTestimonials({
                         {t.name}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {t.role} · {t.company}
+                        <span>{t.role}</span> ·{" "}
+                        <cite className="not-italic">{t.company}</cite>
                       </p>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </footer>
+                </div>
+              </article>
             );
           })}
         </div>

@@ -31,16 +31,27 @@ interface LandingPricingProps {
 
 export function LandingPricing({ plans }: LandingPricingProps) {
   return (
-    <section id="pricing" className="relative py-28">
-      <div className="section-glow-divider" />
-      <div className="absolute inset-0 bg-linear-to-b from-transparent via-purple-600/3 to-transparent" />
-      <div className="glow-orb w-80 h-80 bg-purple-600/10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+    <section
+      id="pricing"
+      className="relative py-28"
+      aria-labelledby="pricing-heading"
+    >
+      <div className="section-glow-divider" aria-hidden="true" />
+      <div
+        className="absolute inset-0 bg-linear-to-b from-transparent via-purple-600/3 to-transparent"
+        aria-hidden="true"
+      />
+      <div
+        className="glow-orb w-80 h-80 bg-purple-600/10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+        aria-hidden="true"
+      />
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 pt-8">
         <SectionHeading
           label="Preços"
           title="Pague apenas pelo uso"
           subtitle="Sem assinaturas. Deposite créditos e use no seu ritmo."
+          id="pricing-heading"
         />
 
         <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
@@ -55,7 +66,7 @@ export function LandingPricing({ plans }: LandingPricingProps) {
             >
               {plan.highlight && (
                 <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 text-xs shadow-lg shadow-primary/30">
-                  <SparklesIcon className="w-3 h-3" />
+                  <SparklesIcon className="w-3 h-3" aria-hidden="true" />
                   Mais popular
                 </Badge>
               )}
@@ -88,6 +99,7 @@ export function LandingPricing({ plans }: LandingPricingProps) {
                       className="flex items-start gap-3 text-sm"
                     >
                       <CheckIcon
+                        aria-hidden="true"
                         className={`w-4 h-4 shrink-0 mt-0.5 ${plan.highlight ? "text-purple-400" : "text-muted-foreground"}`}
                       />
                       <span className="leading-relaxed text-white/70">

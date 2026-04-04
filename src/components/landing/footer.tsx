@@ -24,18 +24,20 @@ export function LandingFooter() {
           </div>
 
           <div className="flex items-center gap-6 text-xs text-muted-foreground">
-            <Link
-              href="/privacy"
-              className="hover:text-white transition-colors duration-200"
-            >
-              Privacidade
-            </Link>
-            <Link
-              href="/terms"
-              className="hover:text-white transition-colors duration-200"
-            >
-              Termos
-            </Link>
+            <nav aria-label="Links legais" className="flex items-center gap-6">
+              <Link
+                href="/privacy"
+                className="hover:text-white transition-colors duration-200"
+              >
+                Privacidade
+              </Link>
+              <Link
+                href="/terms"
+                className="hover:text-white transition-colors duration-200"
+              >
+                Termos
+              </Link>
+            </nav>
             <span className="text-muted-foreground/50">
               © {new Date().getFullYear()} RivoFlow
             </span>

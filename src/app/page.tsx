@@ -197,15 +197,23 @@ const faqs = [
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:z-100 focus:top-4 focus:left-4 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-lg focus:text-sm focus:font-medium"
+      >
+        Pular para o conteúdo
+      </a>
       <LandingNavbar navLinks={navLinks} />
-      <LandingHero />
-      <LandingUseCases />
-      <LandingFeatures features={features} />
-      <LandingHowItWorks steps={steps} />
-      <LandingTestimonials testimonials={testimonials} />
-      <LandingPricing plans={pricingPlans} />
-      <LandingFaq faqs={faqs} />
-      <LandingFinalCta />
+      <main id="main-content">
+        <LandingHero />
+        <LandingUseCases />
+        <LandingFeatures features={features} />
+        <LandingHowItWorks steps={steps} />
+        <LandingTestimonials testimonials={testimonials} />
+        <LandingPricing plans={pricingPlans} />
+        <LandingFaq faqs={faqs} />
+        <LandingFinalCta />
+      </main>
       <LandingFooter />
     </div>
   );

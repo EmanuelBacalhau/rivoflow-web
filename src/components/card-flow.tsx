@@ -66,6 +66,7 @@ export function CardFlow({ flow }: CardFlowProps) {
                   size="icon-sm"
                   variant="ghost"
                   onClick={(e) => e.stopPropagation()}
+                  aria-label={`Renomear ${flow.title}`}
                 >
                   <PencilIcon className="size-3.5" />
                 </Button>
@@ -111,6 +112,7 @@ export function CardFlow({ flow }: CardFlowProps) {
                   size="icon-sm"
                   variant="ghost"
                   className="hover:text-destructive"
+                  aria-label={`Excluir ${flow.title}`}
                 >
                   <TrashIcon className="size-3.5" />
                 </Button>

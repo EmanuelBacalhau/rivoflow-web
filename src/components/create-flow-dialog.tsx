@@ -50,33 +50,43 @@ export function CreateFlowDialog({
         <DialogDescription>
           Dê um nome ao seu flow para organizá-lo.
         </DialogDescription>
-        <div className="space-y-4 pt-1">
-          <Input
-            placeholder={`Ex: Campanha Verão ${new Date().getFullYear()}`}
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            onKeyDown={(e) =>
-              e.key === "Enter" && !isCreatingFlow && handleCreateFlow(name)
-            }
-            autoFocus
-          />
+        <form
+          className="space-y-4 pt-1"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (!isCreatingFlow && name.trim()) handleCreateFlow(name);
+          }}
+        >
+          <div>
+            <label htmlFor="flow-name" className="sr-only">
+              Nome do flow
+            </label>
+            <Input
+              id="flow-name"
+              placeholder={`Ex: Campanha Verão ${new Date().getFullYear()}`}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              autoFocus
+            />
+          </div>
           <div className="flex justify-end gap-2">
             <Button
               variant="outline"
               size="sm"
+              type="button"
               onClick={() => handleOpenChange(false)}
             >
               Cancelar
             </Button>
             <Button
               size="sm"
-              onClick={() => handleCreateFlow(name)}
+              type="submit"
               disabled={isCreatingFlow || !name.trim()}
             >
               {isCreatingFlow ? "Criando..." : "Criar flow"}
             </Button>
           </div>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   );

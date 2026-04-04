@@ -1,14 +1,13 @@
 import type { MetadataRoute } from "next";
+import { env } from "@/env";
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL;
-
   return {
     rules: {
       userAgent: "*",
       allow: "/",
       disallow: ["/dashboard/", "/dashboard/*"],
     },
-    sitemap: `${baseUrl}/sitemap.xml`,
+    sitemap: `${env.NEXT_PUBLIC_APP_URL}/sitemap.xml`,
   };
 }

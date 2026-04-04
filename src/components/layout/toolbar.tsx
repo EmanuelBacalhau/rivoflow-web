@@ -51,6 +51,7 @@ function ToolButton({
         <button
           type="button"
           onClick={onClick}
+          aria-label={`${label}${shortcut ? ` (${shortcut})` : ""}`}
           className={`relative size-9 flex items-center justify-center rounded-lg transition-all duration-150 hover:bg-white/8 active:scale-95 cursor-pointer ${color}`}
         >
           {icon}
@@ -170,6 +171,7 @@ export function Toolbar({
           <PopoverTrigger asChild>
             <button
               type="button"
+              aria-label="Ferramentas de IA"
               className="flex items-center gap-1.5 h-9 px-3 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 transition-all duration-150 active:scale-95 cursor-pointer"
             >
               <WandSparklesIcon

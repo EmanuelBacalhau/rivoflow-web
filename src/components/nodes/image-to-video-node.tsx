@@ -191,7 +191,7 @@ export function ImageToVideoNode({ id, data, selected }: NodeProps) {
               <div className="relative w-full h-16 rounded-md overflow-hidden border border-green-500/30">
                 <Image
                   src={connectedData.images[0]}
-                  alt="Start frame"
+                  alt="Frame inicial"
                   fill
                   sizes="120px"
                   className="object-cover"
@@ -210,7 +210,7 @@ export function ImageToVideoNode({ id, data, selected }: NodeProps) {
                 <div className="relative w-full h-16 rounded-md overflow-hidden border border-blue-500/30">
                   <Image
                     src={connectedData.images[1]}
-                    alt="End frame"
+                    alt="Frame final"
                     fill
                     sizes="120px"
                     className="object-cover"

@@ -4,22 +4,28 @@ interface SectionHeadingProps {
   label: string;
   title: React.ReactNode;
   subtitle?: string;
+  id?: string;
 }
 
 export function SectionHeading({
   label,
   title,
   subtitle,
+  id,
 }: SectionHeadingProps) {
   return (
     <div className="text-center mb-16">
       <Badge
         variant="outline"
         className="mb-5 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-primary border-primary/20 bg-primary/5"
+        aria-hidden="true"
       >
         {label}
       </Badge>
-      <h2 className="font-display text-3xl md:text-5xl font-bold tracking-tight mb-5">
+      <h2
+        id={id}
+        className="font-display text-3xl md:text-5xl font-bold tracking-tight mb-5"
+      >
         {title}
       </h2>
       {subtitle && (

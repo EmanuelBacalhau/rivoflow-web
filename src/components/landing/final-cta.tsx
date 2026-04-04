@@ -6,23 +6,38 @@ import { Button } from "@/components/ui/button";
 
 export function LandingFinalCta() {
   return (
-    <section className="relative py-32 overflow-hidden">
-      <div className="section-glow-divider" />
+    <section
+      className="relative py-32 overflow-hidden"
+      aria-labelledby="cta-heading"
+    >
+      <div className="section-glow-divider" aria-hidden="true" />
 
       {/* Background glow */}
-      <div className="glow-orb w-96 h-96 bg-purple-600/15 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-glow-pulse" />
-      <div className="absolute inset-0 bg-linear-to-b from-transparent via-purple-600/4 to-transparent" />
+      <div
+        className="glow-orb w-96 h-96 bg-purple-600/15 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-glow-pulse"
+        aria-hidden="true"
+      />
+      <div
+        className="absolute inset-0 bg-linear-to-b from-transparent via-purple-600/4 to-transparent"
+        aria-hidden="true"
+      />
 
       <div className="relative z-10 max-w-3xl mx-auto px-6 text-center pt-8">
         <Badge
           variant="outline"
           className="px-4 py-1.5 text-sm font-medium border-purple-500/20 bg-purple-500/10 text-purple-300 mb-8"
         >
-          <SparklesIcon className="w-3.5 h-3.5 text-purple-400" />
+          <SparklesIcon
+            className="w-3.5 h-3.5 text-purple-400"
+            aria-hidden="true"
+          />
           Créditos que nunca expiram
         </Badge>
 
-        <h2 className="font-display text-3xl md:text-5xl font-bold tracking-tight mb-6 text-white">
+        <h2
+          id="cta-heading"
+          className="font-display text-3xl md:text-5xl font-bold tracking-tight mb-6 text-white"
+        >
           Sua próxima campanha{" "}
           <span className="text-gradient-primary">pronta hoje mesmo</span>
         </h2>

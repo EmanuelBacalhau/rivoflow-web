@@ -76,7 +76,7 @@ export function NodeCardHeader({
           onClick={onRemove}
           className={`${scheme.hover} transition-colors shrink-0 nodrag cursor-pointer md:hidden`}
           type="button"
-          aria-label="Remover nó"
+          aria-label={`Remover ${title}`}
         >
           <Trash2Icon className="size-3.5" />
         </button>

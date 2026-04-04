@@ -126,6 +126,7 @@ export function ResultVideoNode({ id, data, selected }: NodeProps) {
                       size="icon"
                       variant="secondary"
                       className="cursor-pointer nodrag"
+                      aria-label="Reproduzir vídeo em tela cheia"
                     >
                       <PlayCircleIcon className="size-5" />
                     </Button>

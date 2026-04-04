@@ -57,12 +57,19 @@ export default function PaymentSuccessPage() {
     };
   }, [isInitializing, me?.balance?.credits, prePaymentCredits, router]);
 
+  const currentCredits = me?.balance?.credits ?? 0;
+  const creditsUpdated =
+    prePaymentCredits !== null && currentCredits > prePaymentCredits;
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center relative">
+    <main
+      className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center relative"
+      aria-busy={!isRedirecting && !creditsUpdated}
+    >
       <Background />
 
       <div className="relative z-10 animate-scale-in">
-        <div className="mb-6">
+        <div className="mb-6" aria-hidden="true">
           <div className="w-20 h-20 rounded-full bg-green-500/10 flex items-center justify-center mx-auto">
             <CheckCircle2Icon className="size-10 text-green-400" />
           </div>
@@ -73,21 +80,28 @@ export default function PaymentSuccessPage() {
         </h1>
 
         <p className="text-sm text-muted-foreground max-w-sm mb-8">
-          Seus créditos foram adicionados com sucesso. Sincronizando
-          informações...
+          {creditsUpdated
+            ? "Seus créditos foram adicionados com sucesso!"
+            : "Sincronizando seus créditos..."}
         </p>
 
         {isRedirecting ? (
-          <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-            <Loader2Icon className="size-3.5 animate-spin" />
+          <output className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+            <Loader2Icon className="size-3.5 animate-spin" aria-hidden="true" />
             <span>Redirecionando...</span>
-          </div>
+          </output>
         ) : (
-          <div className="flex justify-center">
-            <Loader2Icon className="size-4 animate-spin text-muted-foreground" />
-          </div>
+          <output
+            className="flex justify-center"
+            aria-label="Sincronizando créditos"
+          >
+            <Loader2Icon
+              className="size-4 animate-spin text-muted-foreground"
+              aria-hidden="true"
+            />
+          </output>
         )}
       </div>
-    </div>
+    </main>
   );
 }

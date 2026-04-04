@@ -3,12 +3,15 @@
 import { ArrowLeftIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { Background } from "@/components/background";
 import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <header className="border-b border-border/50 bg-background">
+    <div className="min-h-screen bg-background flex flex-col relative">
+      <Background />
+
+      <header className="relative z-10 border-b border-border/50 bg-background/60 backdrop-blur-xl">
         <div className="max-w-5xl mx-auto px-6 h-14 flex items-center">
           <Link href="/">
             <Image
@@ -22,7 +25,7 @@ export default function NotFound() {
         </div>
       </header>
 
-      <main className="flex-1 flex items-center justify-center">
+      <main className="relative z-10 flex-1 flex items-center justify-center">
         <div className="text-center px-6 animate-slide-up">
           <p className="text-7xl md:text-8xl font-bold text-primary/20 leading-none mb-4 select-none tabular-nums">
             404
@@ -40,10 +43,10 @@ export default function NotFound() {
         </div>
       </main>
 
-      <footer className="border-t border-border/50 py-5">
+      <footer className="relative z-10 border-t border-border/50 py-5">
         <div className="max-w-5xl mx-auto px-6 text-center">
           <p className="text-[11px] text-muted-foreground">
-            © {new Date().getFullYear()} RivoFlow
+            &copy; {new Date().getFullYear()} RivoFlow
           </p>
         </div>
       </footer>

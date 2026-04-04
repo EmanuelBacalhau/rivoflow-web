@@ -16,26 +16,33 @@ export function LandingUseCases() {
   ];
 
   return (
-    <section className="relative py-14">
-      <div className="section-glow-divider mb-14" />
+    <section className="relative py-14" aria-labelledby="use-cases-heading">
+      <div className="section-glow-divider mb-14" aria-hidden="true" />
       <div className="max-w-6xl mx-auto px-6">
-        <p className="text-center text-xs text-muted-foreground/50 uppercase tracking-[0.2em] mb-8">
+        <h2
+          id="use-cases-heading"
+          className="text-center text-xs text-muted-foreground/50 uppercase tracking-[0.2em] mb-8"
+        >
           Ideal para qualquer tipo de campanha
-        </p>
-        <div className="flex flex-wrap items-center justify-center gap-3">
+        </h2>
+        <ul className="flex flex-wrap items-center justify-center gap-3">
           {useCases.map((item) => (
-            <Badge
-              key={item.label}
-              variant="outline"
-              className="px-5 py-2.5 text-sm font-medium border-white/8 bg-white/3 hover:border-purple-500/20 hover:bg-purple-500/5 transition-all duration-300"
-            >
-              <item.icon className={`w-4 h-4 ${item.color} shrink-0`} />
-              {item.label}
-            </Badge>
+            <li key={item.label}>
+              <Badge
+                variant="outline"
+                className="px-5 py-2.5 text-sm font-medium border-white/8 bg-white/3 hover:border-purple-500/20 hover:bg-purple-500/5 transition-all duration-300"
+              >
+                <item.icon
+                  className={`w-4 h-4 ${item.color} shrink-0`}
+                  aria-hidden="true"
+                />
+                {item.label}
+              </Badge>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
-      <div className="section-glow-divider mt-14" />
+      <div className="section-glow-divider mt-14" aria-hidden="true" />
     </section>
   );
 }

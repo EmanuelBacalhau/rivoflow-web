@@ -14,13 +14,17 @@ export function LandingHero() {
   return (
     <section className="relative overflow-hidden hero-gradient min-h-[90vh] flex flex-col justify-center">
       {/* Grain overlay */}
-      <div className="grain absolute inset-0" />
+      <div className="grain absolute inset-0" aria-hidden="true" />
 
       {/* Vivid glow orbs */}
-      <div className="glow-orb w-96 h-96 bg-purple-600/20 -top-20 right-1/4 animate-glow-pulse" />
+      <div
+        className="glow-orb w-96 h-96 bg-purple-600/20 -top-20 right-1/4 animate-glow-pulse"
+        aria-hidden="true"
+      />
       <div
         className="glow-orb w-72 h-72 bg-violet-500/15 bottom-20 left-10 animate-glow-pulse"
         style={{ animationDelay: "2s" }}
+        aria-hidden="true"
       />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-20 md:py-0 w-full">
@@ -94,6 +98,7 @@ export function LandingHero() {
           <div
             className="relative hidden lg:flex items-center justify-center h-140 animate-fade-in"
             style={{ animationDelay: "500ms" }}
+            aria-hidden="true"
           >
             {/* Concentric rings — large to small */}
             <div className="orbital-ring w-120 h-120 orbital-ring-reverse" />
@@ -196,7 +201,10 @@ export function LandingHero() {
       </div>
 
       {/* Bottom gradient fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-linear-to-t from-background to-transparent pointer-events-none z-20" />
+      <div
+        className="absolute bottom-0 left-0 right-0 h-32 bg-linear-to-t from-background to-transparent pointer-events-none z-20"
+        aria-hidden="true"
+      />
     </section>
   );
 }
