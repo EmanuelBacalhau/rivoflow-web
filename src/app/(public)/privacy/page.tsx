@@ -1,7 +1,7 @@
 import { LegalPageLayout } from "@/components/layout/legal-page-layout";
 
 export const metadata = {
-  title: "Política de Privacidade – RIVOFLOW",
+  title: "Política de Privacidade",
   description: "Como o RIVOFLOW coleta, usa e protege seus dados pessoais.",
 };
 

@@ -11,7 +11,7 @@ export function middleware(request: NextRequest) {
     style-src 'self' 'unsafe-inline';
     img-src 'self' blob: data: https://assets-flow.rivocode.com.br https://assets-dev-flow.rivocode.com.br https://lh3.googleusercontent.com;
     media-src 'self' blob: https://assets-flow.rivocode.com.br https://assets-dev-flow.rivocode.com.br;
-    connect-src 'self' https://api.flow.rivocode.com.br https://api-dev.flow.rivocode.com.br https://*.amazoncognito.com wss:;
+    connect-src 'self' https://api.flow.rivocode.com.br https://api-dev.flow.rivocode.com.br https://*.amazoncognito.com https://*.s3.sa-east-1.amazonaws.com wss:;
     font-src 'self';
     object-src 'none';
     base-uri 'self';

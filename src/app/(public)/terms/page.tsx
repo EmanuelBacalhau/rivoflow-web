@@ -1,7 +1,7 @@
 import { LegalPageLayout } from "@/components/layout/legal-page-layout";
 
 export const metadata = {
-  title: "Termos de Uso – RIVOFLOW",
+  title: "Termos de Uso",
   description: "Termos e condições de uso da plataforma RIVOFLOW.",
 };
 

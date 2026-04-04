@@ -167,7 +167,7 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
           </h3>
           <p className="text-[10px] text-purple-500">Prompt + imagem</p>
         </div>
-        {hasAnyInput && (
+        {(hasPrompts || hasImages) && (
           <div className="flex gap-1">
             {hasPrompts && (
               <span className="text-[10px] font-semibold w-5 h-5 rounded-full bg-amber-500/20 text-amber-600 flex items-center justify-center">
@@ -193,12 +193,17 @@ export function AIGeneratorNode({ id, data, selected }: NodeProps) {
 
       {/* Body */}
       <CardContent className="p-3 space-y-3">
-        {!hasAnyInput && (
+        {(!hasPrompts || !hasImages) && (
           <div className="py-2 px-3 bg-muted border border-dashed border-border rounded-lg text-center">
             <p className="text-[10px] text-muted-foreground">
               Conecte um{" "}
-              <span className="text-amber-600 font-medium">Prompt</span> ou{" "}
-              <span className="text-blue-600 font-medium">Imagem</span>
+              <span className="text-amber-600 font-medium">Prompt</span>
+              {!hasImages && (
+                <>
+                  {" e uma "}
+                  <span className="text-blue-600 font-medium">Imagem</span>
+                </>
+              )}
             </p>
           </div>
         )}

@@ -1,6 +1,11 @@
+import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
 import { AppHeader } from "@/components/layout/app-header";
 import { TooltipProvider } from "@/components/ui/tooltip";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+};
 
 export default function DashboardLayout({ children }: PropsWithChildren) {
   return (

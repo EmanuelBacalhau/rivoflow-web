@@ -71,6 +71,7 @@ export function MotionControlNode({ id, data, selected }: NodeProps) {
 
   const hasImages = connectedData.images.length > 0;
   const hasVideos = connectedData.videos.length > 0;
+  const hasPrompts = connectedData.prompts.length > 0;
   const isVideoDurationPending =
     hasVideos && connectedData.videoDurations.some((d) => d === null);
 
@@ -90,6 +91,7 @@ export function MotionControlNode({ id, data, selected }: NodeProps) {
   const isButtonDisabled =
     !hasImages ||
     !hasVideos ||
+    !hasPrompts ||
     isVideoDurationPending ||
     nodeData.isExecuted ||
     isProcessing ||
@@ -125,8 +127,13 @@ export function MotionControlNode({ id, data, selected }: NodeProps) {
           </h3>
           <p className="text-[10px] text-pink-500">Vídeo + imagem</p>
         </div>
-        {(hasImages || hasVideos) && (
+        {(hasPrompts || hasImages || hasVideos) && (
           <div className="flex gap-1">
+            {hasPrompts && (
+              <span className="text-[10px] font-semibold w-5 h-5 rounded-full bg-amber-500/20 text-amber-600 flex items-center justify-center">
+                {connectedData.prompts.length}
+              </span>
+            )}
             {hasImages && (
               <span className="text-[10px] font-semibold w-5 h-5 rounded-full bg-sky-500/20 text-sky-600 flex items-center justify-center">
                 {connectedData.images.length}
@@ -151,14 +158,24 @@ export function MotionControlNode({ id, data, selected }: NodeProps) {
 
       {/* Body */}
       <CardContent className="p-3 space-y-3">
-        {(!hasImages || !hasVideos) && (
+        {(!hasImages || !hasVideos || !hasPrompts) && (
           <div className="py-2 px-3 bg-muted border border-dashed border-border rounded-lg text-center">
             <p className="text-[10px] text-muted-foreground">
-              Conecte uma{" "}
-              <span className="text-blue-600 font-medium">Imagem</span>
-              {" e um "}
-              <span className="text-violet-600 font-medium">Vídeo</span>
-              {" (máx 30s)"}
+              Conecte um{" "}
+              <span className="text-amber-600 font-medium">Prompt</span>
+              {!hasImages && (
+                <>
+                  {", uma "}
+                  <span className="text-blue-600 font-medium">Imagem</span>
+                </>
+              )}
+              {!hasVideos && (
+                <>
+                  {!hasImages ? " e um " : " e um "}
+                  <span className="text-violet-600 font-medium">Vídeo</span>{" "}
+                  (máx 30s)
+                </>
+              )}
             </p>
           </div>
         )}

@@ -104,6 +104,7 @@ export function ImageToVideoNode({ id, data, selected }: NodeProps) {
   };
 
   const hasImages = connectedData.images.length > 0;
+  const hasPrompts = connectedData.prompts.length > 0;
 
   const isProcessing =
     nodeData.status === GenerationStatusEnum.PROCESSING ||
@@ -120,6 +121,7 @@ export function ImageToVideoNode({ id, data, selected }: NodeProps) {
 
   const isButtonDisabled =
     !hasImages ||
+    !hasPrompts ||
     nodeData.isExecuted ||
     isProcessing ||
     isCompleted ||
@@ -154,10 +156,19 @@ export function ImageToVideoNode({ id, data, selected }: NodeProps) {
           </h3>
           <p className="text-[10px] text-orange-500">A partir de imagem</p>
         </div>
-        {hasImages && (
-          <span className="text-[10px] font-semibold w-5 h-5 rounded-full bg-sky-500/20 text-sky-600 flex items-center justify-center">
-            {connectedData.images.length}
-          </span>
+        {(hasImages || hasPrompts) && (
+          <div className="flex gap-1">
+            {hasPrompts && (
+              <span className="text-[10px] font-semibold w-5 h-5 rounded-full bg-amber-500/20 text-amber-600 flex items-center justify-center">
+                {connectedData.prompts.length}
+              </span>
+            )}
+            {hasImages && (
+              <span className="text-[10px] font-semibold w-5 h-5 rounded-full bg-sky-500/20 text-sky-600 flex items-center justify-center">
+                {connectedData.images.length}
+              </span>
+            )}
+          </div>
         )}
         <button
           onClick={() => removeNode(id)}
@@ -171,12 +182,17 @@ export function ImageToVideoNode({ id, data, selected }: NodeProps) {
 
       {/* Body */}
       <CardContent className="p-3 space-y-3">
-        {!hasImages && (
+        {(!hasImages || !hasPrompts) && (
           <div className="py-2 px-3 bg-muted border border-dashed border-border rounded-lg text-center">
             <p className="text-[10px] text-muted-foreground">
-              Conecte uma{" "}
-              <span className="text-blue-600 font-medium">Imagem</span> ou{" "}
-              <span className="text-green-600 font-medium">Resultado</span>
+              Conecte um{" "}
+              <span className="text-amber-600 font-medium">Prompt</span>
+              {!hasImages && (
+                <>
+                  {" e uma "}
+                  <span className="text-blue-600 font-medium">Imagem</span>
+                </>
+              )}
             </p>
           </div>
         )}
