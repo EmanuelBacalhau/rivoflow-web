@@ -35,7 +35,8 @@ export function LegalPageLayout({
               alt="RIVOFLOW"
               width={26}
               height={26}
-              className="rounded-md"
+              className="rounded-md w-auto h-auto"
+              priority
             />
             <span className="text-sm font-semibold tracking-tight">
               RIVOFLOW

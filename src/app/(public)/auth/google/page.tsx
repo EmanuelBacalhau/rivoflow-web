@@ -73,7 +73,8 @@ export default function GoogleLoginPage() {
                   alt="RIVOFLOW"
                   width={48}
                   height={48}
-                  className="rounded-xl"
+                  priority
+                  className="rounded-xl w-auto h-auto"
                 />
                 <span className="text-lg font-semibold font-display tracking-tight text-white">
                   RivoFlow

@@ -57,7 +57,8 @@ export function AppSidebar() {
             alt="RivoFlow"
             width={28}
             height={28}
-            className="rounded-md"
+            className="rounded-md w-auto h-auto"
+            priority
           />
           <span className="text-sm font-semibold font-display tracking-tight">
             RIVOFLOW

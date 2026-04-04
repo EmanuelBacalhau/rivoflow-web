@@ -32,7 +32,8 @@ export function AppHeader() {
             alt="RivoFlow"
             width={28}
             height={28}
-            className="rounded-lg"
+            className="rounded-lg w-auto h-auto"
+            priority
           />
           <span className="font-display font-semibold text-sm tracking-tight text-white hidden sm:block">
             RivoFlow

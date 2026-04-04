@@ -14,7 +14,8 @@ export function LandingFooter() {
                 alt="RIVOFLOW"
                 width={24}
                 height={24}
-                className="rounded-md"
+                priority
+                className="rounded-md w-auto h-auto"
               />
             </Link>
             <span className="text-xs text-muted-foreground">

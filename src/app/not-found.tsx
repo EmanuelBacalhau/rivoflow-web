@@ -19,7 +19,8 @@ export default function NotFound() {
               alt="RIVOFLOW"
               width={28}
               height={28}
-              className="rounded-lg"
+              priority
+              className="rounded-lg w-auto h-auto"
             />
           </Link>
         </div>

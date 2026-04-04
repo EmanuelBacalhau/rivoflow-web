@@ -55,53 +55,55 @@ export function Background() {
       {/* Connecting lines SVG */}
       <svg
         className="absolute inset-0 w-full h-full hidden md:block"
+        viewBox="0 0 1000 1000"
+        preserveAspectRatio="none"
         aria-hidden="true"
       >
         <line
-          x1="20%"
-          y1="15%"
-          x2="35%"
-          y2="40%"
+          x1="200"
+          y1="150"
+          x2="350"
+          y2="400"
           stroke="url(#bg-lg)"
           strokeWidth="0.5"
           opacity="0.2"
         />
         <line
-          x1="80%"
-          y1="20%"
-          x2="65%"
-          y2="45%"
+          x1="800"
+          y1="200"
+          x2="650"
+          y2="450"
           stroke="url(#bg-lg)"
           strokeWidth="0.5"
           opacity="0.15"
         />
         <line
-          x1="15%"
-          y1="75%"
-          x2="40%"
-          y2="55%"
+          x1="150"
+          y1="750"
+          x2="400"
+          y2="550"
           stroke="url(#bg-lg)"
           strokeWidth="0.5"
           opacity="0.15"
         />
         <line
-          x1="85%"
-          y1="80%"
-          x2="60%"
-          y2="55%"
+          x1="850"
+          y1="800"
+          x2="600"
+          y2="550"
           stroke="url(#bg-lg)"
           strokeWidth="0.5"
           opacity="0.2"
         />
         <path
-          d="M 10% 40% Q 30% 20% 50% 35%"
+          d="M 100 400 Q 300 200 500 350"
           stroke="url(#bg-lg)"
           strokeWidth="0.5"
           opacity="0.1"
           fill="none"
         />
         <path
-          d="M 50% 65% Q 70% 80% 90% 60%"
+          d="M 500 650 Q 700 800 900 600"
           stroke="url(#bg-lg)"
           strokeWidth="0.5"
           opacity="0.1"

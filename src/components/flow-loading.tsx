@@ -13,7 +13,8 @@ export function FlowLoading() {
         alt="RivoFlow logo"
         width={160}
         height={160}
-        className="animate-pulse"
+        priority
+        className="animate-pulse w-auto h-auto"
       />
     </div>
   );

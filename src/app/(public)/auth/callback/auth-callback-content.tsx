@@ -46,7 +46,8 @@ export function AuthCallbackContent() {
               alt="RivoFlow"
               width={36}
               height={36}
-              className="rounded-lg"
+              priority
+              className="rounded-lg w-auto h-auto"
             />
           </div>
         </div>

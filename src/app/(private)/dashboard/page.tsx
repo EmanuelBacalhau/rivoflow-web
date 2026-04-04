@@ -79,7 +79,7 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col flex-1 min-h-0 px-8 py-8">
       {/* Actions bar */}
-      <div className="flex items-center justify-between gap-4 mb-10">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-10">
         <div>
           <h1 className="text-2xl font-bold font-display mb-1">
             {firstName ? `Olá, ${firstName}` : "Bem-vindo"}
@@ -89,14 +89,10 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex flex-col md:flex-row md:items-center gap-3 shrink-0">
           <Dialog>
             <DialogTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className="border-white/8 bg-white/3 hover:bg-white/6"
-              >
+              <Button variant="outline" size="sm">
                 <CircleDollarSignIcon className="size-4 mr-1.5" />
                 Créditos
               </Button>
@@ -189,11 +185,7 @@ export default function DashboardPage() {
             </DialogContent>
           </Dialog>
 
-          <Button
-            size="sm"
-            onClick={() => setIsCreateOpen(true)}
-            className="shadow-lg shadow-primary/20"
-          >
+          <Button size="sm" onClick={() => setIsCreateOpen(true)}>
             <PlusIcon className="size-4 mr-1.5" />
             Novo flow
           </Button>
@@ -250,14 +242,15 @@ export default function DashboardPage() {
 
       {/* Flows */}
       <section aria-labelledby="flows-heading">
-        <div className="flex items-center justify-between gap-4 mb-5">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
           <h2
             id="flows-heading"
             className="text-base font-semibold font-display"
           >
             Seus flows
           </h2>
-          <div className="flex items-center gap-2 rounded-lg border border-white/8 bg-white/3 backdrop-blur-sm px-3 py-2 text-sm w-full max-w-64 focus-within:border-purple-500/30 focus-within:ring-1 focus-within:ring-purple-500/15 transition-all">
+
+          <div className="flex items-center gap-2 rounded-lg border border-white/8 bg-white/3 backdrop-blur-sm px-3 py-2 text-sm w-full md:max-w-64 focus-within:border-purple-500/30 focus-within:ring-1 focus-within:ring-purple-500/15 transition-all">
             <SearchIcon
               className="size-4 text-muted-foreground shrink-0"
               aria-hidden="true"

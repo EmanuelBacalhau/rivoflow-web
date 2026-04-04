@@ -28,7 +28,9 @@ export function LandingNavbar({ navLinks }: LandingNavbarProps) {
             alt="RIVOFLOW"
             width={32}
             height={32}
-            className="rounded-lg"
+            loading="eager"
+            priority
+            className="rounded-lg w-auto h-auto"
           />
           <span className="font-display font-semibold text-lg tracking-tight hidden sm:block">
             RivoFlow

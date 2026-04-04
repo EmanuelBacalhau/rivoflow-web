@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Sora } from "next/font/google";
+import { headers } from "next/headers";
 import "./globals.css";
 import "@xyflow/react/dist/style.css";
 import Script from "next/script";
@@ -77,11 +78,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
@@ -104,6 +107,7 @@ export default function RootLayout({
           id="json-ld"
           type="application/ld+json"
           strategy="afterInteractive"
+          nonce={nonce}
         >
           {JSON.stringify(jsonLd)}
         </Script>
