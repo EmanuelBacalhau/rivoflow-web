@@ -43,6 +43,11 @@ export function UploadVideoNode({ id, data, selected }: NodeProps) {
     const selectedFile = event.target.files?.[0];
     if (!selectedFile) return;
 
+    if (selectedFile.type !== "video/mp4") {
+      toast.error("Formato inválido. Apenas arquivos MP4 são permitidos.");
+      return;
+    }
+
     const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
     if (selectedFile.size > MAX_FILE_SIZE) {
       toast.error("Arquivo muito grande. Máximo 100MB.");
@@ -144,7 +149,7 @@ export function UploadVideoNode({ id, data, selected }: NodeProps) {
           <label htmlFor={inputId} className="block nodrag nopan">
             <input
               type="file"
-              accept="video/mp4,video/webm,video/quicktime"
+              accept="video/mp4"
               className="hidden"
               onChange={handleFileChange}
               id={inputId}
@@ -159,7 +164,7 @@ export function UploadVideoNode({ id, data, selected }: NodeProps) {
                   Carregar vídeo
                 </p>
                 <p className="text-[10px] text-muted-foreground">
-                  MP4, WebM ou MOV • Máx 100MB
+                  Apenas MP4 • Máx 100MB
                 </p>
               </div>
             </div>
